@@ -58,7 +58,7 @@ describe("HomeContent", () => {
     expect(screen.getByText("The Fool")).toBeInTheDocument();
     expect(screen.getByText(/☀ 正位置/)).toBeInTheDocument();
     expect(screen.getByText("⭐ 総合運")).toBeInTheDocument();
-    expect(screen.getByTestId("today-result")).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "今日の占い結果" })).toBeInTheDocument();
   });
 
   it("占い済み（逆位置）時に逆位置表示されること", () => {

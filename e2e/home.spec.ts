@@ -69,15 +69,13 @@ test.describe("ホーム画面 — スクラッチアート風テーマ", () => 
     await page.evaluate(() => localStorage.removeItem("tarot-daily-draw"));
     await page.reload();
     await page.getByLabel("カードを引く").click();
-    // フリップ演出待ち
-    await page.waitForTimeout(1500);
     // 結果が表示されるまで待つ
     await expect(page.getByText(/正位置|逆位置/)).toBeVisible({ timeout: 5000 });
 
     // ホームに戻る
     await page.goto("/");
     // 結果サマリーが表示されること
-    await expect(page.getByTestId("today-result")).toBeVisible();
+    await expect(page.getByRole("region", { name: "今日の占い結果" })).toBeVisible();
     await expect(page.getByText("⭐ 総合運")).toBeVisible();
   });
 });

@@ -46,7 +46,7 @@ export function DailyTarot() {
     saveDraw(result);
 
     // フリップ演出後に結果表示へ
-    setTimeout(() => setPhase("result"), 1200);
+    setTimeout(() => setPhase("result"), 500);
   }, []);
 
   return (
@@ -225,7 +225,7 @@ function CardFlip() {
       initial={{ rotateY: 0 }}
       animate={{ rotateY: 360 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 1, ease: "easeInOut" }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
       style={{ transformStyle: "preserve-3d" }}
     >
       <svg

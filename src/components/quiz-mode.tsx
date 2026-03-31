@@ -225,7 +225,7 @@ function QuestionPhase({
         <motion.div
           initial={{ rotateY: 180 }}
           animate={{ rotateY: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
           style={{ transformStyle: "preserve-3d" }}
           className="w-full h-full"
         >

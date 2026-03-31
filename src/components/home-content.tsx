@@ -115,7 +115,7 @@ function TodayResult({
     : card.fortune.general.upright;
 
   return (
-    <div className="w-full flex flex-col items-center gap-4" data-testid="today-result">
+    <section className="w-full flex flex-col items-center gap-4" aria-label="今日の占い結果">
       <p className="text-gold-dim text-xs font-heading">Today&apos;s Card</p>
 
       {/* カード画像 — タップでボトムシート */}
@@ -158,6 +158,6 @@ function TodayResult({
       >
         1dayタロットを見る →
       </Link>
-    </div>
+    </section>
   );
 }

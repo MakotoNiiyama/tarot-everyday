@@ -30,20 +30,3 @@ export const wands: TarotCard[] = [
   queenOfWands,
   kingOfWands,
 ];
-
-export {
-  aceOfWands,
-  twoOfWands,
-  threeOfWands,
-  fourOfWands,
-  fiveOfWands,
-  sixOfWands,
-  sevenOfWands,
-  eightOfWands,
-  nineOfWands,
-  tenOfWands,
-  pageOfWands,
-  knightOfWands,
-  queenOfWands,
-  kingOfWands,
-};

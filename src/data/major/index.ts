@@ -1,26 +1,3 @@
-export { fool } from "./00-fool";
-export { magician } from "./01-magician";
-export { highPriestess } from "./02-high-priestess";
-export { empress } from "./03-empress";
-export { emperor } from "./04-emperor";
-export { hierophant } from "./05-hierophant";
-export { lovers } from "./06-lovers";
-export { chariot } from "./07-chariot";
-export { strength } from "./08-strength";
-export { hermit } from "./09-hermit";
-export { wheelOfFortune } from "./10-wheel-of-fortune";
-export { justice } from "./11-justice";
-export { hangedMan } from "./12-hanged-man";
-export { death } from "./13-death";
-export { temperance } from "./14-temperance";
-export { devil } from "./15-devil";
-export { tower } from "./16-tower";
-export { star } from "./17-star";
-export { moon } from "./18-moon";
-export { sun } from "./19-sun";
-export { judgement } from "./20-judgement";
-export { world } from "./21-world";
-
 import { fool } from "./00-fool";
 import { magician } from "./01-magician";
 import { highPriestess } from "./02-high-priestess";

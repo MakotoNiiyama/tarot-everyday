@@ -30,20 +30,3 @@ export const pentacles: TarotCard[] = [
   queenOfPentacles,
   kingOfPentacles,
 ];
-
-export {
-  aceOfPentacles,
-  twoOfPentacles,
-  threeOfPentacles,
-  fourOfPentacles,
-  fiveOfPentacles,
-  sixOfPentacles,
-  sevenOfPentacles,
-  eightOfPentacles,
-  nineOfPentacles,
-  tenOfPentacles,
-  pageOfPentacles,
-  knightOfPentacles,
-  queenOfPentacles,
-  kingOfPentacles,
-};

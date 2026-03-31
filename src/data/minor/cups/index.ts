@@ -30,20 +30,3 @@ export const cups: TarotCard[] = [
   queenOfCups,
   kingOfCups,
 ];
-
-export {
-  aceOfCups,
-  twoOfCups,
-  threeOfCups,
-  fourOfCups,
-  fiveOfCups,
-  sixOfCups,
-  sevenOfCups,
-  eightOfCups,
-  nineOfCups,
-  tenOfCups,
-  pageOfCups,
-  knightOfCups,
-  queenOfCups,
-  kingOfCups,
-};
