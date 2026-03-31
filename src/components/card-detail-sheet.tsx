@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { Drawer } from "@base-ui/react/drawer";
 import type { TarotCard } from "@/data/types";
@@ -39,29 +39,13 @@ export function CardDetailSheet({
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
-  const [snapPoint, setSnapPoint] = useState<number | string | null>(0.55);
-
-  const handleSnapPointChange = useCallback(
-    (sp: number | string | null) => setSnapPoint(sp),
-    [],
-  );
-
-  const handleHandleClick = useCallback(() => {
-    setSnapPoint((prev) => (prev === 1 ? 0.55 : 1));
-  }, []);
 
   const subTitle = card.arcana === "major"
     ? "大アルカナ"
     : (card.suit ? suitNames[card.suit].full : "小アルカナ");
 
   return (
-    <Drawer.Root
-      open={open}
-      onOpenChange={setOpen}
-      snapPoints={[0.55, 1]}
-      snapPoint={snapPoint}
-      onSnapPointChange={handleSnapPointChange}
-    >
+    <Drawer.Root open={open} onOpenChange={setOpen}>
       <Drawer.Trigger
         render={(props) => (
           <button {...props} type="button" className="cursor-pointer">
@@ -79,19 +63,17 @@ export function CardDetailSheet({
           className="fixed inset-x-0 bottom-0 z-50 flex flex-col rounded-t-2xl
             bg-background border-t border-gold/30 max-h-[85vh] outline-none
             transition-transform duration-300 ease-out
-            data-[starting]:translate-y-full data-[ending]:translate-y-full"
+            data-[starting]:translate-y-full data-[ending]:translate-y-full
+            data-[swiping]:transition-none"
         >
-          {/* ドラッグハンドル */}
-          <button
-            type="button"
-            aria-label="シートをドラッグ"
-            onClick={handleHandleClick}
+          {/* ドラッグハンドル — Drawer.Popup のスワイプ機構がポインターを処理 */}
+          <div
             className="flex justify-center pt-3 pb-2 w-full cursor-grab active:cursor-grabbing
-              touch-none select-none"
+              select-none"
           >
-            <div className="w-12 h-1.5 rounded-full bg-gold/50 transition-colors hover:bg-gold/70
-              active:bg-gold/90 active:scale-x-110" />
-          </button>
+            <div className="w-12 h-1.5 rounded-full bg-gold/40 transition-colors
+              hover:bg-gold/60 active:bg-gold/80" />
+          </div>
 
           <Drawer.Viewport className="flex-1 overflow-y-auto px-4 pb-8">
             {/* ヘッダー */}
