@@ -22,6 +22,9 @@
 # production
 /build
 
+# card images (downloaded via scripts/download-cards.js)
+/public/cards/
+
 # misc
 .DS_Store
 *.pem
