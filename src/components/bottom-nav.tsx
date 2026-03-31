@@ -44,6 +44,37 @@ export function BottomNav() {
         {navItems.map(({ href, label, icon: Icon }) => {
           const isActive =
             href === "/" ? pathname === "/" : pathname.startsWith(href);
+          const isFeatured = href === "/reading";
+
+          if (isFeatured) {
+            return (
+              <li key={href} className="relative -top-3">
+                <Link
+                  href={href}
+                  className="flex flex-col items-center gap-1 transition-colors"
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  <span
+                    className={`flex items-center justify-center w-12 h-12 rounded-full transition-all ${
+                      isActive
+                        ? "bg-gradient-to-br from-gold to-gold-light text-background shadow-[0_0_12px_rgba(204,143,31,0.5)]"
+                        : "bg-gradient-to-br from-[#B8860B] to-[#CC8F1F] text-background shadow-[0_0_8px_rgba(204,143,31,0.25)]"
+                    }`}
+                  >
+                    <Icon active={isActive} />
+                  </span>
+                  <span
+                    className={`text-[10px] font-bold ${
+                      isActive ? "text-gold" : "text-gold-dim"
+                    }`}
+                  >
+                    {label}
+                  </span>
+                </Link>
+              </li>
+            );
+          }
+
           return (
             <li key={href}>
               <Link

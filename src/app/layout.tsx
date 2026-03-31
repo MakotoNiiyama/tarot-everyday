@@ -31,6 +31,7 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "Tarot Everyday",
   },
+  manifest: "/manifest.json",
 };
 
 export const viewport: Viewport = {
