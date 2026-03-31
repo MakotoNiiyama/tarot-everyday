@@ -15,13 +15,18 @@ const navItems = [
     icon: NavIconCards,
   },
   {
+    href: "/reading",
+    label: "占い",
+    icon: NavIconReading,
+  },
+  {
     href: "/quiz",
     label: "クイズ",
     icon: NavIconQuiz,
   },
   {
     href: "/daily",
-    label: "1day占い",
+    label: "1day",
     icon: NavIconDaily,
   },
 ];
@@ -215,6 +220,62 @@ function NavIconQuiz({ active }: { active: boolean }) {
           <circle cx="18" cy="5" r="0.5" fill="currentColor" opacity="0.4" />
         </>
       )}
+    </svg>
+  );
+}
+
+function NavIconReading({ active }: { active: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      className="w-6 h-6"
+      aria-hidden="true"
+    >
+      {/* 3枚のカードを扇形に配置 */}
+      <rect
+        x="8"
+        y="4"
+        width="8"
+        height="12"
+        rx="1"
+        stroke="currentColor"
+        strokeWidth={active ? 2 : 1.5}
+        fill={active ? "currentColor" : "none"}
+        opacity={active ? 0.15 : 1}
+        transform="rotate(-15 12 10)"
+      />
+      <rect
+        x="8"
+        y="4"
+        width="8"
+        height="12"
+        rx="1"
+        stroke="currentColor"
+        strokeWidth={active ? 2 : 1.5}
+        fill={active ? "currentColor" : "none"}
+        opacity={active ? 0.15 : 1}
+      />
+      <rect
+        x="8"
+        y="4"
+        width="8"
+        height="12"
+        rx="1"
+        stroke="currentColor"
+        strokeWidth={active ? 2 : 1.5}
+        fill={active ? "currentColor" : "none"}
+        opacity={active ? 0.15 : 1}
+        transform="rotate(15 12 10)"
+      />
+      {/* 星 */}
+      <path
+        d="M12 18l-1 2h2z"
+        stroke="currentColor"
+        strokeWidth="0.8"
+        fill={active ? "currentColor" : "none"}
+        opacity="0.6"
+      />
     </svg>
   );
 }

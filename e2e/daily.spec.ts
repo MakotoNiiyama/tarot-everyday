@@ -52,8 +52,8 @@ test.describe("1dayタロット占い", () => {
     await expect(page.getByLabel("カードを引く")).not.toBeVisible();
   });
 
-  test("BottomNavの1day占いタブがアクティブであること", async ({ page }) => {
-    const navLink = page.getByRole("link", { name: "1day占い" });
+  test("BottomNavの1dayタブがアクティブであること", async ({ page }) => {
+    const navLink = page.getByRole("link", { name: "1day" });
     await expect(navLink).toHaveAttribute("aria-current", "page");
   });
 });

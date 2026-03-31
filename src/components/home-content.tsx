@@ -74,6 +74,13 @@ export function HomeContent() {
             <p className="text-gold font-heading text-lg">🔮 1dayタロット</p>
             <p className="text-gold-dim text-xs mt-1">今日の運勢を占う</p>
           </Link>
+          <Link
+            href="/reading"
+            className="border border-gold/25 rounded-lg p-4 text-center hover:border-gold/50 transition-colors block"
+          >
+            <p className="text-gold font-heading text-lg">🃏 タロット占い</p>
+            <p className="text-gold-dim text-xs mt-1">スプレッドで本格鑑定</p>
+          </Link>
         </nav>
       </main>
     </div>

@@ -8,12 +8,13 @@ vi.mock("next/navigation", () => ({
 }));
 
 describe("BottomNav", () => {
-  it("4つのナビリンクが表示されること", () => {
+  it("5つのナビリンクが表示されること", () => {
     render(<BottomNav />);
     expect(screen.getByText("ホーム")).toBeInTheDocument();
     expect(screen.getByText("早見表")).toBeInTheDocument();
+    expect(screen.getByText("占い")).toBeInTheDocument();
     expect(screen.getByText("クイズ")).toBeInTheDocument();
-    expect(screen.getByText("1day占い")).toBeInTheDocument();
+    expect(screen.getByText("1day")).toBeInTheDocument();
   });
 
   it("各リンクに正しいhrefが設定されていること", () => {
@@ -26,11 +27,15 @@ describe("BottomNav", () => {
       "href",
       "/cards"
     );
+    expect(screen.getByText("占い").closest("a")).toHaveAttribute(
+      "href",
+      "/reading"
+    );
     expect(screen.getByText("クイズ").closest("a")).toHaveAttribute(
       "href",
       "/quiz"
     );
-    expect(screen.getByText("1day占い").closest("a")).toHaveAttribute(
+    expect(screen.getByText("1day").closest("a")).toHaveAttribute(
       "href",
       "/daily"
     );
@@ -42,10 +47,10 @@ describe("BottomNav", () => {
     expect(nav).toHaveAttribute("aria-label", "メインナビゲーション");
   });
 
-  it("SVGアイコンが4つ描画されていること", () => {
+  it("SVGアイコンが5つ描画されていること", () => {
     const { container } = render(<BottomNav />);
     const svgs = container.querySelectorAll('svg[aria-hidden="true"]');
-    expect(svgs).toHaveLength(4);
+    expect(svgs).toHaveLength(5);
   });
 
   it("アクティブなリンクにaria-current='page'が設定されていること", () => {

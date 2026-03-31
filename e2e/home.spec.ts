@@ -26,15 +26,16 @@ test.describe("ホーム画面 — スクラッチアート風テーマ", () => 
   test("SVG装飾要素が描画されていること", async ({ page }) => {
     await page.goto("/");
     const svgs = page.locator('svg[aria-hidden="true"]');
-    // ヘッダー装飾1 + ディバイダー2 + ScratchFrame1 + ScratchMoon1 + BottomNavアイコン4 = 9
-    await expect(svgs).toHaveCount(9);
+    // ヘッダー装飾1 + ディバイダー2 + ScratchFrame1 + ScratchMoon1 + BottomNavアイコン5 = 10
+    await expect(svgs).toHaveCount(10);
   });
 
-  test("ナビゲーションリンク（早見表・1dayタロット）が表示されること", async ({
+  test("ナビゲーションリンク（早見表・タロット占い・1dayタロット）が表示されること", async ({
     page,
   }) => {
     await page.goto("/");
     await expect(page.getByText("📖 早見表")).toBeVisible();
+    await expect(page.getByText("🃏 タロット占い")).toBeVisible();
     await expect(page.getByText("🔮 1dayタロット")).toBeVisible();
   });
 
