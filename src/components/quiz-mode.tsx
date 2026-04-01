@@ -12,6 +12,7 @@ import {
   type QuizAnswer,
 } from "@/lib/quiz";
 import { ScratchDivider } from "@/components/svg/scratch-decorations";
+import { CardDetailSheet } from "@/components/card-detail-sheet";
 
 type Phase = "start" | "question" | "feedback" | "result";
 
@@ -423,46 +424,47 @@ function ResultScreen({
       <div className="w-full space-y-2">
         <h2 className="text-gold-dim text-xs font-heading">回答一覧</h2>
         {answers.map((a, i) => (
-          <div
-            key={i}
-            className={`flex items-center gap-3 p-2 rounded-lg border ${
-              a.isCorrect
-                ? "border-gold/20 bg-gold/5"
-                : "border-terracotta/20 bg-terracotta/5"
-            }`}
-          >
-            <div className="w-8 h-12 flex-shrink-0 rounded overflow-hidden border border-gold/20">
-              <Image
-                src={a.question.card.imagePath}
-                alt={a.question.card.name.ja}
-                width={32}
-                height={48}
-                className={`w-full h-full object-cover ${
-                  a.question.isReversed ? "rotate-180" : ""
-                }`}
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-cream text-xs truncate">
-                {a.question.card.name.ja}
-                <span className="text-gold-dim/60 ml-1">
-                  {a.question.isReversed ? "逆" : "正"}
-                </span>
-              </p>
-              <p
-                className={`text-xs truncate ${
-                  a.isCorrect ? "text-gold" : "text-terracotta"
-                }`}
-              >
-                {a.isCorrect ? "○" : "✕"} {a.selectedKeyword}
-                {!a.isCorrect && (
-                  <span className="text-gold/60 ml-1">
-                    → {a.question.correctKeyword}
+          <CardDetailSheet key={i} card={a.question.card}>
+            <div
+              className={`flex items-center gap-3 p-2 rounded-lg border ${
+                a.isCorrect
+                  ? "border-gold/20 bg-gold/5"
+                  : "border-terracotta/20 bg-terracotta/5"
+              }`}
+            >
+              <div className="w-8 h-12 flex-shrink-0 rounded overflow-hidden border border-gold/20">
+                <Image
+                  src={a.question.card.imagePath}
+                  alt={a.question.card.name.ja}
+                  width={32}
+                  height={48}
+                  className={`w-full h-full object-cover ${
+                    a.question.isReversed ? "rotate-180" : ""
+                  }`}
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-cream text-xs truncate">
+                  {a.question.card.name.ja}
+                  <span className="text-gold-dim/60 ml-1">
+                    {a.question.isReversed ? "逆" : "正"}
                   </span>
-                )}
-              </p>
+                </p>
+                <p
+                  className={`text-xs truncate ${
+                    a.isCorrect ? "text-gold" : "text-terracotta"
+                  }`}
+                >
+                  {a.isCorrect ? "○" : "✕"} {a.selectedKeyword}
+                  {!a.isCorrect && (
+                    <span className="text-gold/60 ml-1">
+                      → {a.question.correctKeyword}
+                    </span>
+                  )}
+                </p>
+              </div>
             </div>
-          </div>
+          </CardDetailSheet>
         ))}
       </div>
 
