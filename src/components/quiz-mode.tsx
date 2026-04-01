@@ -426,7 +426,7 @@ function ResultScreen({
         {answers.map((a, i) => (
           <CardDetailSheet key={i} card={a.question.card}>
             <div
-              className={`flex items-center gap-3 p-2 rounded-lg border ${
+              className={`w-full flex items-center gap-3 p-2 rounded-lg border ${
                 a.isCorrect
                   ? "border-gold/20 bg-gold/5"
                   : "border-terracotta/20 bg-terracotta/5"

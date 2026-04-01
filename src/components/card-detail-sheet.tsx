@@ -48,7 +48,7 @@ export function CardDetailSheet({
     <Drawer.Root open={open} onOpenChange={setOpen}>
       <Drawer.Trigger
         render={(props) => (
-          <button {...props} type="button" className="w-full text-left cursor-pointer">
+          <button {...props} type="button" className="cursor-pointer">
             {children}
           </button>
         )}
