@@ -424,9 +424,9 @@ function ResultScreen({
       <div className="w-full space-y-2">
         <h2 className="text-gold-dim text-xs font-heading">回答一覧</h2>
         {answers.map((a, i) => (
-          <CardDetailSheet key={i} card={a.question.card}>
+          <CardDetailSheet key={i} card={a.question.card} className="w-full text-left">
             <div
-              className={`w-full flex items-center gap-3 p-2 rounded-lg border ${
+              className={`flex items-center gap-3 p-2 rounded-lg border ${
                 a.isCorrect
                   ? "border-gold/20 bg-gold/5"
                   : "border-terracotta/20 bg-terracotta/5"

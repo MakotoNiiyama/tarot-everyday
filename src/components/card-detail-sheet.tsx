@@ -34,9 +34,11 @@ const orientations = [
 export function CardDetailSheet({
   card,
   children,
+  className,
 }: {
   card: TarotCard;
   children: React.ReactNode;
+  className?: string;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -48,7 +50,7 @@ export function CardDetailSheet({
     <Drawer.Root open={open} onOpenChange={setOpen}>
       <Drawer.Trigger
         render={(props) => (
-          <button {...props} type="button" className="cursor-pointer">
+          <button {...props} type="button" className={`cursor-pointer ${className ?? ""}`}>
             {children}
           </button>
         )}
