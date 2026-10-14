@@ -451,6 +451,7 @@ function ResultScreen({
                 >
                   <span className="inline-flex items-center gap-1">
                     <Icon name={a.isCorrect ? "check" : "close"} size={14} strokeWidth={1.8} />
+                    <span className="sr-only">{a.isCorrect ? "正解" : "不正解"}</span>
                     {a.selectedKeyword}
                   </span>
                   {!a.isCorrect && (

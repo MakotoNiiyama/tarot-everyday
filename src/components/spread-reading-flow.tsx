@@ -417,7 +417,7 @@ function ResultPhase({
                 <span className="text-gold text-xs font-heading font-bold bg-gold/15 px-2 py-0.5 rounded">
                   {pos.label}
                 </span>
-                <OrientationBadge isReversed={dc.isReversed} />
+                <OrientationBadge isReversed={dc.isReversed} className="self-center" />
               </div>
               <p className="text-cream text-sm font-heading">
                 {dc.card.name.ja}

@@ -132,6 +132,30 @@ describe("QuizMode", () => {
     ).toBeInTheDocument();
   });
 
+  it("結果画面の回答一覧にスクリーンリーダー用の正解/不正解テキストが含まれること", async () => {
+    const user = userEvent.setup();
+    render(<QuizMode />);
+    await user.click(screen.getByText("クイズを始める"));
+
+    for (let i = 0; i < 10; i++) {
+      const choices = screen
+        .getAllByRole("button")
+        .filter(
+          (b) =>
+            !b.textContent?.includes("クイズ") &&
+            !b.textContent?.includes("次へ") &&
+            !b.textContent?.includes("もう一度") &&
+            b.textContent?.trim()
+        );
+      await user.click(choices[0]);
+      await user.click(screen.getByText("次へ"));
+    }
+
+    // 結果画面で各回答に sr-only の正解/不正解テキストが存在すること
+    const srTexts = screen.getAllByText((text) => text === "正解" || text === "不正解");
+    expect(srTexts.length).toBe(10);
+  });
+
   it("進捗バーが表示されること", async () => {
     const user = userEvent.setup();
     render(<QuizMode />);
