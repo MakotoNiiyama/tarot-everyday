@@ -27,7 +27,7 @@ describe("generateFortunePrompt", () => {
   });
 
   it("基本情報と相談内容(未入力)", () => {
-    expect(prompt).toContain("■ 生年月日: 1990年3月29日 / 出生時刻: 14時台 / 出生地: 東京都 / 性別: 回答なし");
+    expect(prompt).toContain("■ 生年月日: 1990年3月29日 / 出生時刻: 14時台(14:00〜14:59) / 出生地: 東京都 / 性別: 回答なし");
     expect(prompt).toContain("■ 鑑定日: 2026年10月14日 / 対象期間: 今日");
     expect(prompt).toContain("■ 相談内容: 特になし(総合的な鑑定)");
   });
@@ -39,6 +39,14 @@ describe("generateFortunePrompt", () => {
       expect(prompt).toContain(r.periods.day.rangeLabel);
     }
     expect(prompt).toContain("ライフパス: 33");
+  });
+
+  it("午前・午後で入力した出生時刻は時刻の範囲も書くこと", () => {
+    const am: BirthProfile = { ...profile, time: { kind: "half", half: "am" } };
+    const pm: BirthProfile = { ...profile, time: { kind: "half", half: "pm" } };
+    const gen = (p: BirthProfile) => generateFortunePrompt({ profile: p, readings: readAll(p, today), period: "day", today, question: "", tarot: null });
+    expect(gen(am)).toContain("出生時刻: 午前(0:00〜11:59) /");
+    expect(gen(pm)).toContain("出生時刻: 午後(12:00〜23:59) /");
   });
 
   it("1dayタロットの結果", () => {

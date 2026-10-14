@@ -3,7 +3,7 @@ import type { TarotCard } from "@/data/types";
 import { composeHeadline } from "@/data/guide";
 import type { LocalDate } from "./local-date";
 import { formatBirthTime, formatGender, formatPrefecture } from "./profile-format";
-import type { BirthProfile, Fact, Period, SystemReading } from "./types";
+import type { BirthProfile, BirthTime, Fact, Period, SystemReading } from "./types";
 
 const PERIOD_LABEL: Record<Period, string> = { day: "今日", month: "今月", year: "今年" };
 
@@ -24,13 +24,20 @@ function factText(f: Fact): string {
   return `${f.label}: ${f.value}`;
 }
 
+/** 出生時刻。生成AIが範囲を取り違えないよう、午前・午後と時刻指定は時刻の範囲も書く */
+function birthTimeText(time: BirthTime): string {
+  if (time.kind === "unknown") return "不明";
+  if (time.kind === "half") return time.half === "am" ? "午前(0:00〜11:59)" : "午後(12:00〜23:59)";
+  return `${formatBirthTime(time)}(${time.hour}:00〜${time.hour}:59)`;
+}
+
 /** 総合鑑定プロンプト(設計書 §8)。ユーザーが自分で契約している生成AIに貼り付けて使う */
 export function generateFortunePrompt(input: FortunePromptInput): string {
   const { profile, readings, period, today, question, tarot } = input;
   const p = PERIOD_LABEL[period];
   const { year, month, day } = profile.date;
   const place = profile.prefecture ? formatPrefecture(profile.prefecture) : "未入力(明石を基準に計算)";
-  const time = profile.time.kind === "unknown" ? "不明" : formatBirthTime(profile.time);
+  const time = birthTimeText(profile.time);
 
   const natal = readings.map((r) => `【${r.name}】${r.natal.map(factText).join(" / ")}`);
   const periods = readings.map((r) => {

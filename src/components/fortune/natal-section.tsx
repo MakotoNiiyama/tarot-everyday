@@ -58,7 +58,8 @@ export function NatalSection({ readings }: { readings: SystemReading[] }) {
               className="overflow-hidden rounded-2xl border border-gold/25 bg-surface"
             >
               <AccordionTrigger className="min-h-[52px] px-4 font-heading text-base text-cream">{r.name}</AccordionTrigger>
-              <AccordionContent className="flex flex-col gap-3 px-4 pb-4">
+              {/* 間隔は gap で取るので、AccordionContent が段落に付ける下の余白は打ち消す */}
+              <AccordionContent className="flex flex-col gap-3 px-4 pb-4 [&_p:not(:last-child)]:mb-0">
                 <ul className="grid grid-cols-3 gap-2">
                   {tiles.map((f) => (
                     <li key={f.key}>
