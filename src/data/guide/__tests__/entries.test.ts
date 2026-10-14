@@ -42,6 +42,12 @@ describe.each(cases)("%s の辞書データ", (system, entries) => {
     const text = [e.name, e.reading, e.summary, e.periodNote, ...e.keywords].join("");
     expect(text).not.toMatch(EMOJI_OR_SYMBOL);
     expect(e.image.kind).toBe("glyph");
+    // 文字の絵は改行(\n)で3行まで。各行は空にしない
+    if (e.image.kind === "glyph") {
+      const lines = e.image.text.split("\n");
+      expect(lines.length).toBeLessThanOrEqual(3);
+      for (const line of lines) expect(line).not.toBe("");
+    }
   });
 
   it("related が同じ占術に実在する id だけを指すこと", () => {

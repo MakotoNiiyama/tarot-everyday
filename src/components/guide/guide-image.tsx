@@ -1,22 +1,34 @@
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import type { GuideImage } from "@/data/guide";
 
 type Size = "tile" | "sheet" | "detail";
 
-/** 文字数に応じたタイポグラフィの大きさ(設計書 §10.1: 1字34px / 2字24px / 3字以上 15〜20px をタイル基準に拡大) */
-const GLYPH_CLASS: Record<Size, [string, string, string, string]> = {
-  tile: ["text-[34px]", "text-[24px]", "text-[16px]", "text-[11px]"],
-  sheet: ["text-[64px]", "text-[44px]", "text-[26px]", "text-[16px]"],
-  detail: ["text-[132px] lg:text-[160px]", "text-[88px] lg:text-[110px]", "text-[48px] lg:text-[60px]", "text-[26px] lg:text-[32px]"],
+/** タイルの文字の大きさ(px)。一番長い行の文字数で決める: 1字34 / 2字24 / 3字20 / 4字17 / 5字以上15(設計書 §10.1) */
+const TILE_STEPS = [34, 24, 20, 17, 15] as const;
+
+/**
+ * シート・詳細はタイルの段階を拡大する(シート約1.9倍、詳細約4倍、PC の詳細は少し大きく)。
+ * 拡大すると長い行が枠からはみ出すので、行の幅(1字 = 1em とみなす)が枠の内側に収まる大きさまでにする
+ */
+const SCALE: Record<Size, { base: number; lg: number; maxWidth: number; maxWidthLg: number }> = {
+  tile: { base: 1, lg: 1, maxWidth: Infinity, maxWidthLg: Infinity },
+  // 120px(PC は 140px)の枠
+  sheet: { base: 1.9, lg: 1.9, maxWidth: 112, maxWidthLg: 132 },
+  // 220px(PC は 360px)の枠の内側の枠
+  detail: { base: 4, lg: 4.8, maxWidth: 184, maxWidthLg: 324 },
 };
 
-function glyphClass(text: string, size: Size): string {
-  const length = [...text].length;
-  const [one, two, short, long] = GLYPH_CLASS[size];
-  if (length <= 1) return one;
-  if (length === 2) return two;
-  if (length <= 4) return short;
-  return long;
+/** タイルの最小の大きさ */
+const MIN_TILE = 15;
+
+/** 文字の大きさ(px)。base はスマホ、lg は PC(1024px〜) */
+export function glyphFontSize(text: string, size: Size): { base: number; lg: number } {
+  const longest = Math.max(1, ...text.split("\n").map((line) => [...line].length));
+  const step = Math.max(MIN_TILE, TILE_STEPS[Math.min(longest, TILE_STEPS.length) - 1]);
+  const { base, lg, maxWidth, maxWidthLg } = SCALE[size];
+  const fit = (scale: number, width: number) => Math.min(Math.round(step * scale), Math.floor(width / longest));
+  return { base: fit(base, maxWidth), lg: fit(lg, maxWidthLg) };
 }
 
 /** 早見表の画像枠の中身。枠(大きさ・角丸・背景)は呼び出し側が持つ */
@@ -26,10 +38,19 @@ export function GuideImageView({ image, size }: { image: GuideImage; size: Size 
       <Image src={image.path} alt={image.alt} width={240} height={400} className="h-full w-full object-cover" />
     );
   }
+  const { base, lg } = glyphFontSize(image.text, size);
+  const style = {
+    color: image.color ?? "#E5B85A",
+    "--glyph-size": `${base}px`,
+    "--glyph-size-lg": `${lg}px`,
+  } as CSSProperties;
+  // 名前は枠の外(タイルのラベル・見出し)にあるので、文字の絵は読み上げない。
+  // 改行(\n)で行を分け、自動の折り返しは行の長さをそろえる
   return (
     <span
-      className={`px-1 text-center font-heading leading-tight ${glyphClass(image.text, size)}`}
-      style={{ color: image.color ?? "#E5B85A" }}
+      aria-hidden="true"
+      className="whitespace-pre-line px-1 text-center font-heading text-[length:var(--glyph-size)] leading-[1.15] text-balance lg:text-[length:var(--glyph-size-lg)]"
+      style={style}
     >
       {image.text}
     </span>

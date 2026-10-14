@@ -83,7 +83,7 @@ export const mayaEntries: GuideEntry[] = [
     summary:
       "人と人、世界と世界をつなぐ橋渡しの紋章です。立場の違う相手の間に入り、穏やかに調整する役割を自然と担います。古いものを手放すことで新しい機会が開ける、という流れをよく知る紋章でもあります。",
     periodNote: "手放しとつながりがテーマ。不要なこだわりを手放すと、新しい縁や機会が巡ってきます。",
-    image: { kind: "glyph", text: "白い世界の橋渡し", color: "#F5E6C8" },
+    image: { kind: "glyph", text: "白い\n世界の\n橋渡し", color: "#F5E6C8" },
     related: ["seal-13", "seal-16"],
   },
   {
@@ -181,7 +181,7 @@ export const mayaEntries: GuideEntry[] = [
     summary:
       "未知の世界へ軽やかに踏み出す、探求の紋章です。好奇心が旺盛で、新しい場所や人との出会いから多くを学びます。広い視野で物事を見渡し、人の役に立とうとする優しさも持ち合わせています。",
     periodNote: "探求と冒険がテーマ。行ったことのない場所や新しい出会いに、気軽に足を向けてみましょう。",
-    image: { kind: "glyph", text: "赤い空歩く人", color: "#C75B39" },
+    image: { kind: "glyph", text: "赤い\n空歩く人", color: "#C75B39" },
     related: ["seal-6", "seal-3"],
   },
   {
@@ -195,7 +195,7 @@ export const mayaEntries: GuideEntry[] = [
     summary:
       "相手をありのまま受け入れる器の大きさで、人を惹きつける紋章です。誠実に向き合うほど信頼が集まり、焦らず待つことで物事がよい時機に整っていきます。自分を飾らずにいるほど、その魅力は自然と伝わります。",
     periodNote: "受け入れる姿勢が鍵になります。結果を急がず、目の前の人や出来事に誠実に向き合いましょう。",
-    image: { kind: "glyph", text: "白い魔法使い", color: "#F5E6C8" },
+    image: { kind: "glyph", text: "白い\n魔法使い", color: "#F5E6C8" },
     related: ["seal-5", "seal-4"],
   },
   {
@@ -223,7 +223,7 @@ export const mayaEntries: GuideEntry[] = [
     summary:
       "知性と勇気をあわせ持ち、困難に立ち向かう紋章です。物事に疑問を持ち、自分で考えて答えを見つけようとする強さがあります。ひとりで戦いすぎず仲間と力を合わせると、挑戦がより実を結びます。",
     periodNote: "勇気と挑戦がテーマ。避けてきた課題にひとつ向き合うと、自信が育ち道が開けてきます。",
-    image: { kind: "glyph", text: "黄色い戦士", color: "#E5B85A" },
+    image: { kind: "glyph", text: "黄色い\n戦士", color: "#E5B85A" },
     related: ["seal-3", "seal-6"],
   },
   {
@@ -279,7 +279,7 @@ export const mayaEntries: GuideEntry[] = [
     summary:
       "太陽のように分け隔てなく光を注ぐ、普遍の愛の紋章です。明るくおおらかな存在感で、自然と人の輪の中心に立ちます。高い理想を掲げつつ一人ひとりを照らすことで、悟りのような穏やかさに近づいていきます。",
     periodNote: "普遍の愛がテーマ。分け隔てなく人に接し、自分の明るさを周りに分けてみましょう。",
-    image: { kind: "glyph", text: "黄色い太陽", color: "#E5B85A" },
+    image: { kind: "glyph", text: "黄色い\n太陽", color: "#E5B85A" },
     related: ["seal-19", "seal-10"],
   },
   {
