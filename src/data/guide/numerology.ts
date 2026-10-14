@@ -89,9 +89,9 @@ export const numerologyEntries: GuideEntry[] = [
     keywords: ["探求", "内省", "直感", "専門性"],
     summary:
       "物事の奥にある理由を知りたくなる、探求者の数です。ひとりで考える時間から確かな答えを見つけ、専門的な分野で力を発揮します。慎重で人と距離を置きがちですが、信頼できる相手には深い誠実さを見せます。",
-    periodNote: "内省と探求がテーマ。急いで結論を出さず、調べて考える時間を確保すると気づきが深まります。",
+    periodNote: "内省と探求を意識したいとき。急いで結論を出さず、調べて考える時間を確保すると気づきが深まります。",
     image: { kind: "glyph", text: "7" },
-    related: ["number-2", "number-9"],
+    related: ["number-11", "number-9", "number-4"],
   },
   {
     system: "numerology",
@@ -102,7 +102,7 @@ export const numerologyEntries: GuideEntry[] = [
     keywords: ["達成", "力", "豊かさ", "実行力", "野心"],
     summary:
       "目標に向かって力強く進み、結果を形にする達成の数です。物事を動かす実行力と現実的な判断力があり、仕事やお金の面で成果を上げやすいでしょう。周りへの配慮を忘れないことが、成功を長続きさせます。",
-    periodNote: "成果と実行がテーマ。目標をはっきりさせ、ためらわずに行動へ移すと手応えのある結果が得られます。",
+    periodNote: "目標をはっきりさせることが鍵になります。ためらわずに行動へ移すと、手応えのある結果が得られます。",
     image: { kind: "glyph", text: "8" },
     related: ["number-1", "number-4"],
   },
