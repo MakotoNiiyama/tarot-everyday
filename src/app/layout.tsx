@@ -24,9 +24,8 @@ const caveat = Caveat({
 });
 
 export const metadata: Metadata = {
-  title: "Tarot Everyday — タロット暗記アプリ",
-  description:
-    "占い師を目指す人のためのタロットカード暗記・学習アプリ。78枚の早見表、カード詳細、1dayタロット占いで毎日の学習をサポート。",
+  title: "Tarot Everyday — 毎日の占いノート",
+  description: "タロットの練習と、生年月日から読み解く7つの占術で毎日の運勢を確かめる占いノート。",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
