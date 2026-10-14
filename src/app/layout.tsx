@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Zen_Maru_Gothic, Kaisei_Decol, Caveat } from "next/font/google";
 import { BottomNav } from "@/components/bottom-nav";
+import { SideNav } from "@/components/side-nav";
 import { ServiceWorkerRegistrar } from "@/components/sw-registrar";
 import "./globals.css";
 
@@ -39,6 +40,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -51,7 +53,8 @@ export default function RootLayout({
       lang="ja"
       className={`${zenMaruGothic.variable} ${kaiseiDecol.variable} ${caveat.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col pb-16">
+      <body className="min-h-full flex flex-col pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0 lg:pl-[232px]">
+        <SideNav />
         {children}
         <BottomNav />
         <ServiceWorkerRegistrar />

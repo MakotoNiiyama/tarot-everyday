@@ -1,61 +1,42 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { usePathname } from "next/navigation";
 import { BottomNav } from "@/components/bottom-nav";
 
-// next/navigation のモック
 vi.mock("next/navigation", () => ({
   usePathname: vi.fn(() => "/"),
 }));
 
 describe("BottomNav", () => {
-  it("5つのナビリンクが表示されること", () => {
+  it("4つのナビリンクが正しいhrefで表示されること", () => {
     render(<BottomNav />);
-    expect(screen.getByText("ホーム")).toBeInTheDocument();
-    expect(screen.getByText("早見表")).toBeInTheDocument();
-    expect(screen.getByText("占い")).toBeInTheDocument();
-    expect(screen.getByText("クイズ")).toBeInTheDocument();
-    expect(screen.getByText("1day")).toBeInTheDocument();
-  });
-
-  it("各リンクに正しいhrefが設定されていること", () => {
-    render(<BottomNav />);
-    expect(screen.getByText("ホーム").closest("a")).toHaveAttribute(
-      "href",
-      "/"
-    );
-    expect(screen.getByText("早見表").closest("a")).toHaveAttribute(
-      "href",
-      "/cards"
-    );
-    expect(screen.getByText("占い").closest("a")).toHaveAttribute(
-      "href",
-      "/reading"
-    );
-    expect(screen.getByText("クイズ").closest("a")).toHaveAttribute(
-      "href",
-      "/quiz"
-    );
-    expect(screen.getByText("1day").closest("a")).toHaveAttribute(
-      "href",
-      "/daily"
-    );
+    expect(screen.getByRole("link", { name: "ホーム" })).toHaveAttribute("href", "/");
+    expect(screen.getByRole("link", { name: "運勢" })).toHaveAttribute("href", "/fortune");
+    expect(screen.getByRole("link", { name: "タロット" })).toHaveAttribute("href", "/tarot");
+    expect(screen.getByRole("link", { name: "早見表" })).toHaveAttribute("href", "/guide");
+    expect(screen.getAllByRole("link")).toHaveLength(4);
   });
 
   it("navigation ロールとaria-labelが設定されていること", () => {
     render(<BottomNav />);
-    const nav = screen.getByRole("navigation");
-    expect(nav).toHaveAttribute("aria-label", "メインナビゲーション");
+    expect(screen.getByRole("navigation")).toHaveAttribute("aria-label", "メインナビゲーション");
   });
 
-  it("SVGアイコンが5つ描画されていること", () => {
+  it("4項目を均等に並べ、強調表示の項目を持たないこと", () => {
     const { container } = render(<BottomNav />);
-    const svgs = container.querySelectorAll('svg[aria-hidden="true"]');
-    expect(svgs).toHaveLength(5);
+    expect(container.querySelector("ul")).toHaveClass("grid-cols-4");
+    expect(container.querySelector(".rounded-full")).toBeNull();
   });
 
-  it("アクティブなリンクにaria-current='page'が設定されていること", () => {
+  it("PC幅(lg)では非表示になること", () => {
     render(<BottomNav />);
-    const homeLink = screen.getByText("ホーム").closest("a");
-    expect(homeLink).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("navigation")).toHaveClass("lg:hidden");
+  });
+
+  it("配下のページでも該当項目に aria-current='page' が付くこと", () => {
+    vi.mocked(usePathname).mockReturnValue("/tarot/quiz");
+    render(<BottomNav />);
+    expect(screen.getByRole("link", { name: "タロット" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "ホーム" })).not.toHaveAttribute("aria-current");
   });
 });
