@@ -43,4 +43,17 @@ test.describe("運勢ページ", () => {
       page.getByRole("navigation", { name: "メインナビゲーション" }).getByRole("link", { name: "運勢" }),
     ).toHaveAttribute("aria-current", "page");
   });
+
+  test("1024〜1279px ではボトムシートの幅が 640px までで中央に置かれること", async ({ page, isMobile }) => {
+    test.skip(isMobile, "PC の幅のみ確認する");
+    await page.setViewportSize({ width: 1200, height: 800 });
+    const section = page.getByRole("region", { name: "今日の1dayタロット" });
+    await section.getByRole("button", { name: "カードを引く" }).click();
+    await section.getByRole("button", { name: /の詳細を見る/ }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    const box = (await dialog.boundingBox())!;
+    expect(box.width).toBeLessThanOrEqual(640);
+    expect(Math.abs(box.x + box.width / 2 - 600)).toBeLessThan(2);
+  });
 });

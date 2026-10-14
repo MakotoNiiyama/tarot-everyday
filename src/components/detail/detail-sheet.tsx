@@ -63,8 +63,9 @@ export function DetailSheet({
             data-[starting-style]:opacity-0 data-[ending-style]:opacity-0"
         />
         <Drawer.Viewport className="fixed inset-x-0 bottom-0 z-[70]">
+          {/* PC(1024px〜)では横いっぱいに広がらないよう、幅 640px までにして中央に置く */}
           <Drawer.Popup
-            className="flex flex-col rounded-t-[28px]
+            className="flex flex-col rounded-t-[28px] w-full lg:mx-auto lg:max-w-[640px] lg:border-x
               bg-popover border-t border-gold/35 max-h-[85vh] outline-none
               transition-transform duration-300 ease-out
               translate-y-[calc(var(--drawer-snap-point-offset)+var(--drawer-swipe-movement-y))]
