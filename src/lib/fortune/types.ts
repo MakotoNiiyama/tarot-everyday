@@ -68,6 +68,8 @@ export interface PeriodResult {
   /** 一文のまとめの材料。画面側で `${text}。${ref の項目の periodNote}` の形に組み立てる */
   headline: { text: string; ref: ElementRef };
   chips: Fact[];
+  /** 出生時刻の曖昧さで計算の前提が分かれるときの注記。例: 本命星を二黒土星として計算(…) */
+  note?: string;
 }
 
 export interface SystemReading {

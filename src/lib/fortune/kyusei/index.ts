@@ -63,7 +63,7 @@ function boardFor(period: Period, today: LocalDate) {
   return { center: dayStar(today), branch: dayBranchIndex(today), range: formatSlash(today) };
 }
 
-function periodResult(period: Period, natal: KyuseiNatal, today: LocalDate): PeriodResult {
+function periodResult(period: Period, natal: KyuseiNatal, today: LocalDate, note?: string): PeriodResult {
   const board = boardFor(period, today);
   const pos = positionInBoard(board.center, natal.honmei);
   const posLabel = pos === "center" ? "中宮" : `${DIRECTION_LABELS[pos]}(${PALACE_NAMES[pos]})`;
@@ -82,6 +82,7 @@ function periodResult(period: Period, natal: KyuseiNatal, today: LocalDate): Per
       },
       { key: "board-center", label: BOARD_LABEL[period], value: STAR_NAMES[board.center - 1], refs: [ref(starId(board.center))] },
     ],
+    ...(note ? { note } : {}),
   };
 }
 
@@ -119,6 +120,13 @@ export const kyusei: FortuneSystemModule = {
       ),
     ];
     const base = representative(natal);
+    // 運勢は代表の本命星で計算する。本命星が候補に分かれるときはその旨を各期間に添える
+    const otherHonmei = unique(values, (n) => String(n.honmei))
+      .map((n) => n.honmei)
+      .filter((h) => h !== base.honmei);
+    const note = otherHonmei.length
+      ? `本命星を${STAR_NAMES[base.honmei - 1]}として計算(出生時刻により${otherHonmei.map((h) => STAR_NAMES[h - 1]).join("・")}の可能性があります)`
+      : undefined;
 
     return {
       id: "kyusei",
@@ -129,9 +137,9 @@ export const kyusei: FortuneSystemModule = {
       natal: facts,
       ambiguous: isAmbiguous(natal),
       periods: {
-        day: periodResult("day", base, today),
-        month: periodResult("month", base, today),
-        year: periodResult("year", base, today),
+        day: periodResult("day", base, today, note),
+        month: periodResult("month", base, today, note),
+        year: periodResult("year", base, today, note),
       },
     };
   },

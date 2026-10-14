@@ -35,6 +35,21 @@ describe("kyusei.read", () => {
     ]);
   });
 
+  it("本命星が候補に分かれるときは、運勢にどの本命星で計算したかの注記を付けること", () => {
+    // 2026/2/4 5:02 立春。時刻不明なら二黒土星(2025年)と一白水星(2026年)の候補
+    const p: BirthProfile = { version: 1, date: { year: 2026, month: 2, day: 4 }, time: { kind: "unknown" } };
+    const r = kyusei.read(p, toBirthMoment(p), today);
+    for (const period of ["day", "month", "year"] as const) {
+      expect(r.periods[period].note).toBe("本命星を二黒土星として計算(出生時刻により一白水星の可能性があります)");
+    }
+  });
+
+  it("本命星が確定していれば注記を付けないこと", () => {
+    const p: BirthProfile = { version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "unknown" } };
+    const r = kyusei.read(p, toBirthMoment(p), today);
+    for (const period of ["day", "month", "year"] as const) expect(r.periods[period].note).toBeUndefined();
+  });
+
   it("五黄同士で性別未入力なら傾斜宮を両方示すこと", () => {
     // 1995年(五黄の年)の申月(8/8〜9/7)は 2・5・8 グループで月命も五黄
     const p: BirthProfile = { version: 1, date: { year: 1995, month: 8, day: 20 }, time: { kind: "hour", hour: 12 } };
