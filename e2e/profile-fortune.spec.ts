@@ -79,4 +79,20 @@ test.describe("プロフィール登録から運勢ページまで", () => {
     await expect(page).toHaveURL("/fortune");
     await expect(page.getByRole("link", { name: "生年月日を登録する" })).toBeVisible();
   });
+
+  test("PC で詳細パネルを開くと運勢ページが1カラムになり、カードが狭くならないこと", async ({ page, isMobile }) => {
+    test.skip(isMobile, "PC の幅のみ確認する");
+    await page.evaluate(() =>
+      localStorage.setItem(
+        "tarot-birth-profile",
+        JSON.stringify({ version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "unknown" } }),
+      ),
+    );
+    await page.goto("/fortune");
+    const article = page.getByRole("article", { name: "数秘術" });
+    await article.getByRole("button", { name: /ライフパス/ }).click();
+    await expect(page.getByRole("complementary", { name: "詳細パネル" })).toBeVisible();
+    // 2カラムのままだと左の列が 200px 以下まで縮むため、幅が保たれていることを確かめる
+    expect((await article.boundingBox())!.width).toBeGreaterThan(480);
+  });
 });
