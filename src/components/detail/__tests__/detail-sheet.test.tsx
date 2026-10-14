@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DetailSheet } from "../detail-sheet";
 import { DetailPanelLayout } from "../detail-panel";
@@ -107,5 +107,50 @@ describe("DetailSheet", () => {
     expect(panel).toHaveTextContent("月");
     expect(panel).not.toHaveTextContent("星の本文");
     expect(panel).toHaveTextContent("月の本文");
+  });
+
+  it("guideHref があるとボトムシートの末尾に「早見表で見る」リンクを表示すること", async () => {
+    const user = userEvent.setup();
+    render(
+      <DetailSheet heading={heading} body={<p>本文テキスト</p>} guideHref="/guide/tarot/major-17">
+        <span>開く</span>
+      </DetailSheet>,
+    );
+    await user.click(screen.getByRole("button", { name: "開く" }));
+    const dialog = await screen.findByRole("dialog");
+    expect(within(dialog).getByRole("link", { name: "早見表で見る" })).toHaveAttribute(
+      "href",
+      "/guide/tarot/major-17",
+    );
+  });
+
+  it("guideHref があるとサイドパネルの末尾にも「早見表で見る」リンクを表示すること", async () => {
+    mockWide(true);
+    const user = userEvent.setup();
+    render(
+      <DetailPanelLayout>
+        <DetailSheet heading={heading} body={<p>本文テキスト</p>} guideHref="/guide/tarot/major-17">
+          <span>開く</span>
+        </DetailSheet>
+      </DetailPanelLayout>,
+    );
+    await user.click(screen.getByRole("button", { name: "開く" }));
+    const panel = screen.getByRole("complementary", { name: "詳細パネル" });
+    expect(within(panel).getByRole("link", { name: "早見表で見る" })).toHaveAttribute(
+      "href",
+      "/guide/tarot/major-17",
+    );
+  });
+
+  it("guideHref がなければ「早見表で見る」リンクを表示しないこと", async () => {
+    const user = userEvent.setup();
+    render(
+      <DetailSheet heading={heading} body={<p>本文テキスト</p>}>
+        <span>開く</span>
+      </DetailSheet>,
+    );
+    await user.click(screen.getByRole("button", { name: "開く" }));
+    await screen.findByRole("dialog");
+    expect(screen.queryByRole("link", { name: "早見表で見る" })).not.toBeInTheDocument();
   });
 });

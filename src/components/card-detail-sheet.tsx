@@ -23,6 +23,7 @@ export function CardDetailSheet({
     <DetailSheet
       heading={{ title: card.name.ja, subtitle: arcanaLabel(card), description: card.name.en }}
       body={<TarotCardSheetBody card={card} />}
+      guideHref={`/guide/tarot/${card.id}`}
       className={className}
       triggerLabel={triggerLabel}
     >

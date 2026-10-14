@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { Drawer } from "@base-ui/react/drawer";
 import { useDetailPanel } from "./detail-panel";
-import { DetailHeadingView, type DetailHeading } from "./detail-heading";
+import { DetailGuideLink, DetailHeadingView, type DetailHeading } from "./detail-heading";
 
 /**
  * 詳細を開くトリガーと、その表示先。
@@ -13,12 +13,15 @@ import { DetailHeadingView, type DetailHeading } from "./detail-heading";
 export function DetailSheet({
   heading,
   body,
+  guideHref,
   children,
   className,
   triggerLabel,
 }: {
   heading: DetailHeading;
   body: ReactNode;
+  /** 早見表の該当ページ。あれば本文の末尾に「早見表で見る」リンクを出す */
+  guideHref?: string;
   /** トリガーの中身 */
   children: ReactNode;
   className?: string;
@@ -30,7 +33,7 @@ export function DetailSheet({
 
   const handleOpenChange = (next: boolean) => {
     if (next && panel?.enabled) {
-      panel.show({ heading, body });
+      panel.show({ heading, body, guideHref });
       return;
     }
     setOpen(next);
@@ -73,6 +76,7 @@ export function DetailSheet({
             <div className="flex-1 overflow-y-auto px-5 pb-11 pt-2 flex flex-col gap-3.5">
               <DetailHeadingView heading={heading} titleAs={Drawer.Title} descriptionAs={Drawer.Description} />
               {body}
+              {guideHref && <DetailGuideLink href={guideHref} />}
             </div>
           </Drawer.Popup>
         </Drawer.Viewport>

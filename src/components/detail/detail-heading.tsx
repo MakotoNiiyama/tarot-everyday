@@ -1,4 +1,7 @@
+import Link from "next/link";
 import type { ElementType, ReactNode } from "react";
+import { Icon } from "@/components/icons/icon";
+import { outlineButton } from "@/lib/button-styles";
 
 /** 詳細表示の見出し。subtitle は分類(例「大アルカナ」)、description は補足(例: 英名・読み) */
 export interface DetailHeading {
@@ -11,6 +14,8 @@ export interface DetailHeading {
 export interface DetailContent {
   heading: DetailHeading;
   body: ReactNode;
+  /** 早見表の該当ページ。あれば本文の末尾に「早見表で見る」リンクを出す */
+  guideHref?: string;
 }
 
 /**
@@ -36,5 +41,15 @@ export function DetailHeadingView({
         <Description className="text-gold-dim text-sm font-accent mt-1">{heading.description}</Description>
       )}
     </header>
+  );
+}
+
+/** 詳細の末尾に置く、早見表の該当ページへのリンク。ボトムシートとサイドパネルで共通 */
+export function DetailGuideLink({ href }: { href: string }) {
+  return (
+    <Link href={href} className={`${outlineButton} mt-2 w-full`}>
+      早見表で見る
+      <Icon name="right" size={16} />
+    </Link>
   );
 }

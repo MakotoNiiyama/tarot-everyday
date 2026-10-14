@@ -12,7 +12,7 @@ import {
 } from "react";
 import { Icon } from "@/components/icons/icon";
 import { useMediaQuery } from "@/lib/use-media-query";
-import { DetailHeadingView, type DetailContent } from "./detail-heading";
+import { DetailGuideLink, DetailHeadingView, type DetailContent } from "./detail-heading";
 
 interface DetailPanelContextValue {
   /** サイドパネルが使える状態か(DetailPanelLayout の中で、かつ 1280px 以上) */
@@ -95,6 +95,7 @@ export function DetailPanelLayout({ children }: { children: ReactNode }) {
             <div key={panel.id} className="flex flex-col gap-4 px-6 pb-8 pt-6">
               <DetailHeadingView heading={panel.content.heading} />
               {panel.content.body}
+              {panel.content.guideHref && <DetailGuideLink href={panel.content.guideHref} />}
             </div>
           </aside>
         )}
