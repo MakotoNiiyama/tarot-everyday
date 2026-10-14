@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { FortuneContent } from "../fortune-content";
+import { FortuneContent, ReadingsLoading } from "../fortune-content";
 import { getTodayKey } from "@/lib/daily-draw";
 import { todayInTokyo } from "@/lib/fortune/tokyo-time";
 
@@ -58,6 +58,27 @@ describe("FortuneContent(登録済み)", () => {
     expect(screen.getByRole("article", { name: "数秘術" })).toHaveTextContent("パーソナルイヤー");
     expect(screen.getByRole("heading", { name: "あなたについて" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "総合鑑定プロンプトをコピー" })).toBeInTheDocument();
+  });
+});
+
+describe("FortuneContent(運勢の見出しとタブパネル)", () => {
+  it("選んだ期間に合わせた見出しと、選択中のタブに結び付いたタブパネルを表示すること", async () => {
+    store["tarot-birth-profile"] = PROFILE;
+    const user = userEvent.setup();
+    render(<FortuneContent />);
+    expect(screen.getByRole("heading", { level: 2, name: "今日の運勢" })).toBeInTheDocument();
+    expect(screen.getByRole("tabpanel", { name: "今日" })).toContainElement(screen.getByRole("article", { name: "数秘術" }));
+    await user.click(screen.getByRole("tab", { name: "今月" }));
+    expect(screen.getByRole("heading", { level: 2, name: "今月の運勢" })).toBeInTheDocument();
+    expect(screen.getByRole("tabpanel", { name: "今月" })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "今月" })).toHaveAttribute("aria-controls", screen.getByRole("tabpanel").id);
+  });
+});
+
+describe("ReadingsLoading", () => {
+  it("計算中であることを読み上げ用のテキストで伝えること", () => {
+    render(<ReadingsLoading />);
+    expect(screen.getByRole("status")).toHaveTextContent("運勢を計算しています");
   });
 });
 

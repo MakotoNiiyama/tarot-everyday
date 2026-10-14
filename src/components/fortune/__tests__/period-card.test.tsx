@@ -16,17 +16,24 @@ describe("PeriodTabs", () => {
   it("今日・今月・今年のタブで、選択状態と切り替えを扱うこと", async () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
-    render(<PeriodTabs value="day" onChange={onChange} />);
+    render(<PeriodTabs value="day" onChange={onChange} idBase="t" panelId="p" />);
     expect(screen.getAllByRole("tab").map((t) => t.textContent)).toEqual(["今日", "今月", "今年"]);
     expect(screen.getByRole("tab", { name: "今日" })).toHaveAttribute("aria-selected", "true");
     await user.click(screen.getByRole("tab", { name: "今年" }));
     expect(onChange).toHaveBeenCalledWith("year");
   });
 
+  it("タブに id と、操作対象のパネルの aria-controls を付けること", () => {
+    render(<PeriodTabs value="month" onChange={() => {}} idBase="t" panelId="p" />);
+    const tab = screen.getByRole("tab", { name: "今月" });
+    expect(tab).toHaveAttribute("id", "t-month");
+    expect(tab).toHaveAttribute("aria-controls", "p");
+  });
+
   it("矢印キーで隣のタブに移ること", async () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
-    render(<PeriodTabs value="day" onChange={onChange} />);
+    render(<PeriodTabs value="day" onChange={onChange} idBase="t" panelId="p" />);
     screen.getByRole("tab", { name: "今日" }).focus();
     await user.keyboard("{ArrowRight}");
     expect(onChange).toHaveBeenCalledWith("month");

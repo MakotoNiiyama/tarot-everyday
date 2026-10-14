@@ -9,7 +9,13 @@ export function ProfilePage() {
   const { ready, profile } = useBirthProfile();
   return (
     <PageContainer wide>
-      {ready ? <ProfileForm key={profile ? "edit" : "new"} initial={profile} /> : <div className="h-96" aria-busy="true" />}
+      {ready ? (
+        <ProfileForm key={profile ? "edit" : "new"} initial={profile} />
+      ) : (
+        <div role="status" className="h-96">
+          <span className="sr-only">読み込み中</span>
+        </div>
+      )}
     </PageContainer>
   );
 }
