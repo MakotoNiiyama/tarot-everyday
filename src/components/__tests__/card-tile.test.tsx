@@ -45,7 +45,7 @@ describe("CardTile", () => {
   it("カード詳細へのリンクが正しいこと", () => {
     render(<CardTile card={mockMajorCard} />);
     const link = screen.getByRole("link", { name: "愚者の詳細を見る" });
-    expect(link).toHaveAttribute("href", "/cards/major-00");
+    expect(link).toHaveAttribute("href", "/guide/tarot/major-00");
   });
 
   it("カード画像が表示されること", () => {

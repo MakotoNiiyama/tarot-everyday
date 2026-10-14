@@ -37,7 +37,7 @@ describe("CardList", () => {
     const cards = [makeCard("major-00", "愚者")];
     render(<CardList cards={cards} />);
     const link = screen.getByRole("link", { name: "愚者の詳細を見る" });
-    expect(link).toHaveAttribute("href", "/cards/major-00");
+    expect(link).toHaveAttribute("href", "/guide/tarot/major-00");
   });
 
   it("大アルカナの場合「大アルカナ」と表示されること", () => {

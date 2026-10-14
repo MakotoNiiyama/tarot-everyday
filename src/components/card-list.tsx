@@ -10,7 +10,7 @@ export function CardList({ cards }: { cards: TarotCard[] }) {
       {cards.map((card) => (
         <Link
           key={card.id}
-          href={`/cards/${card.id}`}
+          href={`/guide/tarot/${card.id}`}
           className="flex items-center gap-3 px-3 py-2 rounded-lg
             hover:bg-surface/60 transition-colors focus-visible:outline-2 focus-visible:outline-gold"
           aria-label={`${card.name.ja}の詳細を見る`}

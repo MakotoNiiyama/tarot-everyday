@@ -30,16 +30,24 @@ export function CardBrowser({ cards }: CardBrowserProps) {
 
   // localStorage から表示モードを復元
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved === "grid" || saved === "list") {
-      setViewMode(saved);
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved === "grid" || saved === "list") {
+        setViewMode(saved);
+      }
+    } catch {
+      // localStorage が使えない環境では初期値のままにする
     }
   }, []);
 
   const toggleViewMode = useCallback(() => {
     setViewMode((prev) => {
       const next = prev === "grid" ? "list" : "grid";
-      localStorage.setItem(STORAGE_KEY, next);
+      try {
+        localStorage.setItem(STORAGE_KEY, next);
+      } catch {
+        // localStorage が使えない環境では保存をスキップする
+      }
       return next;
     });
   }, []);

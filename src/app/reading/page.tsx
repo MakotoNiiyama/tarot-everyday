@@ -1,5 +1,6 @@
-import { SpreadReadingFlow } from "@/components/spread-reading-flow";
+// 旧URLからの転送ページ
+import { ClientRedirect } from "@/components/client-redirect";
 
-export default function ReadingPage() {
-  return <SpreadReadingFlow />;
+export default function LegacyReadingPage() {
+  return <ClientRedirect to="/tarot/reading" />;
 }

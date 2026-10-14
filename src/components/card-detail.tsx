@@ -11,13 +11,15 @@ export function CardDetail({ card }: { card: TarotCard }) {
   const subTitle = arcanaLabel(card);
 
   return (
-    <div className="flex flex-col flex-1 px-4 py-6 pb-20 gap-6 max-w-lg mx-auto">
+    <div className="flex flex-col flex-1 px-4 py-6 gap-6 max-w-lg mx-auto">
       {/* パンくず */}
       <nav aria-label="パンくずリスト" className="text-xs text-gold-dim">
-        <Link href="/cards" className="hover:text-gold transition-colors">
+        <Link href="/guide" className="hover:text-gold transition-colors">
           早見表
         </Link>
-        <span className="mx-1">›</span>
+        <span className="mx-1">/</span>
+        <span>タロット</span>
+        <span className="mx-1">/</span>
         <span className="text-cream">{card.name.ja}</span>
       </nav>
 

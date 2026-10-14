@@ -5,7 +5,7 @@ import type { TarotCard } from "@/data/types";
 export function CardTile({ card }: { card: TarotCard }) {
   return (
     <Link
-      href={`/cards/${card.id}`}
+      href={`/guide/tarot/${card.id}`}
       className="group flex flex-col items-center gap-1 p-2 rounded-lg
         hover:bg-surface/60 transition-colors focus-visible:outline-2 focus-visible:outline-gold"
       aria-label={`${card.name.ja}の詳細を見る`}

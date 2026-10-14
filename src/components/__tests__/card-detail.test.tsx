@@ -56,11 +56,9 @@ describe("CardDetail", () => {
   it("パンくずリストが表示されること", () => {
     render(<CardDetail card={mockCard} />);
     const nav = screen.getByLabelText("パンくずリスト");
-    expect(nav).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "早見表" })).toHaveAttribute(
-      "href",
-      "/cards"
-    );
+    expect(nav).toHaveTextContent("早見表");
+    expect(nav).toHaveTextContent("タロット");
+    expect(screen.getByRole("link", { name: "早見表" })).toHaveAttribute("href", "/guide");
   });
 
   it("正位置タブが初期表示されること", () => {

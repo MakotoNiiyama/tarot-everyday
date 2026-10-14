@@ -1,5 +1,6 @@
-import { QuizMode } from "@/components/quiz-mode";
+// 旧URLからの転送ページ
+import { ClientRedirect } from "@/components/client-redirect";
 
-export default function QuizPage() {
-  return <QuizMode />;
+export default function LegacyQuizPage() {
+  return <ClientRedirect to="/tarot/quiz" />;
 }
