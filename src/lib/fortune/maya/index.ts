@@ -11,9 +11,9 @@ import {
   guideKin,
   kinOf,
   lastBirthday,
+  moonDateRange,
   occultKin,
   sealOf,
-  thirteenMoon,
   toneOf,
   wavespellSeal,
 } from "./calc";
@@ -48,7 +48,7 @@ export const maya: FortuneSystemModule = {
 
     const todayKin = kinOf(today);
     const todayTone = toneOf(todayKin);
-    const moon = thirteenMoon(today);
+    const moon = moonDateRange(today);
     const birthday = lastBirthday(profile.date, today);
     // 次の誕生日 = birthday より後で最初の誕生日(2月29日生まれは平年2月28日・閏年2月29日を正しく扱う)
     const nextBirthday = lastBirthday(profile.date, { year: birthday.year + 1, month: 12, day: 31 });
@@ -76,16 +76,17 @@ export const maya: FortuneSystemModule = {
         month: moon.moon
           ? {
               period: "month",
-              rangeLabel: `13の月の暦 第${moon.moon}の月`,
+              rangeLabel: `${formatSlash(moon.start)}〜${formatSlash(moon.end)}`,
               headline: { text: `13の月の暦 第${moon.moon}の月(${MOON_NAMES[moon.moon - 1]})`, ref: ref(moonId(moon.moon)) },
               chips: [
                 { label: `第${moon.moon}の月`, value: MOON_NAMES[moon.moon - 1], refs: [ref(moonId(moon.moon))] },
-                { label: "ウェイブスペル", value: SEAL_NAMES[wave - 1], refs: [ref(sealId(wave))] },
+                // 第n の月の音は銀河の音 n
+                { label: "月の音", value: `${moon.moon}(${TONE_NAMES[moon.moon - 1]})`, refs: [ref(toneId(moon.moon))] },
               ],
             }
           : {
               period: "month",
-              rangeLabel: "13の月の暦 時間をはずした日",
+              rangeLabel: formatSlash(today),
               headline: { text: "時間をはずした日", ref: ref(moonId(0)) },
               chips: [{ label: "13の月の暦", value: "時間をはずした日", refs: [ref(moonId(0))] }],
             },

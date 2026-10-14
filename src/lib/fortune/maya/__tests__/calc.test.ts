@@ -7,6 +7,7 @@ import {
   guideKin,
   kinOf,
   lastBirthday,
+  moonDateRange,
   occultKin,
   sealOf,
   thirteenMoon,
@@ -67,6 +68,42 @@ describe("thirteenMoon", () => {
 
   it("7月25日は時間をはずした日", () => {
     expect(thirteenMoon({ year: 2026, month: 7, day: 25 })).toEqual({ moon: null, day: null });
+  });
+});
+
+describe("moonDateRange", () => {
+  it("2026年10月14日は第3の月(2026/9/20〜2026/10/17)", () => {
+    expect(moonDateRange({ year: 2026, month: 10, day: 14 })).toEqual({
+      moon: 3,
+      start: { year: 2026, month: 9, day: 20 },
+      end: { year: 2026, month: 10, day: 17 },
+    });
+  });
+
+  it("7月26日は第1の月の初日", () => {
+    expect(moonDateRange({ year: 2026, month: 7, day: 26 })).toEqual({
+      moon: 1,
+      start: { year: 2026, month: 7, day: 26 },
+      end: { year: 2026, month: 8, day: 22 },
+    });
+  });
+
+  it("2月29日を含む月は終わりが1日後ろにずれる", () => {
+    // 2027/7/26 始まりの年の第8の月。2028/2/29 を数えないので 3/6 まで
+    expect(moonDateRange({ year: 2028, month: 2, day: 29 })).toEqual({
+      moon: 8,
+      start: { year: 2028, month: 2, day: 7 },
+      end: { year: 2028, month: 3, day: 6 },
+    });
+    expect(moonDateRange({ year: 2028, month: 3, day: 7 })).toMatchObject({ moon: 9, start: { year: 2028, month: 3, day: 7 } });
+  });
+
+  it("時間をはずした日はその日だけ", () => {
+    expect(moonDateRange({ year: 2026, month: 7, day: 25 })).toEqual({
+      moon: null,
+      start: { year: 2026, month: 7, day: 25 },
+      end: { year: 2026, month: 7, day: 25 },
+    });
   });
 });
 

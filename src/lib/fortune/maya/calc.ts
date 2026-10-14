@@ -1,5 +1,5 @@
 // src/lib/fortune/maya/calc.ts
-import { compareLocalDate, isLeapYear, mod, toJdn, type LocalDate } from "../local-date";
+import { addDays, compareLocalDate, isLeapYear, mod, toJdn, type LocalDate } from "../local-date";
 
 /** 13の月の暦(ドリームスペル)の紋章。1 = 赤い竜 … 20 = 黄色い太陽 */
 export const SEAL_NAMES = [
@@ -90,13 +90,38 @@ export function occultKin(kin: number): number {
   return 261 - kin;
 }
 
+/** d を含む13の月の暦の年の始まり(7月26日) */
+function moonYearStart(d: LocalDate): LocalDate {
+  const afterStart = d.month > 7 || (d.month === 7 && d.day >= 26);
+  return { year: afterStart ? d.year : d.year - 1, month: 7, day: 26 };
+}
+
+/** 2月29日を数えずに days 日進める(days ≥ 0。2月29日には止まらない) */
+function addDaysWithoutLeapDay(d: LocalDate, days: number): LocalDate {
+  let result = d;
+  for (let i = 0; i < days; i++) {
+    result = addDays(result, 1);
+    if (isFeb29(result)) result = addDays(result, 1);
+  }
+  return result;
+}
+
 /** 13の月の暦での位置。7月25日(時間をはずした日)は moon/day が null */
 export function thirteenMoon(d: LocalDate): { moon: number | null; day: number | null } {
-  const afterStart = d.month > 7 || (d.month === 7 && d.day >= 26);
-  const start: LocalDate = { year: afterStart ? d.year : d.year - 1, month: 7, day: 26 };
-  const dayOfYear = daysWithoutLeapDay(start, withoutFeb29(d));
+  const dayOfYear = daysWithoutLeapDay(moonYearStart(d), withoutFeb29(d));
   if (dayOfYear >= 364) return { moon: null, day: null };
   return { moon: Math.floor(dayOfYear / 28) + 1, day: (dayOfYear % 28) + 1 };
+}
+
+/**
+ * today を含む13の月の暦の月の期間(両端を含む)。1つの月は2月29日を数えずに28日。
+ * 2月29日を含む月は終わりが暦の上で1日後ろにずれる。時間をはずした日はその日だけ。
+ */
+export function moonDateRange(today: LocalDate): { moon: number | null; start: LocalDate; end: LocalDate } {
+  const { moon } = thirteenMoon(today);
+  if (moon === null) return { moon, start: today, end: today };
+  const start = addDaysWithoutLeapDay(moonYearStart(today), (moon - 1) * 28);
+  return { moon, start, end: addDaysWithoutLeapDay(start, 27) };
 }
 
 /** today 以前で直近の誕生日(2月29日生まれは平年は2月28日) */

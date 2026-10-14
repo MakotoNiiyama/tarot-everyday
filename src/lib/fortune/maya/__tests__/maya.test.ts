@@ -35,8 +35,13 @@ describe("maya.read", () => {
   });
 
   it("今月は13の月の暦の月", () => {
-    expect(reading.periods.month.rangeLabel).toBe("13の月の暦 第3の月");
+    expect(reading.periods.month.rangeLabel).toBe("2026/9/20〜2026/10/17");
     expect(reading.periods.month.headline).toEqual({ text: "13の月の暦 第3の月(電気の月)", ref: { system: "maya", id: moonId(3) } });
+    // 月のチップは月の名前と、その月の音(第3の月 = 音3)
+    expect(reading.periods.month.chips.map((c) => [c.label, c.value, c.refs])).toEqual([
+      ["第3の月", "電気の月", [{ system: "maya", id: moonId(3) }]],
+      ["月の音", "3(電気)", [{ system: "maya", id: toneId(3) }]],
+    ]);
   });
 
   it("今年は年回りKIN(直近の誕生日から次の誕生日の前日まで)", () => {
@@ -55,5 +60,6 @@ describe("maya.read", () => {
   it("時間をはずした日の今月", () => {
     const r = maya.read(profile, toBirthMoment(profile), { year: 2026, month: 7, day: 25 });
     expect(r.periods.month.headline).toEqual({ text: "時間をはずした日", ref: { system: "maya", id: moonId(0) } });
+    expect(r.periods.month.rangeLabel).toBe("2026/7/25");
   });
 });
