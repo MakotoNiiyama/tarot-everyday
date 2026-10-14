@@ -2,6 +2,7 @@
 import { describe, it, expect } from "vitest";
 import { ELEMENT_IDS } from "../element-ids";
 import { fortuneSystems, readAll } from "../registry";
+import { FORTUNE_SYSTEM_NAMES } from "../system-names";
 import type { BirthProfile } from "../types";
 
 const profile: BirthProfile = { version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "hour", hour: 14 }, prefecture: "13" };
@@ -34,6 +35,10 @@ describe("registry", () => {
         expect(new Set(keys).size).toBe(keys.length);
       }
     }
+  });
+
+  it("FORTUNE_SYSTEM_NAMES が fortuneSystems と一致すること", () => {
+    expect(FORTUNE_SYSTEM_NAMES).toEqual(fortuneSystems.map((s) => ({ id: s.id, name: s.name })));
   });
 
   it("すべての参照 id が早見表の項目 id の一覧に含まれること", () => {
