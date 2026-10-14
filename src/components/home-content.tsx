@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useMemo } from "react";
 import { Icon, type IconName } from "@/components/icons/icon";
 import { DailyTarotCard } from "@/components/daily-tarot-card";
 import { DetailPanelLayout } from "@/components/detail/detail-panel";
@@ -11,7 +10,7 @@ import { SignupCard } from "@/components/fortune/signup-card";
 import { primaryButton } from "@/lib/button-styles";
 import { formatEnWeekday, formatJaDate, formatJaWeekday } from "@/lib/date-format";
 import { useBirthProfile } from "@/lib/fortune/profile-storage";
-import { useToday } from "@/lib/use-today";
+import { useToday, useTodayLocalDate } from "@/lib/use-today";
 
 const HomeFortuneChips = dynamic(() => import("./home-fortune-chips").then((m) => m.HomeFortuneChips), { ssr: false });
 
@@ -24,10 +23,7 @@ const entries: { href: string; icon: IconName; title: string; sub: string }[] = 
 export function HomeContent() {
   const today = useToday();
   const { ready, profile } = useBirthProfile();
-  const todayLocal = useMemo(
-    () => (today ? { year: today.getFullYear(), month: today.getMonth() + 1, day: today.getDate() } : null),
-    [today],
-  );
+  const todayLocal = useTodayLocalDate();
 
   return (
     <DetailPanelLayout>

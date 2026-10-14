@@ -57,6 +57,24 @@ describe("daily-draw", () => {
       const key = getTodayKey();
       expect(key).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     });
+
+    it("端末のタイムゾーンによらず日本時間の日付を返すこと", () => {
+      // 端末が日本以外のタイムゾーンにある場合を再現する
+      const originalTz = process.env.TZ;
+      process.env.TZ = "America/New_York";
+      vi.useFakeTimers({ toFake: ["Date"] });
+      try {
+        // UTC 15:30 は日本時間の翌日 0:30
+        vi.setSystemTime(new Date("2026-10-14T15:30:00Z"));
+        expect(getTodayKey()).toBe("2026-10-15");
+        vi.setSystemTime(new Date("2026-10-14T14:59:00Z"));
+        expect(getTodayKey()).toBe("2026-10-14");
+      } finally {
+        vi.useRealTimers();
+        if (originalTz === undefined) delete process.env.TZ;
+        else process.env.TZ = originalTz;
+      }
+    });
   });
 
   describe("drawRandomCard", () => {

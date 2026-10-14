@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DailyTarotCard } from "../daily-tarot-card";
 import { _resetModuleStateForTest } from "@/lib/use-daily-draw";
+import { getTodayKey } from "@/lib/daily-draw";
 
 const store: Record<string, string> = {};
 const localStorageMock = {
@@ -34,9 +35,9 @@ beforeEach(() => {
   });
 });
 
+/** 日本時間の今日(アプリと同じ基準) */
 function todayKey(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  return getTodayKey();
 }
 
 describe("DailyTarotCard", () => {

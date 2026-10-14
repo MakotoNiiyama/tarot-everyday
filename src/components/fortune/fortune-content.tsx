@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useMemo } from "react";
 import { DailyTarotCard } from "@/components/daily-tarot-card";
 import { DetailPanelLayout } from "@/components/detail/detail-panel";
 import { Icon } from "@/components/icons/icon";
@@ -10,7 +9,7 @@ import { PageContainer } from "@/components/page-container";
 import { formatJaDate, formatJaWeekday } from "@/lib/date-format";
 import { formatProfileSummary } from "@/lib/fortune/profile-format";
 import { useBirthProfile } from "@/lib/fortune/profile-storage";
-import { useToday } from "@/lib/use-today";
+import { useToday, useTodayLocalDate } from "@/lib/use-today";
 import { SignupCard } from "./signup-card";
 
 /** 計算エンジン(astronomy-engine を含む)はこのページでだけ読み込む */
@@ -23,10 +22,7 @@ const FortuneReadings = dynamic(() => import("./fortune-readings").then((m) => m
 export function FortuneContent() {
   const todayDate = useToday();
   const { ready, profile } = useBirthProfile();
-  const today = useMemo(
-    () => (todayDate ? { year: todayDate.getFullYear(), month: todayDate.getMonth() + 1, day: todayDate.getDate() } : null),
-    [todayDate],
-  );
+  const today = useTodayLocalDate();
 
   const tarot = (
     <section aria-label="今日の1dayタロット" className="rounded-[20px] border border-gold/25 bg-surface p-4 lg:p-5">

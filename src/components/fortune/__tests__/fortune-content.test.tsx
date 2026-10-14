@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FortuneContent } from "../fortune-content";
+import { getTodayKey } from "@/lib/daily-draw";
+import { todayInTokyo } from "@/lib/fortune/tokyo-time";
 
 vi.mock("next/dynamic", async () => {
   // テストでは動的読み込みをやめ、本体の部品をそのまま返す
@@ -31,9 +33,9 @@ afterEach(() => {
   window.matchMedia = originalMatchMedia;
 });
 
+/** 日本時間の今日(アプリと同じ基準) */
 function todayKey(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  return getTodayKey();
 }
 
 const PROFILE = JSON.stringify({ version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "hour", hour: 14 }, prefecture: "13" });
@@ -72,8 +74,8 @@ describe("FortuneContent", () => {
     render(<FortuneContent />);
     expect(screen.getByRole("heading", { level: 1, name: "運勢" })).toBeInTheDocument();
     expect(screen.getByText("Today")).toBeInTheDocument();
-    const d = new Date();
-    expect(screen.getByText(`${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`)).toBeInTheDocument();
+    const d = todayInTokyo();
+    expect(screen.getByText(`${d.year}年${d.month}月${d.day}日`)).toBeInTheDocument();
   });
 
   it("今日の1dayタロットを表示すること", () => {

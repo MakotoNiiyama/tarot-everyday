@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { HomeContent } from "../home-content";
 import { _resetModuleStateForTest } from "@/lib/use-daily-draw";
+import { getTodayKey } from "@/lib/daily-draw";
 
 vi.mock("next/dynamic", async () => {
   // テストでは動的読み込みをやめ、本体の部品をそのまま返す
@@ -32,9 +33,9 @@ afterEach(() => {
   window.matchMedia = originalMatchMedia;
 });
 
+/** 日本時間の今日(アプリと同じ基準) */
 function todayKey(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  return getTodayKey();
 }
 
 describe("HomeContent", () => {
