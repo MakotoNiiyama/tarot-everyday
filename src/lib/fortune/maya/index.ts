@@ -52,9 +52,8 @@ export const maya: FortuneSystemModule = {
 
     const todayKin = kinOf(today);
     const moon = thirteenMoon(today);
-    const birthMonthDay = { month: profile.date.month, day: profile.date.day };
-    const birthday = lastBirthday(birthMonthDay, today);
-    const nextBirthday = lastBirthday(birthMonthDay, { year: birthday.year + 1, month: birthday.month, day: birthday.day });
+    const birthday = lastBirthday(profile.date, today);
+    const nextBirthday = lastBirthday(profile.date, { year: birthday.year + 1, month: birthday.month, day: birthday.day });
     const yearKin = kinOf(birthday);
     const yearEnd: LocalDate = addDays(nextBirthday, -1);
 

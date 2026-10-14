@@ -79,4 +79,11 @@ describe("lastBirthday", () => {
   it("2月29日生まれはうるう年以外は2月28日", () => {
     expect(lastBirthday({ month: 2, day: 29 }, { year: 2026, month: 10, day: 14 })).toEqual({ year: 2026, month: 2, day: 28 });
   });
+
+  it("生まれ年を含む LocalDate を渡しても生まれ年を使わない", () => {
+    // profile.date のように year を持つオブジェクトを渡しても今年/去年の誕生日を返すこと
+    const fullDate = { year: 1987, month: 7, day: 26 };
+    expect(lastBirthday(fullDate, { year: 2026, month: 10, day: 14 })).toEqual({ year: 2026, month: 7, day: 26 });
+    expect(lastBirthday(fullDate, { year: 2026, month: 3, day: 1 })).toEqual({ year: 2025, month: 7, day: 26 });
+  });
 });

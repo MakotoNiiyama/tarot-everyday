@@ -102,7 +102,7 @@ export function thirteenMoon(d: LocalDate): { moon: number | null; day: number |
 /** today 以前で直近の誕生日(2月29日生まれは平年は2月28日) */
 export function lastBirthday(birth: { month: number; day: number }, today: LocalDate): LocalDate {
   const on = (year: number): LocalDate =>
-    birth.month === 2 && birth.day === 29 && !isLeapYear(year) ? { year, month: 2, day: 28 } : { year, ...birth };
+    birth.month === 2 && birth.day === 29 && !isLeapYear(year) ? { year, month: 2, day: 28 } : { year, month: birth.month, day: birth.day };
   const thisYear = on(today.year);
   return compareLocalDate(thisYear, today) <= 0 ? thisYear : on(today.year - 1);
 }
