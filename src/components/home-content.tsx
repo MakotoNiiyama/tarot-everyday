@@ -1,13 +1,19 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useMemo } from "react";
 import { Icon, type IconName } from "@/components/icons/icon";
 import { DailyTarotCard } from "@/components/daily-tarot-card";
 import { DetailPanelLayout } from "@/components/detail/detail-panel";
 import { PageContainer } from "@/components/page-container";
+import { SignupCard } from "@/components/fortune/signup-card";
 import { primaryButton } from "@/lib/button-styles";
 import { formatEnWeekday, formatJaDate, formatJaWeekday } from "@/lib/date-format";
+import { useBirthProfile } from "@/lib/fortune/profile-storage";
 import { useToday } from "@/lib/use-today";
+
+const HomeFortuneChips = dynamic(() => import("./home-fortune-chips").then((m) => m.HomeFortuneChips), { ssr: false });
 
 const entries: { href: string; icon: IconName; title: string; sub: string }[] = [
   { href: "/tarot/reading", icon: "chat", title: "相談したいことがある", sub: "タロット占い" },
@@ -17,6 +23,11 @@ const entries: { href: string; icon: IconName; title: string; sub: string }[] = 
 
 export function HomeContent() {
   const today = useToday();
+  const { ready, profile } = useBirthProfile();
+  const todayLocal = useMemo(
+    () => (today ? { year: today.getFullYear(), month: today.getMonth() + 1, day: today.getDate() } : null),
+    [today],
+  );
 
   return (
     <DetailPanelLayout>
@@ -44,11 +55,15 @@ export function HomeContent() {
               <span className="font-accent text-base text-gold-dark lg:text-[17px]">Today&apos;s fortune</span>
             </div>
             <DailyTarotCard variant="home" />
+            {ready && profile && todayLocal && <HomeFortuneChips profile={profile} today={todayLocal} />}
+            {ready && !profile && <SignupCard className="border-t border-gold/15 pt-3.5" />}
           </div>
-          <Link href="/fortune" className={`${primaryButton} lg:px-[22px]`}>
-            詳しく見る
-            <Icon name="right" size={16} strokeWidth={2} />
-          </Link>
+          {ready && profile && (
+            <Link href="/fortune" className={`${primaryButton} lg:px-[22px]`}>
+              詳しく見る
+              <Icon name="right" size={16} strokeWidth={2} />
+            </Link>
+          )}
         </section>
 
         <section aria-label="メニュー">

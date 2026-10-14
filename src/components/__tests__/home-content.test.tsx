@@ -4,6 +4,12 @@ import userEvent from "@testing-library/user-event";
 import { HomeContent } from "../home-content";
 import { _resetModuleStateForTest } from "@/lib/use-daily-draw";
 
+vi.mock("next/dynamic", async () => {
+  // テストでは動的読み込みをやめ、本体の部品をそのまま返す
+  const m = await import("../home-fortune-chips");
+  return { default: () => m.HomeFortuneChips };
+});
+
 const store: Record<string, string> = {};
 const localStorageMock = {
   getItem: vi.fn((key: string) => store[key] ?? null),
@@ -37,10 +43,15 @@ describe("HomeContent", () => {
     expect(screen.getByRole("heading", { level: 1, name: "tarot-everyday" })).toBeInTheDocument();
   });
 
-  it("「今日の運勢」カードに1dayタロットと「詳しく見る」を表示すること", () => {
+  it("「今日の運勢」カードに1dayタロットを表示すること", () => {
     render(<HomeContent />);
     const today = screen.getByRole("region", { name: "今日の運勢" });
     expect(today).toHaveTextContent("1dayタロット");
+  });
+
+  it("登録済みなら「詳しく見る」を表示すること", () => {
+    store["tarot-birth-profile"] = JSON.stringify({ version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "unknown" } });
+    render(<HomeContent />);
     expect(screen.getByRole("link", { name: "詳しく見る" })).toHaveAttribute("href", "/fortune");
   });
 
@@ -81,5 +92,22 @@ describe("HomeContent", () => {
     render(<HomeContent />);
     await user.click(screen.getByRole("button", { name: "愚者の詳細を見る" }));
     expect(screen.getByRole("complementary", { name: "詳細パネル" })).toHaveTextContent("The Fool");
+  });
+});
+
+describe("HomeContent(生年月日)", () => {
+  it("未登録なら登録への誘導を表示すること", () => {
+    render(<HomeContent />);
+    expect(screen.getByRole("link", { name: "生年月日を登録する" })).toHaveAttribute("href", "/fortune/profile");
+  });
+
+  it("登録済みなら今日の運勢のチップを表示すること", () => {
+    store["tarot-birth-profile"] = JSON.stringify({ version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "unknown" } });
+    render(<HomeContent />);
+    const today = screen.getByRole("region", { name: "今日の運勢" });
+    expect(today).toHaveTextContent("パーソナルデー");
+    expect(today).toHaveTextContent("今日のKIN");
+    expect(today).toHaveTextContent("本命星の位置");
+    expect(screen.queryByRole("link", { name: "生年月日を登録する" })).not.toBeInTheDocument();
   });
 });

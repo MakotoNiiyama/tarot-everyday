@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon } from "@/components/icons/icon";
 import { navItems, isNavActive } from "@/components/nav-items";
+import { ProfileSummaryBox } from "@/components/profile-summary-box";
 
 /** PC(1024px〜)の左サイドナビ。幅 232px で画面左に固定 */
 export function SideNav() {
@@ -38,6 +39,7 @@ export function SideNav() {
           })}
         </ul>
       </nav>
+      <ProfileSummaryBox />
     </div>
   );
 }
