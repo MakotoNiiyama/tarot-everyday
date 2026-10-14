@@ -50,7 +50,7 @@ export function TarotCardMeaningTabs({
       {orientations.map((o) => (
         <TabsContent key={o.key} value={o.key} className="mt-4 flex flex-col gap-4">
           <section aria-label={`${o.label}のキーワード`}>
-            <h2 className={`${o.color} text-sm font-heading font-bold mb-2`}>キーワード</h2>
+            <h3 className={`${o.color} text-sm font-heading font-bold mb-2`}>キーワード</h3>
             <div className="flex flex-wrap gap-2">
               {card.keywords[o.key].map((kw) => (
                 <KeywordBadge key={kw} keyword={kw} />
@@ -59,12 +59,12 @@ export function TarotCardMeaningTabs({
           </section>
 
           <section aria-label={`${o.label}の意味`}>
-            <h2 className={`${o.color} text-sm font-heading font-bold mb-2`}>意味</h2>
+            <h3 className={`${o.color} text-sm font-heading font-bold mb-2`}>意味</h3>
             <p className="text-cream/90 text-sm leading-relaxed">{card.meaning[o.key]}</p>
           </section>
 
           <section aria-label={`${o.label}の運勢`}>
-            <h2 className={`${o.color} text-sm font-heading font-bold mb-2`}>運勢</h2>
+            <h3 className={`${o.color} text-sm font-heading font-bold mb-2`}>運勢</h3>
             <Accordion>
               {fortuneLabels.map(({ key, label, icon }) => (
                 <AccordionItem key={key} value={key}>

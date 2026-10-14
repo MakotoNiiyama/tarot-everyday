@@ -31,8 +31,9 @@ describe("DetailSheet", () => {
     );
     await user.click(screen.getByRole("button", { name: "開く" }));
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "星" })).toBeInTheDocument();
-    expect(screen.getByText("The Star")).toBeInTheDocument();
+    // パネルと同じ見出しの構造(h2)で、ダイアログの名前・説明と結びついていること
+    expect(screen.getByRole("heading", { level: 2, name: "星" })).toBeInTheDocument();
+    expect(screen.getByRole("dialog", { name: "星" })).toHaveAccessibleDescription("The Star");
     expect(screen.getByText("本文テキスト")).toBeInTheDocument();
   });
 

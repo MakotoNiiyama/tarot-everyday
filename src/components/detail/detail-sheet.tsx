@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { Drawer } from "@base-ui/react/drawer";
 import { useDetailPanel } from "./detail-panel";
-import type { DetailHeading } from "./detail-heading";
+import { DetailHeadingView, type DetailHeading } from "./detail-heading";
 
 /**
  * 詳細を開くトリガーと、その表示先。
@@ -71,15 +71,7 @@ export function DetailSheet({
             </div>
 
             <div className="flex-1 overflow-y-auto px-5 pb-11 pt-2 flex flex-col gap-3.5">
-              <header className="text-center">
-                {heading.subtitle && <p className="text-gold-dim text-xs mb-1">{heading.subtitle}</p>}
-                <Drawer.Title className="font-heading text-2xl text-cream">{heading.title}</Drawer.Title>
-                {heading.description && (
-                  <Drawer.Description className="text-gold-dim text-sm font-accent mt-1">
-                    {heading.description}
-                  </Drawer.Description>
-                )}
-              </header>
+              <DetailHeadingView heading={heading} titleAs={Drawer.Title} descriptionAs={Drawer.Description} />
               {body}
             </div>
           </Drawer.Popup>

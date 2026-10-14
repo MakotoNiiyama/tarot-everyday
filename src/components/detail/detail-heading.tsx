@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ElementType, ReactNode } from "react";
 
 /** 詳細表示の見出し。subtitle は分類(例「大アルカナ」)、description は補足(例: 英名・読み) */
 export interface DetailHeading {
@@ -13,14 +13,27 @@ export interface DetailContent {
   body: ReactNode;
 }
 
-/** パネル用の見出し表示。ボトムシートでは Drawer.Title を使うため detail-sheet.tsx 側で描く */
-export function DetailHeadingView({ heading }: { heading: DetailHeading }) {
+/**
+ * 詳細の見出し表示。ボトムシートとサイドパネルで同じ見た目にする。
+ * ボトムシートでは Drawer.Title / Drawer.Description を渡し、ダイアログの名前・説明と結びつける。
+ */
+export function DetailHeadingView({
+  heading,
+  titleAs: Title = "h2",
+  descriptionAs: Description = "p",
+}: {
+  heading: DetailHeading;
+  /** 見出しの要素(既定は h2) */
+  titleAs?: ElementType;
+  /** 補足の要素(既定は p) */
+  descriptionAs?: ElementType;
+}) {
   return (
     <header className="text-center">
       {heading.subtitle && <p className="text-gold-dim text-xs mb-1">{heading.subtitle}</p>}
-      <h2 className="font-heading text-[26px] text-cream">{heading.title}</h2>
+      <Title className="font-heading text-[26px] text-cream">{heading.title}</Title>
       {heading.description && (
-        <p className="text-gold-dim text-sm font-accent mt-1">{heading.description}</p>
+        <Description className="text-gold-dim text-sm font-accent mt-1">{heading.description}</Description>
       )}
     </header>
   );
