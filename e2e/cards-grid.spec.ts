@@ -5,11 +5,10 @@ test.describe("早見表ページ — タロットのカード一覧", () => {
     await page.goto("/guide");
   });
 
-  test("ページタイトルと説明が表示されること", async ({ page }) => {
+  test("ページタイトルが表示されること", async ({ page }) => {
     await expect(
       page.getByRole("heading", { level: 1, name: "早見表" })
     ).toBeVisible();
-    await expect(page.getByText("全78枚のタロットカード")).toBeVisible();
   });
 
   test("初期表示で78枚のカードリンクが存在すること", async ({ page }) => {

@@ -14,7 +14,9 @@ describe("早見表ページ", () => {
 
   it("タロットのカード一覧を表示すること", () => {
     render(<GuidePage />);
-    expect(screen.getByText("全78枚のタロットカード")).toBeInTheDocument();
+    // 枚数は CardBrowser の件数表示に任せ、重複する説明文は出さない
+    expect(screen.queryByText("全78枚のタロットカード")).not.toBeInTheDocument();
+    expect(screen.getByText("78枚のカード")).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: /の詳細を見る/ })).toHaveLength(78);
   });
 });

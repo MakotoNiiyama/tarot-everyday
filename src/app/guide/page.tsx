@@ -28,7 +28,6 @@ export default function GuidePage() {
       </nav>
 
       <section className="flex flex-col gap-4">
-        <p className="text-xs text-gold-dim">全78枚のタロットカード</p>
         <CardBrowser cards={allCards} />
       </section>
     </PageContainer>
