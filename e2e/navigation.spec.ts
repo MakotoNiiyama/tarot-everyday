@@ -51,3 +51,23 @@ test.describe("メインナビゲーション", () => {
     }
   });
 });
+
+test.describe("ランドマークとスキップリンク", () => {
+  test("本文が main ランドマークに入っていること", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.getByRole("main")).toHaveCount(1);
+    await expect(page.getByRole("main").getByRole("heading", { name: "今日の運勢" })).toBeVisible();
+  });
+
+  test("最初の Tab で「本文へスキップ」が表示され、押すと本文へ移動すること", async ({ page, isMobile }) => {
+    test.skip(isMobile, "キーボード操作は PC のみ確認する");
+    await page.goto("/");
+    const skip = page.getByRole("link", { name: "本文へスキップ" });
+    await page.keyboard.press("Tab");
+    await expect(skip).toBeFocused();
+    await expect(skip).toBeInViewport();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/#main$/);
+    await expect(page.getByRole("main")).toBeFocused();
+  });
+});

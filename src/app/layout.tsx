@@ -54,8 +54,18 @@ export default function RootLayout({
       className={`${zenMaruGothic.variable} ${kaiseiDecol.variable} ${caveat.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0 lg:pl-[232px]">
+        {/* キーボード操作向け。フォーカスされたときだけ左上に表示する */}
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-[calc(1rem+env(safe-area-inset-top))] focus:z-[100] focus:rounded-[14px] focus:border focus:border-gold/50 focus:bg-popover focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-gold-light focus:outline-none focus:ring-2 focus:ring-gold"
+        >
+          本文へスキップ
+        </a>
         <SideNav />
-        {children}
+        {/* DetailPanelLayout は flex-1 で高さを埋め、サイドパネルの sticky もこの中で効く */}
+        <main id="main" tabIndex={-1} className="flex flex-1 flex-col outline-none">
+          {children}
+        </main>
         <BottomNav />
         <ServiceWorkerRegistrar />
       </body>
