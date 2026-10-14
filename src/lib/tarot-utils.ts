@@ -1,4 +1,5 @@
 import type { TarotCard, Suit } from "@/data/types";
+import type { IconName } from "@/components/icons/icon";
 
 /** 大アルカナ番号をローマ数字に変換 */
 export function toRoman(n: number): string {
@@ -15,14 +16,14 @@ export function toRoman(n: number): string {
 export const fortuneLabels: {
   key: keyof TarotCard["fortune"];
   label: string;
-  emoji: string;
+  icon: IconName;
 }[] = [
-  { key: "general", label: "総合運", emoji: "⭐" },
-  { key: "love", label: "恋愛運", emoji: "💕" },
-  { key: "work", label: "仕事運", emoji: "💼" },
-  { key: "money", label: "金運", emoji: "💰" },
-  { key: "health", label: "健康運", emoji: "🌿" },
-  { key: "advice", label: "アドバイス", emoji: "💡" },
+  { key: "general", label: "総合運", icon: "overall" },
+  { key: "love", label: "恋愛運", icon: "love" },
+  { key: "work", label: "仕事運", icon: "work" },
+  { key: "money", label: "金運", icon: "money" },
+  { key: "health", label: "健康運", icon: "health" },
+  { key: "advice", label: "アドバイス", icon: "advice" },
 ];
 
 /** スーツの日本語表示（用途に応じて3パターン） */
@@ -41,10 +42,3 @@ export const suitColorClass: Record<Suit, string> = {
   pentacles: "text-green-500",
 };
 
-/** スーツの装飾シンボル */
-export function suitSymbol(suit: string): string {
-  const symbols: Record<string, string> = {
-    wands: "🏑", cups: "🏆", swords: "⚔", pentacles: "⬠",
-  };
-  return symbols[suit] ?? "";
-}

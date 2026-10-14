@@ -14,6 +14,8 @@ import { allCards, getCardById } from "@/data/cards";
 import { ScratchDivider } from "@/components/svg/scratch-decorations";
 import { CardDetailSheet } from "@/components/card-detail-sheet";
 import { fortuneLabels } from "@/lib/tarot-utils";
+import { Icon } from "@/components/icons/icon";
+import { OrientationBadge } from "@/components/orientation-badge";
 
 type Phase = "ready" | "flipping" | "result";
 
@@ -87,25 +89,22 @@ export function DailyTarot() {
             <p className="text-gold-dim text-xs font-accent">
               {card.name.en}
             </p>
-            <p
-              className={`text-sm mt-1 font-heading ${draw.isReversed ? "text-terracotta" : "text-gold-light"}`}
-            >
-              {draw.isReversed ? "☽ 逆位置" : "☀ 正位置"}
-            </p>
+            <OrientationBadge isReversed={draw.isReversed} className="mt-1 self-center" />
           </div>
 
           <ScratchDivider className="text-gold-dark" />
 
           {/* 運勢一覧 */}
           <div className="flex flex-col gap-3">
-            {fortuneLabels.map(({ key, label, emoji }) => {
+            {fortuneLabels.map(({ key, label, icon }) => {
               const text = draw.isReversed
                 ? card.fortune[key].reversed
                 : card.fortune[key].upright;
               return (
                 <section key={key} className="flex flex-col gap-1">
-                  <h2 className="text-gold text-sm font-heading font-bold">
-                    {emoji} {label}
+                  <h2 className="text-gold text-sm font-heading font-bold inline-flex items-center gap-2">
+                    <Icon name={icon} size={16} className="text-gold-light" />
+                    {label}
                   </h2>
                   <p className="text-cream/85 text-sm leading-relaxed">
                     {text}

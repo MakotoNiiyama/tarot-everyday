@@ -65,8 +65,8 @@ describe("CardDetail", () => {
 
   it("正位置タブが初期表示されること", () => {
     render(<CardDetail card={mockCard} />);
-    expect(screen.getByText("☀ 正位置")).toBeInTheDocument();
-    expect(screen.getByText("☽ 逆位置")).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "正位置" })).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByRole("tab", { name: "逆位置" })).toBeInTheDocument();
   });
 
   it("正位置のキーワードが表示されること", () => {
@@ -83,7 +83,7 @@ describe("CardDetail", () => {
   it("逆位置タブに切り替えると逆位置の内容が表示されること", async () => {
     const user = userEvent.setup();
     render(<CardDetail card={mockCard} />);
-    await user.click(screen.getByText("☽ 逆位置"));
+    await user.click(screen.getByRole("tab", { name: "逆位置" }));
     expect(screen.getByText("無謀")).toBeInTheDocument();
     expect(screen.getByText("逆位置の意味テスト")).toBeInTheDocument();
   });
@@ -96,5 +96,10 @@ describe("CardDetail", () => {
     expect(screen.getByText(/金運/)).toBeInTheDocument();
     expect(screen.getByText(/健康運/)).toBeInTheDocument();
     expect(screen.getByText(/アドバイス/)).toBeInTheDocument();
+  });
+
+  it("運勢ジャンルに絵文字を使わずアイコンを表示すること", () => {
+    const { container } = render(<CardDetail card={mockCard} />);
+    expect(container.textContent).not.toMatch(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B50}]/u);
   });
 });

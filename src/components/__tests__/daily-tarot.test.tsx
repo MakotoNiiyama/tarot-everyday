@@ -51,7 +51,7 @@ describe("DailyTarot", () => {
     });
 
     // 正位置 or 逆位置のいずれかが表示される
-    const orientation = screen.queryByText("☀ 正位置") || screen.queryByText("☽ 逆位置");
+    const orientation = screen.queryByText("正位置") || screen.queryByText("逆位置");
     expect(orientation).toBeInTheDocument();
 
     // 運勢セクションが表示される
@@ -88,7 +88,7 @@ describe("DailyTarot", () => {
 
     // 愚者のカードが即座に表示される
     expect(screen.getByText("愚者")).toBeInTheDocument();
-    expect(screen.getByText("☀ 正位置")).toBeInTheDocument();
+    expect(screen.getByText("正位置")).toBeInTheDocument();
   });
 
   it("カード詳細へのリンクが表示されること", () => {
