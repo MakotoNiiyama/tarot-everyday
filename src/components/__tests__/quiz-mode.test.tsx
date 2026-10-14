@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QuizMode } from "../quiz-mode";
@@ -19,6 +19,11 @@ vi.mock("framer-motion", async () => {
       },
     }),
   };
+});
+
+const originalMatchMedia = window.matchMedia;
+afterEach(() => {
+  window.matchMedia = originalMatchMedia;
 });
 
 describe("QuizMode", () => {
@@ -161,5 +166,35 @@ describe("QuizMode", () => {
     render(<QuizMode />);
     await user.click(screen.getByText("クイズを始める"));
     expect(screen.getByRole("progressbar")).toBeInTheDocument();
+  });
+
+  it("PC幅では結果の回答一覧からカードの詳細を右サイドパネルに表示すること", async () => {
+    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+      matches: true,
+      media: query,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }));
+    const user = userEvent.setup();
+    render(<QuizMode />);
+    await user.click(screen.getByText("クイズを始める"));
+    for (let i = 0; i < 10; i++) {
+      const choices = screen
+        .getAllByRole("button")
+        .filter(
+          (b) =>
+            !b.textContent?.includes("クイズ") &&
+            !b.textContent?.includes("次へ") &&
+            !b.textContent?.includes("もう一度") &&
+            b.textContent?.trim()
+        );
+      await user.click(choices[0]);
+      await user.click(screen.getByText("次へ"));
+    }
+
+    const firstAnswer = screen.getAllByRole("button").find((b) => b.textContent?.includes("正解"))!;
+    await user.click(firstAnswer);
+    expect(screen.getByRole("complementary", { name: "詳細パネル" })).toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 });

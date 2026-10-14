@@ -1,5 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { HomeContent } from "../home-content";
 import { _resetModuleStateForTest } from "@/lib/use-daily-draw";
 
@@ -18,6 +19,11 @@ beforeEach(() => {
   _resetModuleStateForTest();
   localStorageMock.clear();
   Object.defineProperty(window, "localStorage", { value: localStorageMock, writable: true });
+});
+
+const originalMatchMedia = window.matchMedia;
+afterEach(() => {
+  window.matchMedia = originalMatchMedia;
 });
 
 function todayKey(): string {
@@ -61,5 +67,19 @@ describe("HomeContent", () => {
   it("絵文字を使わないこと", () => {
     const { container } = render(<HomeContent />);
     expect(container.textContent).not.toMatch(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B50}]/u);
+  });
+
+  it("PC幅ではカードの詳細を右サイドパネルに表示すること", async () => {
+    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+      matches: true,
+      media: query,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }));
+    store["tarot-daily-draw"] = JSON.stringify({ cardId: "major-00", isReversed: false, date: todayKey() });
+    const user = userEvent.setup();
+    render(<HomeContent />);
+    await user.click(screen.getByRole("button", { name: "愚者の詳細を見る" }));
+    expect(screen.getByRole("complementary", { name: "詳細パネル" })).toHaveTextContent("The Fool");
   });
 });

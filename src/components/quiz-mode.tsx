@@ -13,6 +13,7 @@ import {
 } from "@/lib/quiz";
 import { ScratchDivider } from "@/components/svg/scratch-decorations";
 import { CardDetailSheet } from "@/components/card-detail-sheet";
+import { DetailPanelLayout } from "@/components/detail/detail-panel";
 import { Icon } from "@/components/icons/icon";
 import { OrientationBadge } from "@/components/orientation-badge";
 
@@ -63,56 +64,59 @@ export function QuizMode() {
     }
   }, [currentIndex]);
 
+  // 結果の回答一覧からカードの詳細を開いたとき、1280px 以上では右サイドパネルに表示する
   return (
-    <div className="flex flex-col items-center px-4 py-6 pb-20 gap-4 max-w-lg mx-auto">
-      {/* ヘッダー */}
-      <header className="text-center">
-        <h1 className="font-heading text-2xl font-bold text-gold">
-          キーワードクイズ
-        </h1>
+    <DetailPanelLayout>
+      <div className="flex flex-col items-center px-4 py-6 pb-20 gap-4 w-full max-w-lg mx-auto">
+        {/* ヘッダー */}
+        <header className="text-center">
+          <h1 className="font-heading text-2xl font-bold text-gold">
+            キーワードクイズ
+          </h1>
+          {phase !== "start" && phase !== "result" && (
+            <p className="text-gold-dim text-sm mt-1">
+              {currentIndex + 1} / {QUIZ_COUNT}
+            </p>
+          )}
+        </header>
+
+        {/* 進捗バー */}
         {phase !== "start" && phase !== "result" && (
-          <p className="text-gold-dim text-sm mt-1">
-            {currentIndex + 1} / {QUIZ_COUNT}
-          </p>
-        )}
-      </header>
-
-      {/* 進捗バー */}
-      {phase !== "start" && phase !== "result" && (
-        <ProgressBar current={currentIndex} total={QUIZ_COUNT} />
-      )}
-
-      <AnimatePresence mode="wait">
-        {phase === "start" && <StartScreen key="start" onStart={startQuiz} />}
-
-        {phase === "question" && currentQuestion && (
-          <QuestionPhase
-            key={`q-${currentIndex}`}
-            question={currentQuestion}
-            onAnswer={handleAnswer}
-          />
+          <ProgressBar current={currentIndex} total={QUIZ_COUNT} />
         )}
 
-        {phase === "feedback" && currentQuestion && selectedKeyword && (
-          <FeedbackPhase
-            key={`fb-${currentIndex}`}
-            question={currentQuestion}
-            selectedKeyword={selectedKeyword}
-            isCorrect={selectedKeyword === currentQuestion.correctKeyword}
-            onNext={handleNext}
-          />
-        )}
+        <AnimatePresence mode="wait">
+          {phase === "start" && <StartScreen key="start" onStart={startQuiz} />}
 
-        {phase === "result" && (
-          <ResultScreen
-            key="result"
-            answers={answers}
-            correctCount={correctCount}
-            onRetry={startQuiz}
-          />
-        )}
-      </AnimatePresence>
-    </div>
+          {phase === "question" && currentQuestion && (
+            <QuestionPhase
+              key={`q-${currentIndex}`}
+              question={currentQuestion}
+              onAnswer={handleAnswer}
+            />
+          )}
+
+          {phase === "feedback" && currentQuestion && selectedKeyword && (
+            <FeedbackPhase
+              key={`fb-${currentIndex}`}
+              question={currentQuestion}
+              selectedKeyword={selectedKeyword}
+              isCorrect={selectedKeyword === currentQuestion.correctKeyword}
+              onNext={handleNext}
+            />
+          )}
+
+          {phase === "result" && (
+            <ResultScreen
+              key="result"
+              answers={answers}
+              correctCount={correctCount}
+              onRetry={startQuiz}
+            />
+          )}
+        </AnimatePresence>
+      </div>
+    </DetailPanelLayout>
   );
 }
 
