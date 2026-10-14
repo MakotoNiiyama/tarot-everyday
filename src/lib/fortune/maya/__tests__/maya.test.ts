@@ -29,6 +29,9 @@ describe("maya.read", () => {
     expect(reading.periods.day.rangeLabel).toBe("2026/10/14");
     expect(reading.periods.day.chips[0].label).toBe("今日のKIN");
     expect(reading.periods.day.chips[0].value.startsWith(`${kin} `)).toBe(true);
+    // 今日の銀河の音は人物像と同じ「番号(名前)」の表記
+    expect(reading.periods.day.chips[1].label).toBe("銀河の音");
+    expect(reading.periods.day.chips[1].value).toMatch(/^\d+\(.+\)$/);
   });
 
   it("今月は13の月の暦の月", () => {

@@ -47,6 +47,7 @@ export const maya: FortuneSystemModule = {
     const birthKinFact: Fact = { label: "本命KIN", value: `${kin} ${sealName(kin)}`, refs: [ref(sealId(sealOf(kin)))] };
 
     const todayKin = kinOf(today);
+    const todayTone = toneOf(todayKin);
     const moon = thirteenMoon(today);
     const birthday = lastBirthday(profile.date, today);
     // 次の誕生日 = birthday より後で最初の誕生日(2月29日生まれは平年2月28日・閏年2月29日を正しく扱う)
@@ -65,10 +66,10 @@ export const maya: FortuneSystemModule = {
         day: {
           period: "day",
           rangeLabel: formatSlash(today),
-          headline: { text: `今日のKINは${sealName(todayKin)}・音${toneOf(todayKin)}`, ref: ref(sealId(sealOf(todayKin))) },
+          headline: { text: `今日のKINは${sealName(todayKin)}・音${todayTone}`, ref: ref(sealId(sealOf(todayKin))) },
           chips: [
             kinFact("今日のKIN", todayKin),
-            { label: "銀河の音", value: String(toneOf(todayKin)), refs: [ref(toneId(toneOf(todayKin)))] },
+            { label: "銀河の音", value: `${todayTone}(${TONE_NAMES[todayTone - 1]})`, refs: [ref(toneId(todayTone))] },
             birthKinFact,
           ],
         },
