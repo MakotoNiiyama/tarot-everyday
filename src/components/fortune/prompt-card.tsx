@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { TarotCard } from "@/data/types";
 import { Icon } from "@/components/icons/icon";
 import { primaryButton } from "@/lib/button-styles";
@@ -25,6 +25,16 @@ export function PromptCard({
   const [question, setQuestion] = useState("");
   const [status, setStatus] = useState<"idle" | "copied" | "failed">("idle");
   const inputId = useId();
+  /** 「コピーしました」などを消すタイマー。続けて押したら前のタイマーは取り消す */
+  const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // アンマウントしたらタイマーを止める(ここでは状態を変えない)
+  useEffect(
+    () => () => {
+      if (resetTimer.current) clearTimeout(resetTimer.current);
+    },
+    [],
+  );
 
   const copy = async () => {
     const prompt = generateFortunePrompt({ profile, readings, period, today, question, tarot });
@@ -34,7 +44,11 @@ export function PromptCard({
     } catch {
       setStatus("failed");
     }
-    setTimeout(() => setStatus("idle"), 2000);
+    if (resetTimer.current) clearTimeout(resetTimer.current);
+    resetTimer.current = setTimeout(() => {
+      resetTimer.current = null;
+      setStatus("idle");
+    }, 2000);
   };
 
   return (

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NatalSection } from "../natal-section";
 import { PromptCard } from "../prompt-card";
@@ -42,5 +42,61 @@ describe("PromptCard", () => {
     expect(writeText.mock.calls[0][0]).toContain("■ 相談内容: 仕事のこと");
     expect(writeText.mock.calls[0][0]).toContain("── 今月の運勢 ──");
     expect(await screen.findByText("コピーしました")).toBeInTheDocument();
+  });
+
+  it("コピーに失敗したら「コピーできませんでした」と表示し、しばらくすると消すこと", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      const writeText = vi.fn().mockRejectedValue(new Error("denied"));
+      Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
+      render(<PromptCard profile={profile} readings={readings} period="day" today={today} tarot={null} />);
+      await user.click(screen.getByRole("button", { name: "総合鑑定プロンプトをコピー" }));
+      expect(await screen.findByText("コピーできませんでした")).toBeInTheDocument();
+      act(() => {
+        vi.advanceTimersByTime(2000);
+      });
+      expect(screen.queryByText("コピーできませんでした")).not.toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("続けてコピーしても、前のタイマーで表示が早く消えないこと", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      const writeText = vi.fn().mockResolvedValue(undefined);
+      Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
+      render(<PromptCard profile={profile} readings={readings} period="day" today={today} tarot={null} />);
+      const button = screen.getByRole("button", { name: "総合鑑定プロンプトをコピー" });
+      await user.click(button);
+      act(() => {
+        vi.advanceTimersByTime(1500);
+      });
+      await user.click(button);
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+      // 1回目から2.5秒たっているが、2回目からは1秒なので表示は残る
+      expect(screen.getByText("コピーしました")).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("表示を消す前にアンマウントしてもタイマーが残らないこと", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      Object.defineProperty(navigator, "clipboard", { value: { writeText: vi.fn().mockResolvedValue(undefined) }, configurable: true });
+      const { unmount } = render(<PromptCard profile={profile} readings={readings} period="day" today={today} tarot={null} />);
+      await user.click(screen.getByRole("button", { name: "総合鑑定プロンプトをコピー" }));
+      await screen.findByText("コピーしました");
+      unmount();
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
