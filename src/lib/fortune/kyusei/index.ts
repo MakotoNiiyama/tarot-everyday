@@ -1,6 +1,7 @@
 // src/lib/fortune/kyusei/index.ts
 import { describeResolved, isAmbiguous, representative, resolvedValues, resolveOverRange } from "../ambiguity";
 import { jieBoundariesWithin, solarLongitudeTime, solarMonthAt } from "../astro/solar-terms";
+import { directionId, palaceId, starId, type Direction } from "../element-ids";
 import { addDays, formatSlash, type LocalDate } from "../local-date";
 import { monthBranchIndex, yearBranchIndex } from "../sexagenary";
 import { jstLocalDate, tokyoToUtc } from "../tokyo-time";
@@ -17,15 +18,8 @@ import {
   positionInBoard,
   sameKyuseiNatal,
   yearStar,
-  type Direction,
   type KyuseiNatal,
-  type Palace,
 } from "./calc";
-
-/** 早見表の項目 id(1C の辞書データと一致させる) */
-export const starId = (n: number) => `star-${n}`;
-export const palaceId = (p: Palace) => `palace-${p}`;
-export const directionId = (d: Direction) => `direction-${d}`;
 
 const ref = (id: string): ElementRef => ({ system: "kyusei", id });
 

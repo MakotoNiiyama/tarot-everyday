@@ -1,6 +1,7 @@
 // src/lib/fortune/kyusei/__tests__/kyusei.test.ts
 import { describe, it, expect } from "vitest";
-import { kyusei, palaceId, starId, directionId } from "../index";
+import { kyusei } from "../index";
+import { directionId, palaceId, starId } from "../../element-ids";
 import { toBirthMoment } from "../../birth-moment";
 import type { BirthProfile } from "../../types";
 

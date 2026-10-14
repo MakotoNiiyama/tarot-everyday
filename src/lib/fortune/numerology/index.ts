@@ -1,7 +1,8 @@
 // src/lib/fortune/numerology/index.ts
+import { numberId } from "../element-ids";
 import { daysInMonth, formatSlash } from "../local-date";
 import type { ElementRef, Fact, FortuneSystemModule } from "../types";
-import { birthdayNumber, lifePath, numberId, personalDay, personalMonth, personalYear } from "./calc";
+import { birthdayNumber, lifePath, personalDay, personalMonth, personalYear } from "./calc";
 
 const ref = (n: number): ElementRef => ({ system: "numerology", id: numberId(n) });
 const fact = (label: string, n: number): Fact => ({ label, value: String(n), refs: [ref(n)] });

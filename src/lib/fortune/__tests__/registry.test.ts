@@ -1,5 +1,6 @@
 // src/lib/fortune/__tests__/registry.test.ts
 import { describe, it, expect } from "vitest";
+import { ELEMENT_IDS } from "../element-ids";
 import { fortuneSystems, readAll } from "../registry";
 import type { BirthProfile } from "../types";
 
@@ -23,13 +24,8 @@ describe("registry", () => {
     }
   });
 
-  it("すべての参照 id が占術ごとの命名規則に従うこと", () => {
+  it("すべての参照 id が早見表の項目 id の一覧に含まれること", () => {
     const readings = readAll(profile, { year: 2026, month: 10, day: 14 });
-    const patterns: Record<string, RegExp> = {
-      numerology: /^number-(\d|11|22|33)$/,
-      kyusei: /^(star-[1-9]|palace-(center|n|ne|e|se|s|sw|w|nw)|direction-(n|ne|e|se|s|sw|w|nw))$/,
-      maya: /^(seal-([1-9]|1\d|20)|tone-([1-9]|1[0-3])|moon-([0-9]|1[0-3]))$/,
-    };
     for (const r of readings) {
       const refs = [
         ...r.natal.flatMap((f) => f.refs),
@@ -37,7 +33,7 @@ describe("registry", () => {
       ];
       for (const ref of refs) {
         expect(ref.system).toBe(r.id);
-        expect(ref.id).toMatch(patterns[r.id]);
+        expect(ELEMENT_IDS[r.id as keyof typeof ELEMENT_IDS]).toContain(ref.id);
       }
     }
   });

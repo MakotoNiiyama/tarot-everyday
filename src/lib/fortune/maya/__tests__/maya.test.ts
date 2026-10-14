@@ -1,6 +1,7 @@
 // src/lib/fortune/maya/__tests__/maya.test.ts
 import { describe, it, expect } from "vitest";
-import { maya, moonId, sealId, toneId } from "../index";
+import { maya } from "../index";
+import { moonId, sealId, toneId } from "../../element-ids";
 import { kinOf } from "../calc";
 import { toBirthMoment } from "../../birth-moment";
 import type { BirthProfile } from "../../types";

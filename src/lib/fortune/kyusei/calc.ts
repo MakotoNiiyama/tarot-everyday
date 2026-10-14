@@ -1,18 +1,16 @@
 // src/lib/fortune/kyusei/calc.ts
 import { solarLongitudeTime, solarMonthAt } from "../astro/solar-terms";
+import { DIRECTIONS, type Direction, type Palace } from "../element-ids";
 import { mod, toJdn, type LocalDate } from "../local-date";
 import { dayCycleIndex } from "../sexagenary";
 import { jstLocalDate } from "../tokyo-time";
 import type { BirthProfile } from "../types";
 
-export type Direction = "n" | "ne" | "e" | "se" | "s" | "sw" | "w" | "nw";
-export type Palace = Direction | "center";
+export { DIRECTIONS, type Direction, type Palace };
 
 export const STAR_NAMES = [
   "一白水星", "二黒土星", "三碧木星", "四緑木星", "五黄土星", "六白金星", "七赤金星", "八白土星", "九紫火星",
 ] as const;
-
-export const DIRECTIONS: readonly Direction[] = ["n", "ne", "e", "se", "s", "sw", "w", "nw"];
 
 export const DIRECTION_LABELS: Record<Direction, string> = {
   n: "北", ne: "北東", e: "東", se: "南東", s: "南", sw: "南西", w: "西", nw: "北西",

@@ -39,8 +39,3 @@ export function personalMonth(personalYearNumber: number, month: number): number
 export function personalDay(personalMonthNumber: number, day: number): number {
   return reduceNumber(personalMonthNumber + day, false);
 }
-
-/** 早見表の項目 id(1C の辞書データと一致させる) */
-export function numberId(n: number): string {
-  return `number-${n}`;
-}

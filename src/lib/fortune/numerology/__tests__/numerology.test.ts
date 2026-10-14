@@ -1,7 +1,8 @@
 // src/lib/fortune/numerology/__tests__/numerology.test.ts
 import { describe, it, expect } from "vitest";
-import { birthdayNumber, lifePath, numberId, personalDay, personalMonth, personalYear, reduceNumber } from "../calc";
+import { birthdayNumber, lifePath, personalDay, personalMonth, personalYear, reduceNumber } from "../calc";
 import { numerology } from "../index";
+import { numberId } from "../../element-ids";
 import { toBirthMoment } from "../../birth-moment";
 import type { BirthProfile } from "../../types";
 

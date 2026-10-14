@@ -1,4 +1,5 @@
 // src/lib/fortune/maya/index.ts
+import { moonId, sealId, toneId } from "../element-ids";
 import { addDays, formatSlash, type LocalDate } from "../local-date";
 import type { ElementRef, Fact, FortuneSystemModule } from "../types";
 import {
@@ -16,11 +17,6 @@ import {
   toneOf,
   wavespellSeal,
 } from "./calc";
-
-/** 早見表の項目 id(1C の辞書データと一致させる)。moonId(0) は時間をはずした日 */
-export const sealId = (n: number) => `seal-${n}`;
-export const toneId = (n: number) => `tone-${n}`;
-export const moonId = (n: number) => `moon-${n}`;
 
 const ref = (id: string): ElementRef => ({ system: "maya", id });
 const sealName = (kin: number) => SEAL_NAMES[sealOf(kin) - 1];
