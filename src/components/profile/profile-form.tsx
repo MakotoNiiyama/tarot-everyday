@@ -165,7 +165,7 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
   };
 
   return (
-    <div className="flex flex-col gap-5 lg:grid lg:grid-cols-[520px_minmax(0,1fr)] lg:items-start lg:gap-12">
+    <div className="flex flex-col gap-5 xl:grid xl:grid-cols-[520px_minmax(0,1fr)] xl:items-start xl:gap-12">
       <div className="flex flex-col gap-5 lg:gap-6">
         <div className="flex items-center gap-2 lg:gap-3">
           <Link href="/fortune" aria-label="運勢に戻る" className="flex h-10 w-10 items-center justify-center rounded-full border border-gold/30 text-gold-light">
@@ -331,7 +331,8 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
         </form>
       </div>
 
-      <div className="hidden lg:block lg:pt-16">{profile && <ProfilePreview profile={profile} />}</div>
+      {/* 「この入力で分かること」はフォームの横に並べる余裕があるとき(1280px〜)だけ表示する */}
+      <div className="hidden xl:block xl:pt-16">{profile && <ProfilePreview profile={profile} />}</div>
     </div>
   );
 }

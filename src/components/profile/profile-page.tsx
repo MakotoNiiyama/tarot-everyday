@@ -8,7 +8,7 @@ import { ProfileForm } from "./profile-form";
 export function ProfilePage() {
   const { ready, profile } = useBirthProfile();
   return (
-    <PageContainer className="lg:max-w-[1100px]">
+    <PageContainer wide>
       {ready ? <ProfileForm key={profile ? "edit" : "new"} initial={profile} /> : <div className="h-96" aria-busy="true" />}
     </PageContainer>
   );

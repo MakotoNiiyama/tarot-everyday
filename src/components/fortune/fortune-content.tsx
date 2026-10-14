@@ -32,7 +32,7 @@ export function FortuneContent() {
 
   return (
     <DetailPanelLayout>
-      <PageContainer className="xl:max-w-[1100px]">
+      <PageContainer wide>
         <h1 className="sr-only">運勢</h1>
         <header className="flex items-start justify-between gap-3 px-1">
           <div className="flex flex-col gap-1">
