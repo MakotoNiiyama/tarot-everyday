@@ -14,8 +14,9 @@ describe("maya.read", () => {
   it("人物像にKIN・紋章・音・ウェイブスペル・関係KINを返すこと", () => {
     const byLabel = Object.fromEntries(reading.natal.map((f) => [f.label, f]));
     expect(byLabel["KIN"].value).toBe("34");
-    expect(byLabel["太陽の紋章"]).toEqual({ label: "太陽の紋章", value: "白い魔法使い", refs: [{ system: "maya", id: sealId(14) }] });
-    expect(byLabel["銀河の音"]).toEqual({ label: "銀河の音", value: "8(銀河)", refs: [{ system: "maya", id: toneId(8) }] });
+    expect(reading.natal.map((f) => f.key)).toEqual(["kin", "seal", "tone", "wavespell", "guide", "analog", "antipode", "occult"]);
+    expect(byLabel["太陽の紋章"]).toEqual({ key: "seal", label: "太陽の紋章", value: "白い魔法使い", refs: [{ system: "maya", id: sealId(14) }] });
+    expect(byLabel["銀河の音"]).toEqual({ key: "tone", label: "銀河の音", value: "8(銀河)", refs: [{ system: "maya", id: toneId(8) }] });
     expect(byLabel["ウェイブスペル"].value).toBe("青い手");
     expect(byLabel["ガイドKIN"].value).toBe("138 白い鏡");
     expect(byLabel["類似KIN"].value).toMatch(/赤い蛇$/);
@@ -31,6 +32,7 @@ describe("maya.read", () => {
     expect(reading.periods.day.chips[0].value.startsWith(`${kin} `)).toBe(true);
     // 今日の銀河の音は人物像と同じ「番号(名前)」の表記
     expect(reading.periods.day.chips[1].label).toBe("銀河の音");
+    expect(reading.periods.day.chips.map((c) => c.key)).toEqual(["today-kin", "today-tone", "birth-kin"]);
     expect(reading.periods.day.chips[1].value).toMatch(/^\d+\(.+\)$/);
   });
 
@@ -38,15 +40,16 @@ describe("maya.read", () => {
     expect(reading.periods.month.rangeLabel).toBe("2026/9/20〜2026/10/17");
     expect(reading.periods.month.headline).toEqual({ text: "13の月の暦 第3の月(電気の月)", ref: { system: "maya", id: moonId(3) } });
     // 月のチップは月の名前と、その月の音(第3の月 = 音3)
-    expect(reading.periods.month.chips.map((c) => [c.label, c.value, c.refs])).toEqual([
-      ["第3の月", "電気の月", [{ system: "maya", id: moonId(3) }]],
-      ["月の音", "3(電気)", [{ system: "maya", id: toneId(3) }]],
+    expect(reading.periods.month.chips.map((c) => [c.key, c.label, c.value, c.refs])).toEqual([
+      ["moon", "第3の月", "電気の月", [{ system: "maya", id: moonId(3) }]],
+      ["moon-tone", "月の音", "3(電気)", [{ system: "maya", id: toneId(3) }]],
     ]);
   });
 
   it("今年は年回りKIN(直近の誕生日から次の誕生日の前日まで)", () => {
     expect(reading.periods.year.rangeLabel).toBe("2026/7/26〜2027/7/25");
     expect(reading.periods.year.chips[0].label).toBe("年回りKIN");
+    expect(reading.periods.year.chips.map((c) => c.key)).toEqual(["year-kin", "birth-kin"]);
     expect(reading.periods.year.chips[0].value.startsWith(`${kinOf({ year: 2026, month: 7, day: 26 })} `)).toBe(true);
   });
 
@@ -61,5 +64,6 @@ describe("maya.read", () => {
     const r = maya.read(profile, toBirthMoment(profile), { year: 2026, month: 7, day: 25 });
     expect(r.periods.month.headline).toEqual({ text: "時間をはずした日", ref: { system: "maya", id: moonId(0) } });
     expect(r.periods.month.rangeLabel).toBe("2026/7/25");
+    expect(r.periods.month.chips.map((c) => c.key)).toEqual(["moon"]);
   });
 });

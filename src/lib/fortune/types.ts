@@ -52,6 +52,8 @@ export interface ElementRef {
 
 /** 表示用の事実。value は候補があれば「A(〜5:01) / B(5:01〜)」のように整形済み */
 export interface Fact {
+  /** 占術内で一意で、表記や順番が変わっても変わらない識別子(例: "honmei")。画面の key や項目の特定に使う */
+  key: string;
   label: string;
   value: string;
   refs: ElementRef[];

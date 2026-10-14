@@ -73,13 +73,14 @@ function periodResult(period: Period, natal: KyuseiNatal, today: LocalDate): Per
     rangeLabel: board.range,
     headline: { text: `${PERIOD_WORD[period]}は本命星が${posLabel}に回る`, ref: ref(palaceId(pos)) },
     chips: [
-      { label: "本命星の位置", value: posLabel, refs: [ref(palaceId(pos))] },
+      { key: "position", label: "本命星の位置", value: posLabel, refs: [ref(palaceId(pos))] },
       {
+        key: "lucky",
         label: "吉方位",
         value: lucky.length ? lucky.map((d) => DIRECTION_LABELS[d]).join("・") : "なし",
         refs: lucky.map((d) => ref(directionId(d))),
       },
-      { label: BOARD_LABEL[period], value: STAR_NAMES[board.center - 1], refs: [ref(starId(board.center))] },
+      { key: "board-center", label: BOARD_LABEL[period], value: STAR_NAMES[board.center - 1], refs: [ref(starId(board.center))] },
     ],
   };
 }
@@ -98,16 +99,19 @@ export const kyusei: FortuneSystemModule = {
     const values = resolvedValues(natal);
     const facts: Fact[] = [
       {
+        key: "honmei",
         label: "本命星",
         value: describeResolved(natal, (n) => STAR_NAMES[n.honmei - 1]),
         refs: unique(values.map((n) => ref(starId(n.honmei))), (r) => r.id),
       },
       {
+        key: "getsumei",
         label: "月命星",
         value: describeResolved(natal, (n) => STAR_NAMES[n.getsumei - 1]),
         refs: unique(values.map((n) => ref(starId(n.getsumei))), (r) => r.id),
       },
       {
+        key: "keisha",
         label: "傾斜宮",
         value: describeResolved(natal, (n) => keishaLabel(n.keisha)),
         refs: unique(values.flatMap((n) => n.keisha.map((k) => ref(palaceId(k)))), (r) => r.id),

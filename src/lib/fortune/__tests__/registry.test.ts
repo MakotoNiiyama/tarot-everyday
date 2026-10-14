@@ -24,6 +24,18 @@ describe("registry", () => {
     }
   });
 
+  it("事実の key は人物像・各期間のチップの中で一意であること", () => {
+    const readings = readAll(profile, { year: 2026, month: 10, day: 14 });
+    for (const r of readings) {
+      const lists = [r.natal, ...Object.values(r.periods).map((p) => p.chips)];
+      for (const facts of lists) {
+        const keys = facts.map((f) => f.key);
+        expect(keys.every((k) => k !== "")).toBe(true);
+        expect(new Set(keys).size).toBe(keys.length);
+      }
+    }
+  });
+
   it("すべての参照 id が早見表の項目 id の一覧に含まれること", () => {
     const readings = readAll(profile, { year: 2026, month: 10, day: 14 });
     for (const r of readings) {

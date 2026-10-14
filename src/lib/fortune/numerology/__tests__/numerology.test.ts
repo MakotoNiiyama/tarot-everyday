@@ -56,8 +56,8 @@ describe("numerology.read", () => {
 
   it("人物像にライフパスとバースデーを返すこと", () => {
     expect(reading.natal).toEqual([
-      { label: "ライフパス", value: "33", refs: [{ system: "numerology", id: "number-33" }] },
-      { label: "バースデー", value: "11", refs: [{ system: "numerology", id: "number-11" }] },
+      { key: "life-path", label: "ライフパス", value: "33", refs: [{ system: "numerology", id: "number-33" }] },
+      { key: "birthday", label: "バースデー", value: "11", refs: [{ system: "numerology", id: "number-11" }] },
     ]);
     expect(reading.ambiguous).toBe(false);
   });
@@ -69,5 +69,8 @@ describe("numerology.read", () => {
     expect(reading.periods.month.headline.text).toBe("パーソナルマンス7");
     expect(reading.periods.year.rangeLabel).toBe("2026/1/1〜2026/12/31");
     expect(reading.periods.year.headline.text).toBe("パーソナルイヤー6");
+    expect(reading.periods.day.chips.map((c) => c.key)).toEqual(["personal-day", "life-path"]);
+    expect(reading.periods.month.chips.map((c) => c.key)).toEqual(["personal-month", "life-path"]);
+    expect(reading.periods.year.chips.map((c) => c.key)).toEqual(["personal-year", "life-path"]);
   });
 });

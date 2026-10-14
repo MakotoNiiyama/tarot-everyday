@@ -12,9 +12,9 @@ describe("kyusei.read", () => {
     const p: BirthProfile = { version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "hour", hour: 14 } };
     const r = kyusei.read(p, toBirthMoment(p), today);
     expect(r.natal).toEqual([
-      { label: "本命星", value: "一白水星", refs: [{ system: "kyusei", id: starId(1) }] },
-      { label: "月命星", value: "七赤金星", refs: [{ system: "kyusei", id: starId(7) }] },
-      { label: "傾斜宮", value: "艮宮", refs: [{ system: "kyusei", id: palaceId("ne") }] },
+      { key: "honmei", label: "本命星", value: "一白水星", refs: [{ system: "kyusei", id: starId(1) }] },
+      { key: "getsumei", label: "月命星", value: "七赤金星", refs: [{ system: "kyusei", id: starId(7) }] },
+      { key: "keisha", label: "傾斜宮", value: "艮宮", refs: [{ system: "kyusei", id: palaceId("ne") }] },
     ]);
     expect(r.ambiguous).toBe(false);
   });
@@ -65,6 +65,9 @@ describe("kyusei.read", () => {
     expect(r.periods.year.headline).toEqual({ text: "今年は本命星が中宮に回る", ref: { system: "kyusei", id: palaceId("center") } });
     const labels = r.periods.year.chips.map((c) => c.label);
     expect(labels).toEqual(["本命星の位置", "吉方位", "年盤の中宮"]);
+    for (const period of ["day", "month", "year"] as const) {
+      expect(r.periods[period].chips.map((c) => c.key)).toEqual(["position", "lucky", "board-center"]);
+    }
     expect(r.periods.year.chips[2].value).toBe("一白水星");
     for (const chip of r.periods.year.chips[1].refs) expect(chip.id).toMatch(/^direction-/);
   });
