@@ -52,21 +52,25 @@ export function guideHref(system: GuideSystemId, id: string): string {
   return `/guide/${system}/${id}`;
 }
 
-/** カタカナをひらがなにし、英字を小文字にそろえる */
-function normalize(s: string): string {
+/** 互換文字をそろえ(NFKC: 全角英数・半角カナなど)、英字を小文字に、カタカナをひらがなにする */
+function normalizeSearchText(s: string): string {
   return s
+    .normalize("NFKC")
     .toLowerCase()
-    .replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x60))
-    .trim();
+    .replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x60));
 }
 
-/** 名前・読み・英名・キーワードで全占術を横断して検索する */
+/** 検索対象の文字列(名前・読み・英名・キーワード)を項目ごとに正規化しておく。欄の境目をまたいで一致しないよう改行で区切る */
+const haystacks: { entry: GuideEntry; text: string }[] = allEntries.map((entry) => ({
+  entry,
+  text: normalizeSearchText([entry.name, entry.reading, entry.nameEn ?? "", ...entry.keywords].join("\n")),
+}));
+
+/** 名前・読み・英名・キーワードで全占術を横断して検索する。空白で区切った語はすべて含むもの(AND)に絞る */
 export function searchGuide(query: string): GuideEntry[] {
-  const q = normalize(query);
-  if (!q) return [];
-  return allEntries.filter((e) =>
-    [e.name, e.reading, e.nameEn ?? "", ...e.keywords].some((field) => normalize(field).includes(q)),
-  );
+  const terms = normalizeSearchText(query).split(/\s+/).filter(Boolean);
+  if (terms.length === 0) return [];
+  return haystacks.filter(({ text }) => terms.every((t) => text.includes(t))).map(({ entry }) => entry);
 }
 
 /** ElementRef が指す項目の「運勢として出たときの一文」 */
@@ -74,8 +78,13 @@ export function periodNoteOf(ref: ElementRef): string | undefined {
   return getGuideEntry(ref.system, ref.id)?.periodNote;
 }
 
-/** 運勢カードの一文のまとめ(設計書 §7): 「{見出しの文}。{periodNote}」 */
-export function composeHeadline(result: PeriodResult): string {
-  const note = periodNoteOf(result.headline.ref);
-  return note ? `${result.headline.text}。${note}` : `${result.headline.text}。`;
+/**
+ * 運勢カードの一文のまとめ(設計書 §7): 「{見出しの文}。{periodNote}」。
+ * 見出し({ text, ref })か PeriodResult を受け取る。見出しの文の末尾の「。」は重ねない
+ */
+export function composeHeadline(source: PeriodResult["headline"] | PeriodResult): string {
+  const { text, ref } = "headline" in source ? source.headline : source;
+  const body = text.replace(/。$/, "");
+  const note = periodNoteOf(ref);
+  return note ? `${body}。${note}` : `${body}。`;
 }

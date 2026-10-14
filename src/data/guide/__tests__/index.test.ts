@@ -64,6 +64,17 @@ describe("searchGuide", () => {
     expect(searchGuide("イッパク").map((e) => e.id)).toContain("star-1");
   });
 
+  it("全角英字・半角カナも正規化して一致すること", () => {
+    expect(searchGuide("Ｆｏｏｌ").map((e) => e.id)).toContain("major-00");
+    expect(searchGuide("ｲｯﾊﾟｸ").map((e) => e.id)).toContain("star-1");
+  });
+
+  it("空白で区切った語をすべて含む項目だけを返すこと", () => {
+    expect(searchGuide("一白 水星").map((e) => e.id)).toEqual(["star-1"]);
+    expect(searchGuide("一白　水星").map((e) => e.id)).toEqual(["star-1"]);
+    expect(searchGuide("一白 存在しない言葉")).toEqual([]);
+  });
+
   it("空の検索語は空の結果", () => {
     expect(searchGuide("  ")).toEqual([]);
   });
@@ -80,6 +91,17 @@ describe("composeHeadline", () => {
   it("見出しの文と、参照先の periodNote をつなげること", () => {
     const note = getGuideEntry("numerology", "number-7")?.periodNote;
     expect(composeHeadline(result)).toBe(`パーソナルデー7。${note}`);
+  });
+
+  it("見出し({ text, ref })だけを渡しても組み立てられること", () => {
+    const note = getGuideEntry("numerology", "number-7")?.periodNote;
+    expect(composeHeadline(result.headline)).toBe(`パーソナルデー7。${note}`);
+  });
+
+  it("見出しの文の末尾の「。」を重ねないこと", () => {
+    const note = getGuideEntry("numerology", "number-7")?.periodNote;
+    expect(composeHeadline({ text: "パーソナルデー7。", ref: result.headline.ref })).toBe(`パーソナルデー7。${note}`);
+    expect(composeHeadline({ text: "X。", ref: { system: "numerology", id: "nothing" } })).toBe("X。");
   });
 
   it("参照先が見つからなければ見出しの文だけ", () => {
