@@ -2,11 +2,12 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useMemo, useState, type ReactNode } from "react";
+import { useId, useMemo, useRef, useState, type ReactNode } from "react";
+import { flushSync } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Icon, type IconName } from "@/components/icons/icon";
 import { primaryButton } from "@/lib/button-styles";
-import { daysInMonth, isValidLocalDate } from "@/lib/fortune/local-date";
+import { compareLocalDate, daysInMonth, isValidLocalDate } from "@/lib/fortune/local-date";
 import { prefectures, type PrefectureCode } from "@/lib/fortune/prefectures";
 import { clearBirthProfile, saveBirthProfile } from "@/lib/fortune/profile-storage";
 import { todayInTokyo } from "@/lib/fortune/tokyo-time";
@@ -42,10 +43,16 @@ function Field({ icon, label, required, hint, children }: { icon: IconName; labe
   );
 }
 
-function Select({ label, value, onChange, children }: { label: string; value: string; onChange: (v: string) => void; children: ReactNode }) {
+function Select({ label, value, onChange, children, describedBy }: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  children: ReactNode;
+  describedBy?: string;
+}) {
   return (
     <div className="relative">
-      <select aria-label={label} value={value} onChange={(e) => onChange(e.target.value)} className={SELECT}>
+      <select aria-label={label} aria-describedby={describedBy} value={value} onChange={(e) => onChange(e.target.value)} className={SELECT}>
         {children}
       </select>
       <Icon name="chev" size={16} className="pointer-events-none absolute right-3 top-4 text-gold-dim" />
@@ -81,7 +88,7 @@ function Segment<T extends string>({ label, value, options, onChange }: { label:
 /** プロフィール入力(設計書 §11.4)。initial は登録済みの値 */
 export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
   const router = useRouter();
-  const thisYear = todayInTokyo().year;
+  const today = todayInTokyo();
   const [year, setYear] = useState(initial ? String(initial.date.year) : "");
   const [month, setMonth] = useState(initial ? String(initial.date.month) : "");
   const [day, setDay] = useState(initial ? String(initial.date.day) : "");
@@ -92,9 +99,36 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
   const [gender, setGender] = useState<"male" | "female" | "none">(initial?.gender ?? "none");
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [error, setError] = useState("");
-  const halfRoving = useRovingSelection({ values: HALF_VALUES, value: half, onChange: setHalf });
+  const futureHintId = useId();
+  const confirmLabelId = useId();
+  const deleteButtonRef = useRef<HTMLButtonElement>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
 
-  const lastDay = year && month ? daysInMonth(Number(year), Number(month)) : 31;
+  /** 入力を変えたら、前回の保存失敗のメッセージは消す */
+  const edit =
+    <T,>(set: (v: T) => void) =>
+    (v: T) => {
+      setError("");
+      set(v);
+    };
+  const halfRoving = useRovingSelection({ values: HALF_VALUES, value: half, onChange: edit(setHalf) });
+
+  const daysOf = (y: string, m: string) => (y && m ? daysInMonth(Number(y), Number(m)) : 31);
+  const lastDay = daysOf(year, month);
+  // 今年の未来の月・日は選べないようにする(すでに選んである値は表示したまま、未来の日付として知らせる)
+  const isThisYear = Number(year) === today.year;
+  const lastSelectableMonth = isThisYear ? today.month : 12;
+  const lastSelectableDay = isThisYear && Number(month) === today.month ? today.day : lastDay;
+
+  /** 年・月を変えて日がその月にない日付になったら(2月30日など)、日を空に戻す */
+  const changeYear = edit((v: string) => {
+    setYear(v);
+    if (Number(day) > daysOf(v, month)) setDay("");
+  });
+  const changeMonth = edit((v: string) => {
+    setMonth(v);
+    if (Number(day) > daysOf(year, v)) setDay("");
+  });
 
   const profile = useMemo<BirthProfile | null>(() => {
     const date = { year: Number(year), month: Number(month), day: Number(day) };
@@ -107,10 +141,22 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
     return p;
   }, [year, month, day, timeMode, half, hour, prefecture, gender]);
 
+  const isFuture = profile !== null && compareLocalDate(profile.date, today) > 0;
+
   const save = () => {
-    if (!profile) return;
+    if (!profile || isFuture) return;
     if (saveBirthProfile(profile)) router.push("/fortune");
     else setError("保存できませんでした。日付が未来になっていないか、ブラウザの保存設定を確認してください。");
+  };
+
+  // 確認の表示・非表示と同時にフォーカスを移す(DOM の更新を待ってから focus する)
+  const askDelete = () => {
+    flushSync(() => setConfirmingDelete(true));
+    cancelButtonRef.current?.focus();
+  };
+  const cancelDelete = () => {
+    flushSync(() => setConfirmingDelete(false));
+    deleteButtonRef.current?.focus();
   };
 
   const remove = () => {
@@ -140,38 +186,43 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
         >
           <Field icon="cal" label="生年月日" required>
             <div className="grid grid-cols-[1.4fr_1fr_1fr] gap-2">
-              <Select label="年" value={year} onChange={setYear}>
+              <Select label="年" value={year} onChange={changeYear} describedBy={isFuture ? futureHintId : undefined}>
                 <option value="">年</option>
-                {Array.from({ length: thisYear - 1900 + 1 }, (_, i) => thisYear - i).map((y) => (
+                {Array.from({ length: today.year - 1900 + 1 }, (_, i) => today.year - i).map((y) => (
                   <option key={y} value={y}>
                     {y}年
                   </option>
                 ))}
               </Select>
-              <Select label="月" value={month} onChange={setMonth}>
+              <Select label="月" value={month} onChange={changeMonth} describedBy={isFuture ? futureHintId : undefined}>
                 <option value="">月</option>
                 {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                  <option key={m} value={m}>
+                  <option key={m} value={m} disabled={m > lastSelectableMonth}>
                     {m}月
                   </option>
                 ))}
               </Select>
-              <Select label="日" value={day && Number(day) <= lastDay ? day : ""} onChange={setDay}>
+              <Select label="日" value={day} onChange={edit(setDay)} describedBy={isFuture ? futureHintId : undefined}>
                 <option value="">日</option>
                 {Array.from({ length: lastDay }, (_, i) => i + 1).map((d) => (
-                  <option key={d} value={d}>
+                  <option key={d} value={d} disabled={d > lastSelectableDay}>
                     {d}日
                   </option>
                 ))}
               </Select>
             </div>
+            {isFuture && (
+              <p id={futureHintId} role="alert" className="px-1 text-xs text-terracotta">
+                未来の日付は選べません
+              </p>
+            )}
           </Field>
 
           <Field icon="clock" label="出生時刻">
             <Segment
               label="出生時刻の入力方式"
               value={timeMode}
-              onChange={setTimeMode}
+              onChange={edit(setTimeMode)}
               options={[
                 { value: "unknown", label: "不明" },
                 { value: "half", label: "午前・午後" },
@@ -192,7 +243,7 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
                     type="button"
                     role="radio"
                     aria-checked={half === value}
-                    onClick={() => setHalf(value)}
+                    onClick={() => edit(setHalf)(value)}
                     className={`min-h-[52px] rounded-[14px] border text-[15px] font-bold ${
                       half === value ? "border-gold bg-gold/18 text-gold-light" : "border-gold/25 bg-surface text-gold-dim"
                     }`}
@@ -204,7 +255,7 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
               </div>
             )}
             {timeMode === "hour" && (
-              <Select label="出生時刻" value={hour} onChange={setHour}>
+              <Select label="出生時刻" value={hour} onChange={edit(setHour)}>
                 {Array.from({ length: 24 }, (_, h) => (
                   <option key={h} value={h}>
                     {h}時台({h}:00〜{h}:59)
@@ -216,7 +267,7 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
 
           <div className="flex flex-col gap-5 lg:grid lg:grid-cols-2 lg:gap-5">
             <Field icon="pin" label="出生地">
-              <Select label="出生地" value={prefecture} onChange={setPrefecture}>
+              <Select label="出生地" value={prefecture} onChange={edit(setPrefecture)}>
                 <option value="">未入力</option>
                 {prefectures.map((p) => (
                   <option key={p.code} value={p.code}>
@@ -229,7 +280,7 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
               <Segment
                 label="性別"
                 value={gender}
-                onChange={setGender}
+                onChange={edit(setGender)}
                 options={[
                   { value: "male", label: "男性" },
                   { value: "female", label: "女性" },
@@ -240,24 +291,27 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
           </div>
 
           <div className="flex flex-col gap-2.5 lg:flex-row lg:items-center lg:gap-3 lg:border-t lg:border-gold/15 lg:pt-2">
-            <button type="submit" disabled={!profile} className={`${primaryButton} disabled:opacity-40 lg:px-8`}>
+            <button type="submit" disabled={!profile || isFuture} className={`${primaryButton} disabled:opacity-40 lg:px-8`}>
               保存
             </button>
             {initial &&
               (confirmingDelete ? (
-                <div className="flex flex-wrap items-center justify-center gap-2 text-[13px]">
-                  <span className="text-terracotta">本当に削除しますか?</span>
+                <div role="group" aria-labelledby={confirmLabelId} className="flex flex-wrap items-center justify-center gap-2 text-[13px]">
+                  <span id={confirmLabelId} className="text-terracotta">
+                    本当に削除しますか?
+                  </span>
                   <button type="button" onClick={remove} className="min-h-11 rounded-[14px] px-3 font-bold text-terracotta">
                     削除する
                   </button>
-                  <button type="button" onClick={() => setConfirmingDelete(false)} className="min-h-11 rounded-[14px] px-3 text-gold-dim">
+                  <button ref={cancelButtonRef} type="button" onClick={cancelDelete} className="min-h-11 rounded-[14px] px-3 text-gold-dim">
                     キャンセル
                   </button>
                 </div>
               ) : (
                 <button
+                  ref={deleteButtonRef}
                   type="button"
-                  onClick={() => setConfirmingDelete(true)}
+                  onClick={askDelete}
                   className="flex min-h-11 items-center justify-center gap-1.5 rounded-[14px] px-3.5 text-[13px] text-terracotta"
                 >
                   <Icon name="trash" size={16} />
