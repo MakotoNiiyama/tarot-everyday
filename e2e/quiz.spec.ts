@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe("キーワードクイズ", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/quiz");
+    await page.goto("/tarot/quiz");
   });
 
   test("ページタイトルが表示されること", async ({ page }) => {
@@ -53,11 +53,11 @@ test.describe("キーワードクイズ", () => {
     await expect(page.getByText("もう一度挑戦する")).toBeVisible();
   });
 
-  test("BottomNavのクイズタブがアクティブであること", async ({ page }) => {
+  test("タロットナビがアクティブであること", async ({ page }) => {
     const nav = page.getByRole("navigation", {
       name: "メインナビゲーション",
     });
-    const quizLink = nav.getByRole("link", { name: /クイズ/ });
+    const quizLink = nav.getByRole("link", { name: "タロット" });
     await expect(quizLink).toHaveAttribute("aria-current", "page");
   });
 });

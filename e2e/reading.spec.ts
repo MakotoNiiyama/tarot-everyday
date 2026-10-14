@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe("タロット占い（スプレッド）", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/reading");
+    await page.goto("/tarot/reading");
   });
 
   test("ページタイトルが表示されること", async ({ page }) => {
@@ -77,11 +77,11 @@ test.describe("タロット占い（スプレッド）", () => {
     await expect(page.getByText("恋愛の相談")).toBeVisible();
   });
 
-  test("BottomNavの占いタブがアクティブであること", async ({ page }) => {
+  test("タロットナビがアクティブであること", async ({ page }) => {
     const nav = page.getByRole("navigation", {
       name: "メインナビゲーション",
     });
-    const readingLink = nav.getByRole("link", { name: /占い/ });
+    const readingLink = nav.getByRole("link", { name: "タロット" });
     await expect(readingLink).toHaveAttribute("aria-current", "page");
   });
 });

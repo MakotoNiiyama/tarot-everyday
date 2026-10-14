@@ -1,8 +1,8 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("早見表ページ — カード一覧", () => {
+test.describe("早見表ページ — タロットのカード一覧", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/cards");
+    await page.goto("/guide");
   });
 
   test("ページタイトルと説明が表示されること", async ({ page }) => {
@@ -75,11 +75,13 @@ test.describe("早見表ページ — カード一覧", () => {
 
   test("カードリンクが正しいhrefを持つこと", async ({ page }) => {
     const foolLink = page.getByRole("link", { name: "愚者の詳細を見る" });
-    await expect(foolLink).toHaveAttribute("href", "/cards/major-00");
+    await expect(foolLink).toHaveAttribute("href", "/guide/tarot/major-00");
   });
 
-  test("BottomNavの早見表タブがアクティブであること", async ({ page }) => {
-    const navLink = page.getByRole("link", { name: "早見表" });
+  test("早見表ナビがアクティブであること", async ({ page }) => {
+    const navLink = page
+      .getByRole("navigation", { name: "メインナビゲーション" })
+      .getByRole("link", { name: "早見表" });
     await expect(navLink).toHaveAttribute("aria-current", "page");
   });
 });
