@@ -24,14 +24,14 @@ test.describe("ホーム画面", () => {
   });
 
   test("入口カードから各ページへ遷移できること", async ({ page }) => {
-    const menu = page.getByRole("navigation", { name: "メニュー" });
-    await menu.getByRole("link", { name: /相談したいことがある/ }).click();
+    const menu = () => page.getByRole("navigation", { name: "メニュー" });
+    await menu().getByRole("link", { name: /相談したいことがある/ }).click();
     await expect(page).toHaveURL("/tarot/reading");
-    await page.goBack();
-    await menu.getByRole("link", { name: /タロットクイズ/ }).click();
+    await page.goto("/");
+    await menu().getByRole("link", { name: /タロットクイズ/ }).click();
     await expect(page).toHaveURL("/tarot/quiz");
-    await page.goBack();
-    await menu.getByRole("link", { name: /早見表/ }).click();
+    await page.goto("/");
+    await menu().getByRole("link", { name: /早見表/ }).click();
     await expect(page).toHaveURL("/guide");
   });
 
