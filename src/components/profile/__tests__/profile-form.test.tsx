@@ -45,7 +45,7 @@ describe("ProfileForm", () => {
     render(<ProfileForm initial={null} />);
     expect(screen.getByText(/時刻が不明の場合/)).toBeInTheDocument();
     await user.click(screen.getByRole("radio", { name: "午前・午後" }));
-    expect(screen.getByRole("radio", { name: /午後/ })).toBeInTheDocument();
+    expect(within(screen.getByRole("radiogroup", { name: "午前・午後" })).getByRole("radio", { name: /午後/ })).toBeInTheDocument();
     await user.click(screen.getByRole("radio", { name: "時刻を指定" }));
     expect(screen.getByRole("combobox", { name: "出生時刻" })).toBeInTheDocument();
   });

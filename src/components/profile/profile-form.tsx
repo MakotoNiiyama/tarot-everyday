@@ -172,7 +172,7 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
               </p>
             )}
             {timeMode === "half" && (
-              <div className="grid grid-cols-2 gap-2">
+              <div role="radiogroup" aria-label="午前・午後" className="grid grid-cols-2 gap-2">
                 {(
                   [
                     ["am", "午前", "0:00〜11:59"],
@@ -182,7 +182,8 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
                   <button
                     key={value}
                     type="button"
-                    aria-pressed={half === value}
+                    role="radio"
+                    aria-checked={half === value}
                     onClick={() => setHalf(value)}
                     className={`min-h-[52px] rounded-[14px] border text-[15px] font-bold ${
                       half === value ? "border-gold bg-gold/18 text-gold-light" : "border-gold/25 bg-surface text-gold-dim"
