@@ -1,4 +1,4 @@
-// 早見表ページ（新URL）
+// 早見表ページ(新URL)
 import { CardBrowser } from "@/components/card-browser";
 import { PageContainer } from "@/components/page-container";
 import { PageHeader } from "@/components/page-header";

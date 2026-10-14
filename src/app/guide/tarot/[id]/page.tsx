@@ -1,4 +1,4 @@
-// タロットカード詳細ページ（新URL）
+// タロットカード詳細ページ(新URL)
 import { notFound } from "next/navigation";
 import { allCards, getCardById } from "@/data/cards";
 import { CardDetail } from "@/components/card-detail";
