@@ -92,10 +92,13 @@ function subscribe(onChange: () => void) {
   };
 }
 
-/** 保存できたら true。localStorage が使えない環境では false */
+/** 保存できたら true。プロフィールが不正、または localStorage が使えない環境では false */
 export function saveBirthProfile(profile: BirthProfile): boolean {
+  // 読み込み時と同じ検証を通るものだけを保存する(保存したのに読めない状態を作らない)
+  const raw = JSON.stringify(profile);
+  if (!parseBirthProfile(raw)) return false;
   try {
-    localStorage.setItem(BIRTH_PROFILE_STORAGE_KEY, JSON.stringify(profile));
+    localStorage.setItem(BIRTH_PROFILE_STORAGE_KEY, raw);
     notify();
     return true;
   } catch {

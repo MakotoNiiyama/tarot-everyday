@@ -22,6 +22,7 @@ const localStorageMock = {
 };
 
 beforeEach(() => {
+  vi.clearAllMocks();
   for (const k of Object.keys(store)) delete store[k];
   localStorageMock.getItem.mockImplementation((k: string) => store[k] ?? null);
   localStorageMock.setItem.mockImplementation((k: string, v: string) => {
@@ -82,6 +83,13 @@ describe("useBirthProfile", () => {
     expect(store[BIRTH_PROFILE_STORAGE_KEY]).toBeDefined();
     act(() => clearBirthProfile());
     expect(screen.getByText("none")).toBeInTheDocument();
+  });
+
+  it("不正なプロフィールは保存せず false を返すこと", () => {
+    const invalid = { ...valid, time: { kind: "hour", hour: 24 } } as BirthProfile;
+    expect(saveBirthProfile(invalid)).toBe(false);
+    expect(localStorageMock.setItem).not.toHaveBeenCalledWith(BIRTH_PROFILE_STORAGE_KEY, expect.anything());
+    expect(store[BIRTH_PROFILE_STORAGE_KEY]).toBeUndefined();
   });
 
   it("localStorage が使えなくても落ちないこと", () => {
