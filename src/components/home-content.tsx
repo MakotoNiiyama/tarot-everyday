@@ -1,170 +1,75 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import type { TarotCard } from "@/data/types";
-import { loadTodayDraw, type DailyDrawResult } from "@/lib/daily-draw";
-import { getCardById } from "@/data/cards";
-import {
-  ScratchDivider,
-  ScratchFrame,
-  ScratchMoon,
-  ScratchHeader,
-} from "@/components/svg/scratch-decorations";
-import { CardDetailSheet } from "@/components/card-detail-sheet";
+import { Icon, type IconName } from "@/components/icons/icon";
+import { DailyTarotCard } from "@/components/daily-tarot-card";
+import { PageContainer } from "@/components/page-container";
+import { primaryButton } from "@/lib/button-styles";
+import { formatEnWeekday, formatJaDate, formatJaWeekday } from "@/lib/date-format";
+import { useToday } from "@/lib/use-today";
+
+const entries: { href: string; icon: IconName; title: string; sub: string }[] = [
+  { href: "/tarot/reading", icon: "chat", title: "相談したいことがある", sub: "タロット占い" },
+  { href: "/tarot/quiz", icon: "quiz", title: "タロットクイズ", sub: "カードの意味を練習する" },
+  { href: "/guide", icon: "guide", title: "早見表", sub: "タロットと7占術の要素を調べる" },
+];
 
 export function HomeContent() {
-  const [draw, setDraw] = useState<DailyDrawResult | null>(null);
-  const [card, setCard] = useState<TarotCard | null>(null);
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    const saved = loadTodayDraw();
-    if (saved) {
-      const found = getCardById(saved.cardId);
-      if (found) {
-        setDraw(saved);
-        setCard(found);
-      }
-    }
-    setLoaded(true);
-  }, []);
+  const today = useToday();
 
   return (
-    <div className="flex flex-col flex-1 items-center justify-center px-6 py-12">
-      <main className="flex flex-col items-center gap-8 w-full max-w-sm">
-        {/* ヘッダー装飾 */}
-        <ScratchHeader className="text-gold" />
+    <PageContainer>
+      <header className="flex flex-col gap-0.5 px-1">
+        <h1 className="font-accent text-[30px] leading-none text-gold lg:sr-only">tarot-everyday</h1>
+        {today && (
+          <>
+            <p className="text-xs text-gold-dim lg:hidden">
+              {formatJaDate(today)} {formatJaWeekday(today)}
+            </p>
+            <p className="hidden font-accent text-[26px] leading-none text-gold lg:block">{formatEnWeekday(today)}</p>
+            <p className="hidden font-heading text-[30px] lg:block">{formatJaDate(today)}</p>
+          </>
+        )}
+      </header>
 
-        {/* アプリタイトル */}
-        <div className="text-center">
-          <h1 className="font-heading text-3xl font-bold text-gold tracking-wide">
-            Tarot Everyday
-          </h1>
-          <p className="mt-2 text-gold-dim text-sm font-accent">
-            ― 毎日の一枚が、あなたの道を照らす ―
-          </p>
-        </div>
-
-        <ScratchDivider className="text-gold" />
-
-        {/* 今日の占いセクション */}
-        {loaded && (draw && card ? (
-          <TodayResult card={card} draw={draw} />
-        ) : (
-          <TodayCTA />
-        ))}
-
-        <ScratchDivider className="text-gold" />
-
-        {/* クイックリンク */}
-        <nav aria-label="メインメニュー" className="grid grid-cols-1 gap-4 w-full">
-          <Link
-            href="/cards"
-            className="border border-gold/25 rounded-lg p-4 text-center hover:border-gold/50 transition-colors block"
-          >
-            <p className="text-gold font-heading text-lg">📖 早見表</p>
-            <p className="text-gold-dim text-xs mt-1">全78枚のカード一覧</p>
-          </Link>
-          <Link
-            href="/daily"
-            className="border border-gold/25 rounded-lg p-4 text-center hover:border-gold/50 transition-colors block"
-          >
-            <p className="text-gold font-heading text-lg">🔮 1dayタロット</p>
-            <p className="text-gold-dim text-xs mt-1">今日の運勢を占う</p>
-          </Link>
-          <Link
-            href="/reading"
-            className="border border-gold/25 rounded-lg p-4 text-center hover:border-gold/50 transition-colors block"
-          >
-            <p className="text-gold font-heading text-lg">🃏 タロット占い</p>
-            <p className="text-gold-dim text-xs mt-1">スプレッドで本格鑑定</p>
-          </Link>
-        </nav>
-      </main>
-    </div>
-  );
-}
-
-/** 占い未実施時のCTA */
-function TodayCTA() {
-  return (
-    <Link href="/daily" aria-label="今日のカードを引く">
-      <ScratchFrame className="w-40 h-56 text-gold">
-        <div className="w-full h-full flex items-center justify-center">
-          <div className="text-center">
-            <ScratchMoon className="text-gold mx-auto mb-3" />
-            <p className="text-cream text-sm">今日のカードを</p>
-            <p className="text-cream text-sm">引いてみましょう</p>
-          </div>
-        </div>
-      </ScratchFrame>
-    </Link>
-  );
-}
-
-/** 占い済みの結果サマリー */
-function TodayResult({
-  card,
-  draw,
-}: {
-  card: TarotCard;
-  draw: DailyDrawResult;
-}) {
-  const orientation = draw.isReversed ? "逆位置" : "正位置";
-  const orientationIcon = draw.isReversed ? "☽" : "☀";
-  const orientationColor = draw.isReversed
-    ? "text-terracotta"
-    : "text-gold-light";
-  const generalFortune = draw.isReversed
-    ? card.fortune.general.reversed
-    : card.fortune.general.upright;
-
-  return (
-    <section className="w-full flex flex-col items-center gap-4" aria-label="今日の占い結果">
-      <p className="text-gold-dim text-xs font-heading">Today&apos;s Card</p>
-
-      {/* カード画像 — タップでボトムシート */}
-      <CardDetailSheet card={card}>
-        <div className="w-32 h-auto rounded-lg overflow-hidden border border-gold/30 shadow-lg shadow-black/40">
-          <Image
-            src={card.imagePath}
-            alt={card.name.ja}
-            width={128}
-            height={213}
-            className={`w-full h-auto ${draw.isReversed ? "rotate-180" : ""}`}
-          />
-        </div>
-      </CardDetailSheet>
-
-      {/* カード名・正逆 */}
-      <div className="text-center">
-        <p className="text-gold font-heading text-lg font-bold leading-tight">
-          {card.name.ja}
-        </p>
-        <p className="text-gold-dim text-xs font-accent mt-0.5">
-          {card.name.en}
-        </p>
-        <p className={`text-sm mt-1 font-heading ${orientationColor}`}>
-          {orientationIcon} {orientation}
-        </p>
-      </div>
-
-      {/* 総合運サマリー */}
-      <div className="text-center max-w-xs">
-        <p className="text-gold text-sm font-heading font-bold mb-1">⭐ 総合運</p>
-        <p className="text-cream/85 text-xs leading-relaxed line-clamp-3">
-          {generalFortune}
-        </p>
-      </div>
-
-      <Link
-        href="/daily"
-        className="text-gold text-xs underline underline-offset-4 hover:text-gold-light transition-colors"
+      <section
+        aria-label="今日の運勢"
+        className="flex flex-col gap-3.5 rounded-[22px] border border-gold/30 bg-surface p-[18px] lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:gap-7 lg:rounded-3xl lg:p-7"
       >
-        1dayタロットを見る →
-      </Link>
-    </section>
+        <div className="flex flex-col gap-3.5 lg:gap-3">
+          <div className="flex items-baseline justify-between lg:justify-start lg:gap-2.5">
+            <h2 className="font-heading text-[19px] lg:text-[22px]">今日の運勢</h2>
+            <span className="font-accent text-base text-gold-dark lg:text-[17px]">Today&apos;s fortune</span>
+          </div>
+          <DailyTarotCard variant="home" />
+        </div>
+        <Link href="/fortune" className={`${primaryButton} lg:px-[22px]`}>
+          詳しく見る
+          <Icon name="right" size={16} strokeWidth={2} />
+        </Link>
+      </section>
+
+      <nav aria-label="メニュー">
+        <ul className="flex flex-col gap-2.5 lg:grid lg:grid-cols-3 lg:gap-4">
+          {entries.map((e) => (
+            <li key={e.href}>
+              <Link
+                href={e.href}
+                className="flex min-h-[76px] items-center gap-3.5 rounded-[18px] border border-gold/25 bg-surface p-4 text-cream transition-colors hover:border-gold/50 lg:min-h-[150px] lg:flex-col lg:items-start lg:rounded-[20px] lg:p-[22px]"
+              >
+                <span className="flex h-11 w-11 flex-none items-center justify-center rounded-xl bg-gold/12 text-gold-light lg:h-12 lg:w-12 lg:rounded-[14px]">
+                  <Icon name={e.icon} size={22} />
+                </span>
+                <span className="flex flex-1 flex-col gap-0.5 lg:gap-1">
+                  <span className="font-heading text-base lg:text-[17px]">{e.title}</span>
+                  <span className="text-xs text-gold-dim">{e.sub}</span>
+                </span>
+                <Icon name="right" size={18} className="text-gold-dark lg:hidden" />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </PageContainer>
   );
 }
