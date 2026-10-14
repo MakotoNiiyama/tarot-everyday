@@ -1,4 +1,161 @@
 import type { GuideEntry } from "./types";
 
-/** 数秘術の早見表(Task 2 で項目を入れる) */
-export const numerologyEntries: GuideEntry[] = [];
+/** 数秘術の早見表 */
+export const numerologyEntries: GuideEntry[] = [
+  {
+    system: "numerology",
+    id: "number-1",
+    group: "ルートナンバー",
+    name: "1",
+    reading: "いち",
+    keywords: ["始まり", "自立", "リーダー", "行動力", "意志"],
+    summary:
+      "新しい道を自分の足で切り開く、始まりの数です。決めたことに向かってまっすぐ進む行動力があり、自然と周りを引っぱる立場に立ちます。人の意見にも耳を傾けると、その強さがより生きてきます。",
+    periodNote: "新しい一歩がテーマ。迷っていたことをひとつ選び、自分から動き出すと流れが開けます。",
+    image: { kind: "glyph", text: "1" },
+    related: ["number-2", "number-8"],
+  },
+  {
+    system: "numerology",
+    id: "number-2",
+    group: "ルートナンバー",
+    name: "2",
+    reading: "に",
+    keywords: ["協調", "感受性", "調和", "受容", "パートナー"],
+    summary:
+      "人の気持ちを細やかに感じ取り、人と人の間をつなぐ調和の数です。争いを好まず、相手に寄り添いながら物事を穏やかにまとめる力があります。自分の本音も大切に伝えると、関係がより深まります。",
+    periodNote: "協力と調和がテーマ。ひとりで決めず、身近な人と相談しながら進めると物事がなめらかに運びます。",
+    image: { kind: "glyph", text: "2" },
+    related: ["number-1", "number-6", "number-11"],
+  },
+  {
+    system: "numerology",
+    id: "number-3",
+    group: "ルートナンバー",
+    name: "3",
+    reading: "さん",
+    keywords: ["表現", "喜び", "創造性", "社交性", "楽しさ"],
+    summary:
+      "楽しむ心と豊かな表現力をもつ、創造の数です。言葉や作品、笑顔を通じて周りを明るくし、人の輪の中で自然と輝きます。気が散りやすい面もあるので、ひとつのことを形にする粘りを意識するとよいでしょう。",
+    periodNote: "表現と楽しさがテーマ。感じたことを言葉や形にして発信すると、思わぬ喜びが返ってきます。",
+    image: { kind: "glyph", text: "3" },
+    related: ["number-5", "number-6"],
+  },
+  {
+    system: "numerology",
+    id: "number-4",
+    group: "ルートナンバー",
+    name: "4",
+    reading: "よん",
+    keywords: ["安定", "努力", "誠実", "秩序", "土台"],
+    summary:
+      "コツコツと積み重ねて確かな土台を築く、安定の数です。誠実で責任感が強く、計画を立てて着実にやり遂げる力があります。変化に慎重になりすぎず、柔軟さも取り入れると世界が広がります。",
+    periodNote: "基盤づくりがテーマ。目の前の作業を丁寧に片づけ、足元を整えることが後の安心につながります。",
+    image: { kind: "glyph", text: "4" },
+    related: ["number-8", "number-22"],
+  },
+  {
+    system: "numerology",
+    id: "number-5",
+    group: "ルートナンバー",
+    name: "5",
+    reading: "ご",
+    keywords: ["自由", "変化", "冒険", "好奇心", "柔軟性"],
+    summary:
+      "変化を楽しみ、新しい体験を求めて動き回る自由の数です。好奇心旺盛で順応性が高く、未知の場所や人から多くのことを吸収します。飽きやすさを自覚し、大切なものは手放さないよう心がけると安定します。",
+    periodNote: "変化と自由がテーマ。いつもと違う道や新しい体験を試すと、停滞していた流れが動き出します。",
+    image: { kind: "glyph", text: "5" },
+    related: ["number-1", "number-3"],
+  },
+  {
+    system: "numerology",
+    id: "number-6",
+    group: "ルートナンバー",
+    name: "6",
+    reading: "ろく",
+    keywords: ["愛情", "責任", "家庭", "思いやり", "美意識"],
+    summary:
+      "身近な人を大切にし、愛情で包み込む献身の数です。責任感が強く、家庭や仲間の中で頼られる存在になります。人の世話に力を注ぎすぎず、自分を満たす時間もつくると、その優しさが長く続きます。",
+    periodNote: "愛情と責任がテーマ。身近な人への感謝を言葉にし、できる範囲で手を差し伸べると絆が深まります。",
+    image: { kind: "glyph", text: "6" },
+    related: ["number-2", "number-9", "number-33"],
+  },
+  {
+    system: "numerology",
+    id: "number-7",
+    group: "ルートナンバー",
+    name: "7",
+    reading: "なな",
+    keywords: ["探求", "内省", "直感", "専門性"],
+    summary:
+      "物事の奥にある理由を知りたくなる、探求者の数です。ひとりで考える時間から確かな答えを見つけ、専門的な分野で力を発揮します。慎重で人と距離を置きがちですが、信頼できる相手には深い誠実さを見せます。",
+    periodNote: "内省と探求がテーマ。急いで結論を出さず、調べて考える時間を確保すると気づきが深まります。",
+    image: { kind: "glyph", text: "7" },
+    related: ["number-2", "number-9"],
+  },
+  {
+    system: "numerology",
+    id: "number-8",
+    group: "ルートナンバー",
+    name: "8",
+    reading: "はち",
+    keywords: ["達成", "力", "豊かさ", "実行力", "野心"],
+    summary:
+      "目標に向かって力強く進み、結果を形にする達成の数です。物事を動かす実行力と現実的な判断力があり、仕事やお金の面で成果を上げやすいでしょう。周りへの配慮を忘れないことが、成功を長続きさせます。",
+    periodNote: "成果と実行がテーマ。目標をはっきりさせ、ためらわずに行動へ移すと手応えのある結果が得られます。",
+    image: { kind: "glyph", text: "8" },
+    related: ["number-1", "number-4"],
+  },
+  {
+    system: "numerology",
+    id: "number-9",
+    group: "ルートナンバー",
+    name: "9",
+    reading: "きゅう",
+    keywords: ["完成", "博愛", "寛容", "手放し", "理想"],
+    summary:
+      "多くの経験を経て、広い心で人を受け入れる完成の数です。思いやりが深く、立場や背景の違う人とも分け隔てなく接します。理想と現実の間で悩むこともありますが、その優しさは周りに大きな安心を与えます。",
+    periodNote: "締めくくりと手放しがテーマ。役目を終えたものに区切りをつけると、次の始まりに向けて心が軽くなります。",
+    image: { kind: "glyph", text: "9" },
+    related: ["number-6", "number-7"],
+  },
+  {
+    system: "numerology",
+    id: "number-11",
+    group: "マスターナンバー",
+    name: "11",
+    reading: "じゅういち",
+    keywords: ["直感", "ひらめき", "感受性", "精神性", "啓発"],
+    summary:
+      "鋭い直感とひらめきで、周りに気づきをもたらすマスターナンバーです。目に見えないものを感じ取る力が強く、人の心を動かすメッセージを届けます。繊細で疲れやすいので、心を休める時間を大切にしましょう。",
+    periodNote: "直感とひらめきがテーマ。ふと浮かんだ考えを書き留め、心の声に従って選ぶと道が開けます。",
+    image: { kind: "glyph", text: "11" },
+    related: ["number-2", "number-22", "number-33"],
+  },
+  {
+    system: "numerology",
+    id: "number-22",
+    group: "マスターナンバー",
+    name: "22",
+    reading: "にじゅうに",
+    keywords: ["実現力", "構築", "大きな理想", "社会貢献", "統率"],
+    summary:
+      "大きな理想を現実の形にする、建築家のようなマスターナンバーです。広い視野と着実な実行力をあわせ持ち、多くの人の役に立つ仕組みを築きます。期待の重さを抱え込まず、一歩ずつ積み上げる姿勢を大切にしましょう。",
+    periodNote: "理想を形にすることがテーマ。大きな目標を小さな手順に分け、ひとつずつ進めると実現に近づきます。",
+    image: { kind: "glyph", text: "22" },
+    related: ["number-4", "number-11", "number-33"],
+  },
+  {
+    system: "numerology",
+    id: "number-33",
+    group: "マスターナンバー",
+    name: "33",
+    reading: "さんじゅうさん",
+    keywords: ["奉仕", "癒し", "無償の愛", "理想"],
+    summary:
+      "人を癒し、支えることに喜びを見いだすマスターナンバーです。理想が高く、自分のことより周りを優先しがちなので、自分を労わることも大切にしましょう。その温かさは、出会う人の心を静かに満たしていきます。",
+    periodNote: "誰かの力になる場面が増えそうです。抱え込みすぎず、受け取ることも許すと循環が生まれます。",
+    image: { kind: "glyph", text: "33" },
+    related: ["number-6", "number-11", "number-22"],
+  },
+];
