@@ -34,6 +34,13 @@ export const suitNames: Record<Suit, { short: string; medium: string; full: stri
   pentacles: { short: "金貨", medium: "ペンタクル", full: "ペンタクル（金貨）" },
 };
 
+/** カードのアルカナ分類を日本語で返す(大アルカナ / スーツ名 / 小アルカナ) */
+export function arcanaLabel(card: TarotCard): string {
+  return card.arcana === "major"
+    ? "大アルカナ"
+    : (card.suit ? suitNames[card.suit].full : "小アルカナ");
+}
+
 /** スーツに対応するテーマカラーclass */
 export const suitColorClass: Record<Suit, string> = {
   wands: "text-terracotta",

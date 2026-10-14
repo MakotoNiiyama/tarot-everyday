@@ -5,12 +5,10 @@ import Image from "next/image";
 import type { TarotCard } from "@/data/types";
 import { ScratchDivider } from "@/components/svg/scratch-decorations";
 import { TarotCardMeaningTabs } from "@/components/tarot-card-meaning-tabs";
-import { suitNames } from "@/lib/tarot-utils";
+import { arcanaLabel } from "@/lib/tarot-utils";
 
 export function CardDetail({ card }: { card: TarotCard }) {
-  const subTitle = card.arcana === "major"
-    ? "大アルカナ"
-    : (card.suit ? suitNames[card.suit].full : "小アルカナ");
+  const subTitle = arcanaLabel(card);
 
   return (
     <div className="flex flex-col flex-1 px-4 py-6 pb-20 gap-6 max-w-lg mx-auto">
