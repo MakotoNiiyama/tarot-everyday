@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Kaisei+Decol:wght@500;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0B0704;font-family:'Zen Maru Gothic',sans-serif;color:#F5E6C8;}
+*{box-sizing:border-box}
+a{color:#E5B85A;text-decoration:none}a:hover{color:#F5E6C8}
+button{font-family:inherit;cursor:pointer}
+</style>
+</helmet>
+<svg width="0" height="0" style="position:absolute;width:0;height:0" aria-hidden="true"><defs>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9h-5v-6h-6v6H4z"/></symbol>
+<symbol id="i-fortune" viewBox="0 0 24 24"><path d="M12 3l2.4 6.1L21 9.6l-5 4.3 1.6 6.5L12 16.9 6.4 20.4 8 13.9 3 9.6l6.6-.5z"/></symbol>
+<symbol id="i-tarot" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M12 8l1.2 2.6 2.8.3-2.1 1.9.6 2.8-2.5-1.4-2.5 1.4.6-2.8-2.1-1.9 2.8-.3z"/></symbol>
+<symbol id="i-guide" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2z"/><path d="M4 21a2 2 0 0 1 2-2h14"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+<symbol id="i-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+<symbol id="z-aries" viewBox="0 0 24 24"><path d="M12 21V8M12 8C12 4 8 3 6 5s-1 5 1 6M12 8c0-4 4-5 6-3s1 5-1 6"/></symbol>
+<symbol id="z-taurus" viewBox="0 0 24 24"><circle cx="12" cy="15" r="5"/><path d="M5 3a7 7 0 0 0 14 0"/></symbol>
+<symbol id="z-gemini" viewBox="0 0 24 24"><path d="M4 4c5 2 11 2 16 0M4 20c5-2 11-2 16 0M9 5v14M15 5v14"/></symbol>
+<symbol id="z-cancer" viewBox="0 0 24 24"><circle cx="7" cy="10" r="2.5"/><circle cx="17" cy="14" r="2.5"/><path d="M4 10C6 5 15 4 20 8M20 14c-2 5-11 6-16 2"/></symbol>
+<symbol id="z-leo" viewBox="0 0 24 24"><circle cx="7" cy="16" r="3"/><path d="M10 16V8a4 4 0 0 1 8 0c0 4-3 6-3 9a2.5 2.5 0 0 0 5 0"/></symbol>
+<symbol id="z-virgo" viewBox="0 0 24 24"><path d="M3 7c0-3 4-3 4 0v9M7 7c0-3 4-3 4 0v9M11 7c0-3 4-3 4 0v7c0 3 2 5 5 6M15 14c3 0 4-2 4-5"/></symbol>
+<symbol id="z-libra" viewBox="0 0 24 24"><path d="M3 15h5a4 4 0 1 1 8 0h5M3 20h18"/></symbol>
+<symbol id="z-scorpio" viewBox="0 0 24 24"><path d="M3 7c0-3 4-3 4 0v9M7 7c0-3 4-3 4 0v9M11 7c0-3 4-3 4 0v8a3 3 0 0 0 3 3h3M18 15l3 3-3 3"/></symbol>
+<symbol id="z-sagittarius" viewBox="0 0 24 24"><path d="M5 19L19 5M12 5h7v7M8 9l7 7"/></symbol>
+<symbol id="z-capricorn" viewBox="0 0 24 24"><path d="M3 7c2 0 3 2 3 4v6M6 10c0-3 2-4 4-4s3 2 3 4v5a3 3 0 1 0 3-3"/></symbol>
+<symbol id="z-aquarius" viewBox="0 0 24 24"><path d="M3 9l3-3 3 3 3-3 3 3 3-3 3 3M3 17l3-3 3 3 3-3 3 3 3-3 3 3"/></symbol>
+<symbol id="z-pisces" viewBox="0 0 24 24"><path d="M7 4c4 4 4 12 0 16M17 4c-4 4-4 12 0 16M4 12h16"/></symbol>
+<symbol id="p-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="1.2"/></symbol>
+<symbol id="p-moon" viewBox="0 0 24 24"><path d="M14 3a9 9 0 1 0 7 14.5A7.5 7.5 0 0 1 14 3z"/></symbol>
+<symbol id="p-asc" viewBox="0 0 24 24"><path d="M3 16h18M6 16a6 6 0 0 1 12 0"/></symbol>
+<symbol id="p-jupiter" viewBox="0 0 24 24"><path d="M4 8c0-3 6-3 6 0 0 3-4 5-6 9h13M14 4v17"/></symbol>
+<symbol id="p-saturn" viewBox="0 0 24 24"><path d="M8 3v18M5 7h7M8 11c4-2 8 0 8 4s-4 5-4 7"/></symbol>
+<symbol id="p-mercury" viewBox="0 0 24 24"><circle cx="12" cy="11" r="4"/><path d="M12 15v6M9 18h6M8 3a4 4 0 0 0 8 0"/></symbol>
+<symbol id="p-venus" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M12 13v8M9 18h6"/></symbol>
+<symbol id="p-mars" viewBox="0 0 24 24"><circle cx="10" cy="14" r="5"/><path d="M14 10l6-6M15 4h5v5"/></symbol>
+</defs></svg>
+
+<section style="padding:40px 48px;display:flex;flex-direction:column;gap:12px">
+  <div style="font-family:'Caveat',cursive;font-size:30px;color:#CC8F1F;line-height:1">Fortune — /fortune</div>
+  <h1 style="margin:0;font-family:'Kaisei Decol',serif;font-weight:500;font-size:26px">運勢ページ</h1>
+  <p style="margin:0;max-width:720px;color:#B89A5A;font-size:14px;line-height:1.8;text-wrap:pretty">タブ(今日 / 今月 / 今年)は動作します。チップをタップするとスマホはボトムシート、PCは右サイドパネルで詳細が開きます。<a href="Index.dc.html">← 画面一覧</a></p>
+</section>
+
+<section style="padding:0 48px 64px;display:flex;gap:56px;align-items:flex-start;flex-wrap:wrap">
+
+  <!-- ===== Mobile ===== -->
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:12px;color:#B89A5A;letter-spacing:.1em">スマホ 390px</div>
+    <div style="width:390px;background:#130C06;border:1px solid rgba(204,143,31,.3);border-radius:44px;overflow:hidden;position:relative;display:flex;flex-direction:column">
+      <div style="height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 30px;font-size:14px;font-weight:700;color:#F5E6C8"><span>9:41</span><span style="width:52px;height:6px;border-radius:3px;background:rgba(245,230,200,.35)"></span></div>
+      <div style="padding:4px 16px 24px;display:flex;flex-direction:column;gap:16px">
+
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-family:'Caveat',cursive;font-size:22px;color:#CC8F1F;line-height:1">Today</div>
+            <div style="font-family:'Kaisei Decol',serif;font-size:22px;line-height:1.2">2026年10月14日<span style="font-size:13px;color:#B89A5A;margin-left:8px">水曜日</span></div>
+            <div style="font-size:12px;color:#B89A5A;margin-top:2px">1990/3/29 生 · 14時台 · 東京都</div>
+            <div style="font-size:11px;color:#C75B39;display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:6px;height:6px;border-radius:3px;background:#C75B39"></span>ASC 候補: 獅子座(〜14:20)/ 乙女座(14:20〜)</div>
+          </div>
+          <a href="Profile.dc.html" style="display:flex;align-items:center;gap:4px;font-size:12px;color:#E5B85A;padding:8px 10px;border:1px solid rgba(204,143,31,.3);border-radius:999px;min-height:36px"><svg width="14" height="14" style="fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><use href="#i-edit"></use></svg>編集</a>
+        </div>
+
+        <div style="background:#2A1D0A;border:1px solid rgba(204,143,31,.25);border-radius:20px;padding:16px;display:flex;gap:16px;align-items:center">
+          <div style="width:84px;height:140px;flex:none;border-radius:10px;border:1px solid rgba(204,143,31,.4);background:repeating-linear-gradient(135deg,#3A2910 0 6px,#2A1D0A 6px 12px);display:flex;align-items:flex-end;justify-content:center;padding:6px"><span style="font-family:ui-monospace,monospace;font-size:9px;color:#B89A5A;text-align:center">card image<br>XVII The Star</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+            <div style="font-size:11px;color:#B89A5A;letter-spacing:.1em">今日の1dayタロット</div>
+            <div style="font-family:'Kaisei Decol',serif;font-size:22px;line-height:1.2">星</div>
+            <div style="font-family:'Caveat',cursive;font-size:18px;color:#CC8F1F;line-height:1;margin-top:-4px">The Star</div>
+            <div style="display:inline-flex;align-items:center;gap:4px;align-self:flex-start;padding:4px 10px;border-radius:999px;background:rgba(204,143,31,.15);color:#E5B85A;font-size:12px;font-weight:700"><svg width="14" height="14" style="fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><use href="#i-up"></use></svg>正位置</div>
+            <div style="font-size:13px;color:#F5E6C8">希望 · ひらめき · 癒し</div>
+          </div>
+        </div>
+
+        <div style="position:sticky;top:0;z-index:2;background:#130C06;padding:6px 0">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:#1F1508;border:1px solid rgba(204,143,31,.25);border-radius:14px;padding:4px">
+            <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+              <button onClick="{{ t.go }}" style="min-height:40px;border:none;border-radius:11px;font-size:14px;font-weight:700;background:{{ t.bg }};color:{{ t.color }}">{{ t.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <sc-for list="{{ systemsM }}" as="s" hint-placeholder-count="7">
+          <div style="background:#2A1D0A;border:1px solid rgba(204,143,31,.25);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+              <div style="display:flex;align-items:baseline;gap:8px"><span style="font-family:'Kaisei Decol',serif;font-size:17px;color:#E5B85A">{{ s.name }}</span><span style="font-family:'Caveat',cursive;font-size:14px;color:#8B5E3C">{{ s.en }}</span></div>
+              <div style="font-size:11px;color:#B89A5A;white-space:nowrap">{{ s.period }}</div>
+            </div>
+            <div style="font-size:14px;line-height:1.7;text-wrap:pretty">{{ s.summary }}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <sc-for list="{{ s.chips }}" as="c" hint-placeholder-count="3">
+                <button onClick="{{ c.open }}" style="display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 12px;border-radius:999px;background:rgba(204,143,31,.1);border:1px solid rgba(204,143,31,.3);color:#F5E6C8;font-size:13px"><span style="font-size:11px;color:#B89A5A">{{ c.k }}</span><span style="font-weight:700">{{ c.v }}</span></button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">
+          <div style="font-family:'Caveat',cursive;font-size:20px;color:#CC8F1F;line-height:1">About you</div>
+          <div style="font-family:'Kaisei Decol',serif;font-size:20px">あなたについて</div>
+          <svg width="120" height="8" viewBox="0 0 120 8" style="fill:none;stroke:#CC8F1F;stroke-width:1.5;stroke-linecap:round"><path d="M2 5c15-3 25 2 40-1s25-3 40 1 25-2 36-1"/><path d="M8 7c20-2 40 0 60-2s30 0 44 1" opacity=".5"/></svg>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ genericM }}" as="a" hint-placeholder-count="4">
+            <div style="background:#2A1D0A;border:1px solid rgba(204,143,31,.25);border-radius:16px;overflow:hidden">
+              <button onClick="{{ a.toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;min-height:52px;background:none;border:none;color:#F5E6C8;text-align:left"><span style="font-family:'Kaisei Decol',serif;font-size:16px">{{ a.name }}</span><svg width="18" height="18" style="fill:none;stroke:#B89A5A;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s;transform:rotate({{ a.rot }})"><use href="#i-chev"></use></svg></button>
+              <sc-if value="{{ a.open }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:12px">
+                  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                    <sc-for list="{{ a.facts }}" as="f" hint-placeholder-count="3">
+                      <div style="background:#1F1508;border-radius:12px;padding:10px 6px;display:grid;grid-template-rows:28px 56px;align-items:center;justify-items:center;text-align:center"><span style="font-size:10px;line-height:1.3;color:#B89A5A;white-space:pre-line;align-self:start">{{ f.k }}</span><span style="font-family:'Kaisei Decol',serif;font-size:{{ f.size }};color:{{ f.color }};line-height:1.15;white-space:pre-line;word-break:keep-all">{{ f.v }}</span></div>
+                    </sc-for>
+                  </div>
+                  <div style="font-size:13px;line-height:1.7;color:#F5E6C8">{{ a.desc }}</div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+
+          <!-- 四柱推命 -->
+          <div style="background:#2A1D0A;border:1px solid rgba(204,143,31,.25);border-radius:16px;overflow:hidden">
+            <button onClick="{{ accM.shichu.toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;min-height:52px;background:none;border:none;color:#F5E6C8;text-align:left"><span style="font-family:'Kaisei Decol',serif;font-size:16px">四柱推命</span><svg width="18" height="18" style="fill:none;stroke:#B89A5A;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transform:rotate({{ accM.shichu.rot }})"><use href="#i-chev"></use></svg></button>
+            <sc-if value="{{ accM.shichu.open }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:12px">
+                <div style="font-size:11px;color:#B89A5A">命式表 · 日干 甲(木)</div>
+                <div style="display:grid;grid-template-columns:44px repeat(4,1fr);gap:4px;font-size:12px">
+                  <div></div>
+                  <sc-for list="{{ meishiki }}" as="col" hint-placeholder-count="4"><div style="text-align:center;color:#B89A5A;font-size:11px;padding-bottom:2px">{{ col.pillar }}</div></sc-for>
+                  <div style="color:#B89A5A;font-size:10px;display:flex;align-items:center">干支</div>
+                  <sc-for list="{{ meishiki }}" as="col" hint-placeholder-count="4"><div style="background:#1F1508;border-radius:10px;padding:8px 4px;text-align:center;font-family:'Kaisei Decol',serif;font-size:22px;line-height:1.1;color:#E5B85A">{{ col.kan }}<br>{{ col.shi }}</div></sc-for>
+                  <div style="color:#B89A5A;font-size:10px;display:flex;align-items:center">通変星</div>
+                  <sc-for list="{{ meishiki }}" as="col" hint-placeholder-count="4"><div style="background:#1F1508;border-radius:8px;padding:6px 2px;text-align:center">{{ col.tsuhen }}</div></sc-for>
+                  <div style="color:#B89A5A;font-size:10px;display:flex;align-items:center">蔵干</div>
+                  <sc-for list="{{ meishiki }}" as="col" hint-placeholder-count="4"><div style="background:#1F1508;border-radius:8px;padding:6px 2px;text-align:center">{{ col.zokan }}</div></sc-for>
+                  <div style="color:#B89A5A;font-size:10px;display:flex;align-items:center">十二運</div>
+                  <sc-for list="{{ meishiki }}" as="col" hint-placeholder-count="4"><div style="background:#1F1508;border-radius:8px;padding:6px 2px;text-align:center">{{ col.un }}</div></sc-for>
+                </div>
+                <div style="font-size:13px;line-height:1.7">日干 甲は大樹の木。まっすぐ伸びる気質で、理想を掲げて周囲を導きます。大運は癸未。</div>
+              </div>
+            </sc-if>
+          </div>
+
+          <!-- 算命学 -->
+          <div style="background:#2A1D0A;border:1px solid rgba(204,143,31,.25);border-radius:16px;overflow:hidden">
+            <button onClick="{{ accM.sanmei.toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;min-height:52px;background:none;border:none;color:#F5E6C8;text-align:left"><span style="font-family:'Kaisei Decol',serif;font-size:16px">算命学</span><svg width="18" height="18" style="fill:none;stroke:#B89A5A;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transform:rotate({{ accM.sanmei.rot }})"><use href="#i-chev"></use></svg></button>
+            <sc-if value="{{ accM.sanmei.open }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:12px">
+                <div style="font-size:11px;color:#B89A5A">人体星図 · 戌亥天中殺</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:300px;align-self:center;width:100%">
+                  <sc-for list="{{ jintai }}" as="cell" hint-placeholder-count="9">
+                    <div style="aspect-ratio:1;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:{{ cell.bg }};border:1px solid {{ cell.border }}"><span style="font-size:9px;color:#B89A5A">{{ cell.pos }}</span><span style="font-family:'Kaisei Decol',serif;font-size:{{ cell.size }};color:{{ cell.color }};line-height:1">{{ cell.star }}</span></div>
+                  </sc-for>
+                </div>
+                <div style="font-size:13px;line-height:1.7">中心星は龍高星。既存の枠を越えて学び、旅をし、新しい価値を持ち帰る星です。</div>
+              </div>
+            </sc-if>
+          </div>
+
+          <!-- 西洋占星術 -->
+          <div style="background:#2A1D0A;border:1px solid rgba(204,143,31,.25);border-radius:16px;overflow:hidden">
+            <button onClick="{{ accM.west.toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;min-height:52px;background:none;border:none;color:#F5E6C8;text-align:left"><span style="font-family:'Kaisei Decol',serif;font-size:16px">西洋占星術</span><svg width="18" height="18" style="fill:none;stroke:#B89A5A;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transform:rotate({{ accM.west.rot }})"><use href="#i-chev"></use></svg></button>
+            <sc-if value="{{ accM.west.open }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:12px;align-items:center">
+                <svg width="300" height="300" viewBox="0 0 300 300" style="fill:none;stroke:#CC8F1F;stroke-width:1">
+                  <circle cx="150" cy="150" r="144" style="stroke:rgba(204,143,31,.6)"/>
+                  <circle cx="150" cy="150" r="116" style="stroke:rgba(204,143,31,.6)"/>
+                  <circle cx="150" cy="150" r="46" style="stroke:rgba(204,143,31,.35)"/>
+                  <sc-for list="{{ spokes }}" as="l" hint-placeholder-count="12"><line x1="{{ l.x1 }}" y1="{{ l.y1 }}" x2="{{ l.x2 }}" y2="{{ l.y2 }}" style="stroke:rgba(204,143,31,.4)"/></sc-for>
+                  <sc-for list="{{ signRing }}" as="g" hint-placeholder-count="12"><svg x="{{ g.x }}" y="{{ g.y }}" width="18" height="18" style="stroke:#B89A5A;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><use href="#{{ g.icon }}"></use></svg></sc-for>
+                  <sc-for list="{{ planets }}" as="p" hint-placeholder-count="8"><circle cx="{{ p.cx }}" cy="{{ p.cy }}" r="12" style="fill:#1F1508;stroke:#CC8F1F"/><svg x="{{ p.x }}" y="{{ p.y }}" width="16" height="16" style="stroke:#E5B85A;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><use href="#{{ p.icon }}"></use></svg></sc-for>
+                </svg>
+                <div style="width:100%;display:grid;grid-template-columns:1fr 1fr 48px 48px;font-size:13px;row-gap:2px">
+                  <div style="color:#B89A5A;font-size:11px;padding:4px 8px">天体</div><div style="color:#B89A5A;font-size:11px;padding:4px 8px">星座</div><div style="color:#B89A5A;font-size:11px;padding:4px 8px">度</div><div style="color:#B89A5A;font-size:11px;padding:4px 8px">室</div>
+                  <sc-for list="{{ natal }}" as="n" hint-placeholder-count="8">
+                    <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:#1F1508;border-radius:8px 0 0 8px"><svg width="16" height="16" style="fill:none;stroke:#E5B85A;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><use href="#{{ n.icon }}"></use></svg>{{ n.name }}</div>
+                    <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:#1F1508"><svg width="16" height="16" style="fill:none;stroke:#B89A5A;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><use href="#{{ n.signIcon }}"></use></svg>{{ n.sign }}</div>
+                    <div style="padding:6px 8px;background:#1F1508;color:#B89A5A">{{ n.deg }}</div>
+                    <div style="padding:6px 8px;background:#1F1508;border-radius:0 8px 8px 0;color:#B89A5A">{{ n.house }}</div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+
+        <div style="background:#1F1508;border:1px dashed rgba(204,143,31,.4);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px;margin-top:8px">
+          <div style="font-family:'Kaisei Decol',serif;font-size:16px">総合鑑定プロンプト</div>
+          <div style="font-size:12px;color:#B89A5A;line-height:1.6">7占術の結果と1dayタロットをまとめた鑑定用プロンプトを作成します。</div>
+          <textarea placeholder="相談したいこと(任意)" style="width:100%;min-height:72px;resize:none;background:#130C06;border:1px solid rgba(204,143,31,.3);border-radius:12px;padding:10px 12px;color:#F5E6C8;font-family:inherit;font-size:14px"></textarea>
+          <button style="display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border:none;border-radius:14px;background:#CC8F1F;color:#130C06;font-size:15px;font-weight:700"><svg width="18" height="18" style="fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><use href="#i-copy"></use></svg>総合鑑定プロンプトをコピー</button>
+        </div>
+      </div>
+
+      <div style="position:sticky;bottom:0;background:rgba(19,12,6,.96);border-top:1px solid rgba(204,143,31,.2);padding:8px 8px 0;backdrop-filter:blur(8px)">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr)">
+          <a href="Home.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;min-height:48px;color:#B89A5A;font-size:10px"><svg width="22" height="22" style="fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><use href="#i-home"></use></svg>ホーム</a>
+          <a href="Fortune.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;min-height:48px;color:#E5B85A;font-size:10px;font-weight:700"><svg width="22" height="22" style="fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><use href="#i-fortune"></use></svg>運勢</a>
+          <a href="Tarot.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;min-height:48px;color:#B89A5A;font-size:10px"><svg width="22" height="22" style="fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><use href="#i-tarot"></use></svg>タロット</a>
+          <a href="Guide.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;min-height:48px;color:#B89A5A;font-size:10px"><svg width="22" height="22" style="fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><use href="#i-guide"></use></svg>早見表</a>
+        </div>
+        <div style="height:34px;display:flex;align-items:center;justify-content:center"><span style="width:134px;height:5px;border-radius:3px;background:rgba(245,230,200,.5)"></span></div>
+      </div>
+
+      <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ closeSheet }}" style="position:absolute;inset:0;background:rgba(0,0,0,.55);z-index:5"></div>
+        <div style="position:absolute;left:0;right:0;bottom:0;max-height:85%;background:#1F1508;border-radius:28px 28px 0 0;border-top:1px solid rgba(204,143,31,.35);z-index:6;display:flex;flex-direction:column;overflow:hidden">
+          <div style="display:flex;justify-content:center;padding:10px 0 4px"><span style="width:40px;height:5px;border-radius:3px;background:rgba(184,154,90,.6)"></span></div>
+          <div style="padding:8px 20px 44px;display:flex;flex-direction:column;gap:14px;overflow:auto">
+            <div style="width:120px;height:120px;align-self:center;border-radius:20px;border:1px solid rgba(204,143,31,.4);background:#2A1D0A;display:flex;align-items:center;justify-content:center">
+              <sc-if value="{{ sheet.hasIcon }}" hint-placeholder-val="{{ false }}"><svg width="64" height="64" style="fill:none;stroke:#E5B85A;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round"><use href="#{{ sheet.icon }}"></use></svg></sc-if>
+              <sc-if value="{{ sheet.hasGlyph }}" hint-placeholder-val="{{ true }}"><span style="font-family:'Kaisei Decol',serif;color:#E5B85A;line-height:1;font-size:{{ sheet.glyphSize }}">{{ sheet.glyph }}</span></sc-if>
+            </div>
+            <div style="text-align:center;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:12px;color:#B89A5A">{{ sheet.k }}</div>
+              <div style="font-family:'Kaisei Decol',serif;font-size:24px">{{ sheet.v }}</div>
+              <div style="font-size:12px;color:#B89A5A">{{ sheet.yomi }}</div>
+            </div>
+            <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:6px">
+              <sc-for list="{{ sheet.kw }}" as="w" hint-placeholder-count="3"><span style="padding:4px 10px;border-radius:999px;background:rgba(204,143,31,.15);color:#E5B85A;font-size:12px;font-weight:700">{{ w }}</span></sc-for>
+            </div>
+            <div style="font-size:14px;line-height:1.8;text-wrap:pretty">{{ sheet.desc }}</div>
+            <a href="Guide.dc.html" style="display:flex;align-items:center;justify-content:center;gap:4px;min-height:44px;border:1px solid rgba(204,143,31,.4);border-radius:14px;color:#E5B85A;font-size:14px">早見表で見る<svg width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><use href="#i-right"></use></svg></a>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <!-- ===== Bottom sheet alone ===== -->
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:12px;color:#B89A5A;letter-spacing:.1em">スマホ · 詳細ボトムシート(最大高 85vh)</div>
+    <div style="width:390px;height:620px;background:rgba(19,12,6,1);border:1px solid rgba(204,143,31,.3);border-radius:44px;overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,.55)"></div>
+      <div style="position:absolute;left:0;right:0;bottom:0;background:#1F1508;border-radius:28px 28px 0 0;border-top:1px solid rgba(204,143,31,.35);display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:center;padding:10px 0 4px"><span style="width:40px;height:5px;border-radius:3px;background:rgba(184,154,90,.6)"></span></div>
+        <div style="padding:8px 20px 44px;display:flex;flex-direction:column;gap:14px">
+          <div style="width:120px;height:120px;align-self:center;border-radius:20px;border:1px solid rgba(204,143,31,.4);background:#2A1D0A;display:flex;align-items:center;justify-content:center"><span style="font-family:'Kaisei Decol',serif;color:#E5B85A;line-height:1;font-size:72px">7</span></div>
+          <div style="text-align:center;display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:12px;color:#B89A5A">パーソナルデー</div>
+            <div style="font-family:'Kaisei Decol',serif;font-size:24px">7</div>
+            <div style="font-size:12px;color:#B89A5A">ぱーそなるでー なな</div>
+          </div>
+          <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:6px"><span style="padding:4px 10px;border-radius:999px;background:rgba(204,143,31,.15);color:#E5B85A;font-size:12px;font-weight:700">内省</span><span style="padding:4px 10px;border-radius:999px;background:rgba(204,143,31,.15);color:#E5B85A;font-size:12px;font-weight:700">探求</span><span style="padding:4px 10px;border-radius:999px;background:rgba(204,143,31,.15);color:#E5B85A;font-size:12px;font-weight:700">直感</span></div>
+          <div style="font-size:14px;line-height:1.8;text-wrap:pretty">一人の時間が実りをもたらす日。急いで答えを出さず、調べ、考え、感じたことを書き留めておくと、後で大きな気づきにつながります。</div>
+          <a href="Guide.dc.html" style="display:flex;align-items:center;justify-content:center;gap:4px;min-height:44px;border:1px solid rgba(204,143,31,.4);border-radius:14px;color:#E5B85A;font-size:14px">早見表で見る<svg width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><use href="#i-right"></use></svg></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PC ===== -->
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:12px;color:#B89A5A;letter-spacing:.1em">PC 1280px · 2カラム · 詳細は右サイドパネル(推奨)</div>
+    <div style="width:1280px;background:#130C06;border:1px solid rgba(204,143,31,.3);border-radius:16px;overflow:hidden;position:relative;display:grid;grid-template-columns:232px minmax(0,1fr) {{ panelCol }}">
+      <aside style="border-right:1px solid rgba(204,143,31,.15);padding:28px 16px;display:flex;flex-direction:column;gap:28px">
+        <div style="padding:0 12px;display:flex;flex-direction:column;gap:2px"><div style="font-family:'Caveat',cursive;font-size:28px;color:#CC8F1F;line-height:1">tarot-everyday</div><div style="font-size:11px;color:#8B5E3C;letter-spacing:.15em">毎日の占いノート</div></div>
+        <nav style="display:flex;flex-direction:column;gap:4px">
+          <a href="Home.dc.html" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;color:#B89A5A;font-size:14px"><svg width="20" height="20" style="fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><use href="#i-home"></use></svg>ホーム</a>
+          <a href="Fortune.dc.html" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;color:#E5B85A;font-size:14px;font-weight:700;background:rgba(204,143,31,.12)"><svg width="20" height="20" style="fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><use href="#i-fortune"></use></svg>運勢</a>
+          <a href="Tarot.dc.html" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;color:#B89A5A;font-size:14px"><svg width="20" height="20" style="fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><use href="#i-tarot"></use></svg>タロット</a>
+          <a href="Guide.dc.html" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;color:#B89A5A;font-size:14px"><svg width="20" height="20" style="fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><use href="#i-guide"></use></svg>早見表</a>
+        </nav>
+        <div style="margin-top:auto;padding:12px 14px;border:1px solid rgba(204,143,31,.2);border-radius:14px;font-size:12px;color:#B89A5A;line-height:1.6">1990/3/29 生<br>14時台 · 東京都<a href="Profile.dc.html" style="display:block;margin-top:6px;font-size:12px">編集</a></div>
+      </aside>
+
+      <main style="padding:36px 40px 48px;display:flex;flex-direction:column;gap:28px;min-width:0">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-family:'Caveat',cursive;font-size:26px;color:#CC8F1F;line-height:1">Today</div>
+            <div style="font-family:'Kaisei Decol',serif;font-size:30px;line-height:1.2">2026年10月14日<span style="font-size:15px;color:#B89A5A;margin-left:10px">水曜日</span></div>
+            <div style="font-size:13px;color:#B89A5A;display:flex;gap:14px;align-items:center;flex-wrap:wrap"><span>1990/3/29 生 · 14時台 · 東京都</span><span style="color:#C75B39;display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:6px;height:6px;border-radius:3px;background:#C75B39"></span>ASC 候補: 獅子座(〜14:20)/ 乙女座(14:20〜)</span></div>
+          </div>
+          <a href="Profile.dc.html" style="display:flex;align-items:center;gap:6px;font-size:13px;color:#E5B85A;padding:10px 16px;border:1px solid rgba(204,143,31,.3);border-radius:999px;white-space:nowrap;flex:none"><svg width="14" height="14" style="fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><use href="#i-edit"></use></svg>プロフィールを編集</a>
+        </div>
+
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) {{ rightCol }};gap:28px;align-items:start">
+          <!-- left -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="background:#2A1D0A;border:1px solid rgba(204,143,31,.25);border-radius:20px;padding:20px;display:flex;gap:20px;align-items:center">
+              <div style="width:96px;height:160px;flex:none;border-radius:10px;border:1px solid rgba(204,143,31,.4);background:repeating-linear-gradient(135deg,#3A2910 0 6px,#2A1D0A 6px 12px);display:flex;align-items:flex-end;justify-content:center;padding:6px"><span style="font-family:ui-monospace,monospace;font-size:9px;color:#B89A5A;text-align:center">card image<br>XVII The Star</span></div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="font-size:11px;color:#B89A5A;letter-spacing:.1em">今日の1dayタロット</div>
+                <div style="display:flex;align-items:baseline;gap:10px"><span style="font-family:'Kaisei Decol',serif;font-size:26px;line-height:1.2">星</span><span style="font-family:'Caveat',cursive;font-size:20px;color:#CC8F1F">The Star</span></div>
+                <div style="display:inline-flex;align-items:center;gap:4px;align-self:flex-start;padding:4px 10px;border-radius:999px;background:rgba(204,143,31,.15);color:#E5B85A;font-size:12px;font-weight:700"><svg width="14" height="14" style="fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><use href="#i-up"></use></svg>正位置</div>
+                <div style="font-size:14px">希望 · ひらめき · 癒し</div>
+                <div style="font-size:13px;color:#B89A5A;line-height:1.7;max-width:420px">暗闇のあとに差す静かな光。信じて進めば、必要なものは自然と満たされます。</div>
+              </div>
+            </div>
+
+            <div style="position:sticky;top:0;z-index:2;background:#130C06;padding:6px 0">
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:#1F1508;border:1px solid rgba(204,143,31,.25);border-radius:14px;padding:4px;max-width:360px">
+                <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+                  <button onClick="{{ t.go }}" style="min-height:40px;border:none;border-radius:11px;font-size:14px;font-weight:700;background:{{ t.bg }};color:{{ t.color }}">{{ t.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+
+            <sc-for list="{{ systemsP }}" as="s" hint-placeholder-count="7">
+              <div style="background:#2A1D0A;border:1px solid rgba(204,143,31,.25);border-radius:20px;padding:18px 20px;display:grid;grid-template-columns:{{ cardCols }};gap:14px 16px">
+                <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px"><span style="font-family:'Kaisei Decol',serif;font-size:18px;color:#E5B85A">{{ s.name }}</span><span style="font-family:'Caveat',cursive;font-size:15px;color:#8B5E3C;line-height:1">{{ s.en }}</span><span style="font-size:11px;color:#B89A5A;flex-basis:100%">{{ s.period }}</span></div>
+                <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+                  <div style="font-size:14px;line-height:1.7;text-wrap:pretty">{{ s.summary }}</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:8px">
+                    <sc-for list="{{ s.chips }}" as="c" hint-placeholder-count="3">
+                      <button onClick="{{ c.open }}" style="display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 12px;border-radius:999px;background:rgba(204,143,31,.1);border:1px solid rgba(204,143,31,.3);color:#F5E6C8;font-size:13px"><span style="font-size:11px;color:#B89A5A">{{ c.k }}</span><span style="font-weight:700">{{ c.v }}</span></button>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- right -->
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="font-family:'Caveat',cursive;font-size:20px;color:#CC8F1F;line-height:1">About you</div>
+              <div style="font-family:'Kaisei Decol',serif;font-size:20px">あなたについて</div>
+              <svg width="120" height="8" viewBox="0 0 120 8" style="fill:none;stroke:#CC8F1F;stroke-width:1.5;stroke-linecap:round"><path d="M2 5c15-3 25 2 40-1s25-3 40 1 25-2 36-1"/><path d="M8 7c20-2 40 0 60-2s30 0 44 1" opacity=".5"/></svg>
+            </div>
+
+            <sc-for list="{{ genericP }}" as="a" hint-placeholder-count="4">
+              <div style="background:#2A1D0A;border:1px solid rgba(204,143,31,.25);border-radius:16px;overflow:hidden">
+                <button onClick="{{ a.toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;min-height:52px;background:none;border:none;color:#F5E6C8;text-align:left"><span style="font-family:'Kaisei Decol',serif;font-size:16px">{{ a.name }}</span><svg width="18" height="18" style="fill:none;stroke:#B89A5A;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transform:rotate({{ a.rot }})"><use href="#i-chev"></use></svg></button>
+                <sc-if value="{{ a.open }}" hint-placeholder-val="{{ true }}">
+                  <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:12px">
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                      <sc-for list="{{ a.facts }}" as="f" hint-placeholder-count="3">
+                        <div style="background:#1F1508;border-radius:12px;padding:10px 6px;display:grid;grid-template-rows:28px 56px;align-items:center;justify-items:center;text-align:center"><span style="font-size:10px;line-height:1.3;color:#B89A5A;white-space:pre-line;align-self:start">{{ f.k }}</span><span style="font-family:'Kaisei Decol',serif;font-size:{{ f.size }};color:{{ f.color }};line-height:1.15;white-space:pre-line;word-break:keep-all">{{ f.v }}</span></div>
+                      </sc-for>
+                    </div>
+                    <div style="font-size:13px;line-height:1.7">{{ a.desc }}</div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+
+            <div style="background:#2A1D0A;border:1px solid rgba(204,143,31,.25);border-radius:16px;overflow:hidden">
+              <button onClick="{{ accP.shichu.toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;min-height:52px;background:none;border:none;color:#F5E6C8;text-align:left"><span style="font-family:'Kaisei Decol',serif;font-size:16px">四柱推命</span><svg width="18" height="18" style="fill:none;stroke:#B89A5A;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transform:rotate({{ accP.shichu.rot }})"><use href="#i-chev"></use></svg></button>
+              <sc-if value="{{ accP.shichu.open }}" hint-placeholder-val="{{ true }}">
+                <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:12px">
+                  <div style="font-size:11px;color:#B89A5A">命式表 · 日干 甲(木)</div>
+                  <div style="display:grid;grid-template-columns:44px repeat(4,1fr);gap:4px;font-size:12px">
+                    <div></div>
+                    <sc-for list="{{ meishiki }}" as="col" hint-placeholder-count="4"><div style="text-align:center;color:#B89A5A;font-size:11px">{{ col.pillar }}</div></sc-for>
+                    <div style="color:#B89A5A;font-size:10px;display:flex;align-items:center">干支</div>
+                    <sc-for list="{{ meishiki }}" as="col" hint-placeholder-count="4"><div style="background:#1F1508;border-radius:10px;padding:8px 4px;text-align:center;font-family:'Kaisei Decol',serif;font-size:22px;line-height:1.1;color:#E5B85A">{{ col.kan }}<br>{{ col.shi }}</div></sc-for>
+                    <div style="color:#B89A5A;font-size:10px;display:flex;align-items:center">通変星</div>
+                    <sc-for list="{{ meishiki }}" as="col" hint-placeholder-count="4"><div style="background:#1F1508;border-radius:8px;padding:6px 2px;text-align:center">{{ col.tsuhen }}</div></sc-for>
+                    <div style="color:#B89A5A;font-size:10px;display:flex;align-items:center">蔵干</div>
+                    <sc-for list="{{ meishiki }}" as="col" hint-placeholder-count="4"><div style="background:#1F1508;border-radius:8px;padding:6px 2px;text-align:center">{{ col.zokan }}</div></sc-for>
+                    <div style="color:#B89A5A;font-size:10px;display:flex;align-items:center">十二運</div>
+                    <sc-for list="{{ meishiki }}" as="col" hint-placeholder-count="4"><div style="background:#1F1508;border-radius:8px;padding:6px 2px;text-align:center">{{ col.un }}</div></sc-for>
+                  </div>
+                  <div style="font-size:13px;line-height:1.7">日干 甲は大樹の木。まっすぐ伸びる気質で、理想を掲げて周囲を導きます。大運は癸未。</div>
+                </div>
+              </sc-if>
+            </div>
+
+            <div style="background:#2A1D0A;border:1px solid rgba(204,143,31,.25);border-radius:16px;overflow:hidden">
+              <button onClick="{{ accP.sanmei.toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;min-height:52px;background:none;border:none;color:#F5E6C8;text-align:left"><span style="font-family:'Kaisei Decol',serif;font-size:16px">算命学</span><svg width="18" height="18" style="fill:none;stroke:#B89A5A;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transform:rotate({{ accP.sanmei.rot }})"><use href="#i-chev"></use></svg></button>
+              <sc-if value="{{ accP.sanmei.open }}" hint-placeholder-val="{{ true }}">
+                <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:12px">
+                  <div style="font-size:11px;color:#B89A5A">人体星図 · 戌亥天中殺</div>
+                  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:300px;align-self:center;width:100%">
+                    <sc-for list="{{ jintai }}" as="cell" hint-placeholder-count="9">
+                      <div style="aspect-ratio:1;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:{{ cell.bg }};border:1px solid {{ cell.border }}"><span style="font-size:9px;color:#B89A5A">{{ cell.pos }}</span><span style="font-family:'Kaisei Decol',serif;font-size:{{ cell.size }};color:{{ cell.color }};line-height:1">{{ cell.star }}</span></div>
+                    </sc-for>
+                  </div>
+                  <div style="font-size:13px;line-height:1.7">中心星は龍高星。既存の枠を越えて学び、旅をし、新しい価値を持ち帰る星です。</div>
+                </div>
+              </sc-if>
+            </div>
+
+            <div style="background:#2A1D0A;border:1px solid rgba(204,143,31,.25);border-radius:16px;overflow:hidden">
+              <button onClick="{{ accP.west.toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;min-height:52px;background:none;border:none;color:#F5E6C8;text-align:left"><span style="font-family:'Kaisei Decol',serif;font-size:16px">西洋占星術</span><svg width="18" height="18" style="fill:none;stroke:#B89A5A;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transform:rotate({{ accP.west.rot }})"><use href="#i-chev"></use></svg></button>
+              <sc-if value="{{ accP.west.open }}" hint-placeholder-val="{{ true }}">
+                <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:12px;align-items:center">
+                  <svg viewBox="0 0 300 300" style="width:100%;max-width:300px;height:auto;fill:none;stroke:#CC8F1F;stroke-width:1">
+                    <circle cx="150" cy="150" r="144" style="stroke:rgba(204,143,31,.6)"/>
+                    <circle cx="150" cy="150" r="116" style="stroke:rgba(204,143,31,.6)"/>
+                    <circle cx="150" cy="150" r="46" style="stroke:rgba(204,143,31,.35)"/>
+                    <sc-for list="{{ spokes }}" as="l" hint-placeholder-count="12"><line x1="{{ l.x1 }}" y1="{{ l.y1 }}" x2="{{ l.x2 }}" y2="{{ l.y2 }}" style="stroke:rgba(204,143,31,.4)"/></sc-for>
+                    <sc-for list="{{ signRing }}" as="g" hint-placeholder-count="12"><svg x="{{ g.x }}" y="{{ g.y }}" width="18" height="18" style="stroke:#B89A5A;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><use href="#{{ g.icon }}"></use></svg></sc-for>
+                    <sc-for list="{{ planets }}" as="p" hint-placeholder-count="8"><circle cx="{{ p.cx }}" cy="{{ p.cy }}" r="12" style="fill:#1F1508;stroke:#CC8F1F"/><svg x="{{ p.x }}" y="{{ p.y }}" width="16" height="16" style="stroke:#E5B85A;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><use href="#{{ p.icon }}"></use></svg></sc-for>
+                  </svg>
+                  <div style="width:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr) 36px 30px;font-size:12px;row-gap:2px">
+                    <div style="color:#B89A5A;font-size:11px;padding:4px 6px">天体</div><div style="color:#B89A5A;font-size:11px;padding:4px 6px">星座</div><div style="color:#B89A5A;font-size:11px;padding:4px 6px">度</div><div style="color:#B89A5A;font-size:11px;padding:4px 6px">室</div>
+                    <sc-for list="{{ natal }}" as="n" hint-placeholder-count="8">
+                      <div style="display:flex;align-items:center;gap:6px;padding:6px;background:#1F1508;border-radius:8px 0 0 8px;white-space:nowrap"><svg width="15" height="15" style="flex:none;fill:none;stroke:#E5B85A;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><use href="#{{ n.icon }}"></use></svg>{{ n.name }}</div>
+                      <div style="display:flex;align-items:center;gap:6px;padding:6px;background:#1F1508;white-space:nowrap"><svg width="15" height="15" style="flex:none;fill:none;stroke:#B89A5A;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><use href="#{{ n.signIcon }}"></use></svg>{{ n.sign }}</div>
+                      <div style="padding:6px;background:#1F1508;color:#B89A5A">{{ n.deg }}</div>
+                      <div style="padding:6px;background:#1F1508;border-radius:0 8px 8px 0;color:#B89A5A">{{ n.house }}</div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+
+            <div style="background:#1F1508;border:1px dashed rgba(204,143,31,.4);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:10px;margin-top:8px">
+              <div style="font-family:'Kaisei Decol',serif;font-size:16px">総合鑑定プロンプト</div>
+              <div style="font-size:12px;color:#B89A5A;line-height:1.6">7占術の結果と1dayタロットをまとめた鑑定用プロンプトを作成します。</div>
+              <textarea placeholder="相談したいこと(任意)" style="width:100%;min-height:80px;resize:none;background:#130C06;border:1px solid rgba(204,143,31,.3);border-radius:12px;padding:10px 12px;color:#F5E6C8;font-family:inherit;font-size:14px"></textarea>
+              <button style="display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;border:none;border-radius:14px;background:#CC8F1F;color:#130C06;font-size:15px;font-weight:700"><svg width="18" height="18" style="fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><use href="#i-copy"></use></svg>総合鑑定プロンプトをコピー</button>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <sc-if value="{{ panelOpen }}" hint-placeholder-val="{{ true }}">
+        <div style="background:#1F1508;border-left:1px solid rgba(204,143,31,.35);display:flex;flex-direction:column">
+          <div style="position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid rgba(204,143,31,.15);background:#1F1508"><span style="font-size:12px;color:#B89A5A;letter-spacing:.1em">詳細</span><button onClick="{{ closePanel }}" style="width:36px;height:36px;border-radius:999px;border:1px solid rgba(204,143,31,.3);background:none;color:#E5B85A;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><use href="#i-close"></use></svg></button></div>
+          <div style="padding:24px 24px 32px;display:flex;flex-direction:column;gap:16px;overflow:auto">
+            <div style="width:140px;height:140px;align-self:center;border-radius:24px;border:1px solid rgba(204,143,31,.4);background:#2A1D0A;display:flex;align-items:center;justify-content:center">
+              <sc-if value="{{ panel.hasIcon }}" hint-placeholder-val="{{ false }}"><svg width="72" height="72" style="fill:none;stroke:#E5B85A;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round"><use href="#{{ panel.icon }}"></use></svg></sc-if>
+              <sc-if value="{{ panel.hasGlyph }}" hint-placeholder-val="{{ true }}"><span style="font-family:'Kaisei Decol',serif;color:#E5B85A;line-height:1;font-size:{{ panel.glyphSize }}">{{ panel.glyph }}</span></sc-if>
+            </div>
+            <div style="text-align:center;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:12px;color:#B89A5A">{{ panel.k }}</div>
+              <div style="font-family:'Kaisei Decol',serif;font-size:26px">{{ panel.v }}</div>
+              <div style="font-size:12px;color:#B89A5A">{{ panel.yomi }}</div>
+            </div>
+            <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:6px">
+              <sc-for list="{{ panel.kw }}" as="w" hint-placeholder-count="3"><span style="padding:4px 10px;border-radius:999px;background:rgba(204,143,31,.15);color:#E5B85A;font-size:12px;font-weight:700">{{ w }}</span></sc-for>
+            </div>
+            <div style="font-size:14px;line-height:1.8;text-wrap:pretty">{{ panel.desc }}</div>
+            <a href="Guide.dc.html" style="display:flex;align-items:center;justify-content:center;gap:4px;min-height:44px;border:1px solid rgba(204,143,31,.4);border-radius:14px;color:#E5B85A;font-size:14px">早見表で見る<svg width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><use href="#i-right"></use></svg></a>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+    <div style="max-width:720px;font-size:13px;color:#B89A5A;line-height:1.8">PCの詳細表示はサイドパネルを推奨します。画面下からのシートは横に広いPCでは視線移動が大きく、モーダルは背後の運勢カードを隠してしまうためです。パネルは覆いかぶせず第3カラムとして開き(1280px幅では本文が 1fr で縮む)、左の運勢カードと人物像を見たまま、チップを切り替えられます。</div>
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const SYS = [
+  {id:'num', name:'数秘術', en:'Numerology', p:{
+    today:{period:'2026/10/14', summary:'静かに内省し、学びを深める日。答えは外ではなく内側にあります。', chips:[['パーソナルデー','7'],['ライフパス','33'],['バースデー','2']]},
+    month:{period:'2026/10/1〜10/31', summary:'基盤を固め、コツコツと積み上げる月。手順を整えることが運を呼びます。', chips:[['パーソナルマンス','4'],['ライフパス','33']]},
+    year:{period:'2026/1/1〜12/31', summary:'表現と交流が広がる一年。発信するほど縁が巡ります。', chips:[['パーソナルイヤー','3'],['ライフパス','33'],['バースデー','2']]}}},
+  {id:'kyusei', name:'九星気学', en:'Nine Star Ki', p:{
+    today:{period:'2026/10/14', summary:'日盤で本命星は東に巡る。朝のうちに動くと吉。吉方位は南西。', chips:[['本命星','一白水星'],['日盤','東'],['吉方位','南西']]},
+    month:{period:'2026/10/8〜11/6', summary:'月盤は中宮。動かず内を整える月。吉方位は北。', chips:[['月命星','六白金星'],['月盤','中宮'],['吉方位','北']]},
+    year:{period:'2026/2/4〜2027/2/3', summary:'年盤は北西。目上との縁が開き、責任ある役割が巡る年。', chips:[['年盤','北西'],['傾斜宮','乾宮'],['吉方位','東南']]}}},
+  {id:'maya', name:'マヤ暦', en:'Tzolkin', p:{
+    today:{period:'2026/10/14', summary:'今日のKINは白い鏡・音6。物事をありのままに見る目が冴える日。', chips:[['今日のKIN','58 白い鏡'],['本命KIN','173'],['銀河の音','4']]},
+    month:{period:'13の月の暦 第4の月', summary:'自己存在の月。形を定め、生活のかたちを決めるとき。', chips:[['第4の月','自己存在'],['ウェイブスペル','赤い月']]},
+    year:{period:'2026/7/26〜2027/7/24', summary:'年回りはKIN 208 黄色い星。完成と手放し、美しさを選ぶ年。', chips:[['年回りKIN','208 黄色い星'],['本命KIN','173 赤い空歩く人']]}}},
+  {id:'shichu', name:'四柱推命', en:'Four Pillars', p:{
+    today:{period:'2026/10/14 · 丙辰', summary:'日干 甲に対して丙は食神。発信や創作が活きる日です。', chips:[['日干','甲'],['今日','丙辰'],['通変星','食神']]},
+    month:{period:'2026/10/8〜11/7 · 戊戌', summary:'偏財の月。人との縁が金運を運びます。交際費は惜しまずに。', chips:[['今月','戊戌'],['通変星','偏財']]},
+    year:{period:'2026/2/4〜2027/2/3 · 丙午', summary:'食神の年。表現と楽しみを広げる。大運は癸未で印綬の支え。', chips:[['今年','丙午'],['通変星','食神'],['大運','癸未']]}}},
+  {id:'sanmei', name:'算命学', en:'Sanmeigaku', p:{
+    today:{period:'2026/10/14', summary:'日干支 丙辰。龍高星が動き、知的好奇心が高まる日。', chips:[['中心星','龍高星'],['今日の星','鳳閣星']]},
+    month:{period:'2026/10/8〜11/7', summary:'戌月は天中殺。大きな判断は保留に、整理と準備の月。', chips:[['天中殺','該当月'],['天中殺','戌亥']]},
+    year:{period:'2026/2/4〜2027/2/3', summary:'午年は天中殺に該当しない。積極的に動いてよい年。', chips:[['今年の星','石門星'],['天中殺','該当なし']]}}},
+  {id:'sukuyo', name:'宿曜', en:'Sukuyo', p:{
+    today:{period:'2026/10/14', summary:'今日の宿は氐宿。本命宿との関係は「栄」。良縁と発展の日。', chips:[['本命宿','角宿'],['今日','栄'],['今日の宿','氐宿']]},
+    month:{period:'2026/10', summary:'「安」の月。安定と堅実。守りを固めると吉。', chips:[['本命宿','角宿'],['今月','安']]},
+    year:{period:'2026', summary:'「危」の年。慎重に、確認を重ねて進むこと。', chips:[['本命宿','角宿'],['今年','危']]}}},
+  {id:'west', name:'西洋占星術', en:'Astrology', p:{
+    today:{period:'2026/10/14', summary:'月は天秤座を運行。対人関係とバランス感覚に光が当たる日。', chips:[['太陽','牡羊座',null,'z-aries'],['月','獅子座',null,'z-leo'],['ASC','獅子座',null,'z-leo']]},
+    month:{period:'2026/10', summary:'新月は第3ハウス、満月は第9ハウス。学びと遠出がテーマ。', chips:[['新月','3ハウス',null,'p-moon'],['満月','9ハウス',null,'p-moon']]},
+    year:{period:'2026', summary:'木星は第11ハウス、土星は第8ハウスを運行。仲間と資産の再編。', chips:[['木星','11ハウス',null,'p-jupiter'],['土星','8ハウス',null,'p-saturn']]}}},
+];
+const DETAIL = {
+  'パーソナルデー:7':{yomi:'ぱーそなるでー なな',kw:['内省','探求','直感'],desc:'一人の時間が実りをもたらす日。急いで答えを出さず、調べ、考え、感じたことを書き留めておくと、後で大きな気づきにつながります。'},
+  'ライフパス:33':{yomi:'らいふぱす さんじゅうさん',kw:['マスターナンバー','奉仕','癒し'],desc:'人を癒し導く使命を持つ数。理想が高く、自分より他者を優先しがち。6の性質を深く持ちます。'},
+  '本命星:一白水星':{yomi:'いっぱくすいせい',kw:['水','柔軟','忍耐'],desc:'形を変えて流れる水の星。苦労を糧に深みを増し、人の心に寄り添う力を持ちます。'},
+  '太陽:牡羊座':{yomi:'おひつじざ',kw:['火','活動','先駆'],desc:'十二星座の始まり。思い立ったら即行動。率直さと勇気が持ち味です。'},
+  '月:獅子座':{yomi:'ししざ',kw:['火','不動','表現'],desc:'感情は堂々と、誇り高く。認められることが心の栄養になります。'},
+  'ASC:獅子座':{yomi:'あせんだんと ししざ',kw:['第一印象','存在感'],desc:'周囲からは明るく華のある人に映ります。出生時刻が曖昧なため乙女座の可能性もあります。'},
+  '日干:甲':{yomi:'きのえ',kw:['陽の木','大樹','率直'],desc:'天に向かってまっすぐ伸びる大樹。曲がったことが嫌いで、理想を掲げて周囲を導きます。'},
+  '中心星:龍高星':{yomi:'りゅうこうせい',kw:['知恵','改革','旅'],desc:'既存の枠を越えて学ぶ星。苦労を経験に変え、新しい価値を持ち帰ります。'},
+  '本命宿:角宿':{yomi:'かくしゅく',kw:['華やか','社交','器用'],desc:'宿曜二十七宿の第一。明るく人を惹きつけ、場を華やがせる宿です。'},
+};
+// facts: [label, value(改行は \n で意味文節に), size, color]. タイルは同一高さ、ラベル/値は固定行数ボックスに収める
+const GENERIC = [
+  {id:'num', name:'数秘術', facts:[['ライフパス','33','40px','#E5B85A'],['バースデー','2','40px','#E5B85A'],['パーソナル\nイヤー','3','40px','#F5E6C8']], desc:'ライフパス33はマスターナンバー。人を癒し、導く役割を持つ数です。'},
+  {id:'kyusei', name:'九星気学', facts:[['本命星','一白\n水星','20px','#F5E6C8'],['月命星','六白\n金星','20px','#E5B85A'],['傾斜宮','乾宮','24px','#E5B85A']], desc:'本命星は一白水星。柔らかく形を変える水のように、環境に適応しながら芯を保つ人です。'},
+  {id:'maya', name:'マヤ暦', facts:[['KIN','173','36px','#E5B85A'],['太陽の紋章','赤い\n空歩く人','15px','#C75B39'],['ウェイブ\nスペル','赤い月','18px','#C75B39']], desc:'赤い空歩く人・銀河の音4。人と人をつなぎ、場を整える役割。'},
+  {id:'sukuyo', name:'宿曜', facts:[['本命宿','角宿','30px','#E5B85A'],['七曜','木曜','22px','#F5E6C8'],['宿の性質','華やか','22px','#F5E6C8']], desc:'角宿は社交的で器用。人を惹きつけ、場を華やかにします。'},
+];
+const MEISHIKI = [
+  {pillar:'年柱',kan:'庚',shi:'午',tsuhen:'偏官',zokan:'丁',un:'死'},
+  {pillar:'月柱',kan:'己',shi:'卯',tsuhen:'正財',zokan:'乙',un:'帝旺'},
+  {pillar:'日柱',kan:'甲',shi:'子',tsuhen:'—',zokan:'癸',un:'沐浴'},
+  {pillar:'時柱',kan:'辛',shi:'未',tsuhen:'正官',zokan:'己',un:'墓'},
+];
+const JINTAI = [
+  {pos:'',star:'',empty:true},{pos:'頭',star:'鳳閣星'},{pos:'右肩',star:'天極星',sub:true},
+  {pos:'左手',star:'石門星'},{pos:'胸',star:'龍高星',center:true},{pos:'右手',star:'牽牛星'},
+  {pos:'左足',star:'天南星',sub:true},{pos:'腹',star:'禄存星'},{pos:'右足',star:'天報星',sub:true},
+].map(c=>({...c, bg:c.empty?'transparent':c.center?'rgba(204,143,31,.18)':'#1F1508', border:c.empty?'transparent':c.center?'#CC8F1F':'rgba(204,143,31,.2)', size:c.sub?'14px':'17px', color:c.center?'#E5B85A':c.sub?'#B89A5A':'#F5E6C8'}));
+const SIGNS = ['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces'];
+const NATAL = [
+  {name:'太陽',icon:'p-sun',sign:'牡羊座',signIcon:'z-aries',deg:'8°',house:'9',d:8},
+  {name:'月',icon:'p-moon',sign:'獅子座',signIcon:'z-leo',deg:'20°',house:'1',d:140},
+  {name:'ASC',icon:'p-asc',sign:'獅子座',signIcon:'z-leo',deg:'5°',house:'1',d:125},
+  {name:'水星',icon:'p-mercury',sign:'魚座',signIcon:'z-pisces',deg:'25°',house:'8',d:355},
+  {name:'金星',icon:'p-venus',sign:'牡牛座',signIcon:'z-taurus',deg:'12°',house:'10',d:42},
+  {name:'火星',icon:'p-mars',sign:'水瓶座',signIcon:'z-aquarius',deg:'3°',house:'7',d:303},
+  {name:'木星',icon:'p-jupiter',sign:'蟹座',signIcon:'z-cancer',deg:'15°',house:'12',d:105},
+  {name:'土星',icon:'p-saturn',sign:'山羊座',signIcon:'z-capricorn',deg:'22°',house:'6',d:292},
+];
+const pt=(deg,r)=>{const a=(180-deg)*Math.PI/180;return {x:150+r*Math.cos(a),y:150-r*Math.sin(a)};};
+
+class Component extends DCLogic {
+  state = { tab:'today', sheet:null, panel:this.detail(['パーソナルデー','7']), accM:{shichu:true,sanmei:false,west:false}, accP:{shichu:true,sanmei:true,west:true}, genM:{num:false,kyusei:false,maya:false,sukuyo:false}, genP:{num:true,kyusei:true,maya:false,sukuyo:false} };
+  detail(c){
+    const d = DETAIL[c[0]+':'+c[1]] || {yomi:'—', kw:[c[0]], desc:`${c[0]}「${c[1]}」の意味と、今のあなたへの読み方をここに表示します。`};
+    const glyph = c[2]||c[1]; const len=[...glyph].length;
+    return {k:c[0], v:c[1], icon:c[3]||null, hasIcon:!!c[3], hasGlyph:!c[3], glyph, glyphSize:len<=2?'64px':len<=4?'34px':'22px', ...d};
+  }
+  mapSys(target){
+    return SYS.map(s=>{const p=s.p[this.state.tab];return {...s, ...p, chips:p.chips.map(c=>({k:c[0],v:c[1],open:()=>this.setState({[target]:this.detail(c)})}))};});
+  }
+  acc(key){
+    const st=this.state[key]; const out={};
+    for (const k of Object.keys(st)) out[k]={open:st[k], rot:st[k]?'180deg':'0deg', toggle:()=>this.setState(s=>({[key]:{...s[key],[k]:!s[key][k]}}))};
+    return out;
+  }
+  generic(key){
+    const st=this.state[key];
+    return GENERIC.map(g=>({...g, facts:g.facts.map(f=>({k:f[0],v:f[1],size:f[2],color:f[3]})), open:st[g.id], rot:st[g.id]?'180deg':'0deg', toggle:()=>this.setState(s=>({[key]:{...s[key],[g.id]:!s[key][g.id]}}))}));
+  }
+  renderVals(){
+    const tab=this.state.tab;
+    return {
+      tabs:[['today','今日'],['month','今月'],['year','今年']].map(([id,label])=>({id,label,bg:tab===id?'#CC8F1F':'transparent',color:tab===id?'#130C06':'#B89A5A',go:()=>this.setState({tab:id})})),
+      systemsM:this.mapSys('sheet'), systemsP:this.mapSys('panel'),
+      sheet:this.state.sheet||{kw:[]}, sheetOpen:!!this.state.sheet, closeSheet:()=>this.setState({sheet:null}),
+      panel:this.state.panel||{kw:[]}, panelOpen:!!this.state.panel, closePanel:()=>this.setState({panel:null}),
+      panelCol:this.state.panel?'340px':'0px', rightCol:this.state.panel?'280px':'400px', cardCols:this.state.panel?'minmax(0,1fr)':'150px minmax(0,1fr)',
+      accM:this.acc('accM'), accP:this.acc('accP'), genericM:this.generic('genM'), genericP:this.generic('genP'),
+      meishiki:MEISHIKI, jintai:JINTAI,
+      spokes:SIGNS.map((_,i)=>{const a=pt(i*30,144),b=pt(i*30,46);return {x1:a.x,y1:a.y,x2:b.x,y2:b.y};}),
+      signRing:SIGNS.map((s,i)=>{const p=pt(i*30+15,130);return {icon:'z-'+s,x:p.x-9,y:p.y-9};}),
+      planets:NATAL.map((n,i)=>{const p=pt(n.d,[96,76,96,76,96,76,96,76][i]);return {icon:n.icon,cx:p.x,cy:p.y,x:p.x-8,y:p.y-8};}),
+      natal:NATAL,
+    };
+  }
+}
+</script>
+</body>
+</html>
