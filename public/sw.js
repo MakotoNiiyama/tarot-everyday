@@ -1,9 +1,9 @@
 /// <reference lib="webworker" />
 
-const CACHE_NAME = "tarot-everyday-v1";
+const CACHE_NAME = "tarot-everyday-v2";
 
 // プリキャッシュする静的リソース
-const PRECACHE_URLS = ["/", "/cards", "/daily"];
+const PRECACHE_URLS = ["/", "/fortune", "/tarot", "/guide"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
