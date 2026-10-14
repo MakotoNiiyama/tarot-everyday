@@ -46,6 +46,21 @@ describe("toBirthMoment", () => {
     expect(m.range.start.toISOString()).toBe("1949-07-01T02:00:00.000Z");
   });
 
+  it("サマータイムの切り替わる夜でも1時間の枠は60分にすること", () => {
+    const minutes = (date: BirthProfile["date"], hour: number) => {
+      const m = toBirthMoment({ ...base, date, time: { kind: "hour", hour } });
+      return (m.range.end.getTime() - m.range.start.getTime()) / 60_000;
+    };
+    expect(minutes({ year: 1948, month: 5, day: 1 }, 23)).toBe(60);
+    expect(minutes({ year: 1949, month: 9, day: 10 }, 23)).toBe(60);
+  });
+
+  it("サマータイム開始の夜に時刻不明でも最後の1時間を落とさないこと", () => {
+    const m = toBirthMoment({ ...base, date: { year: 1948, month: 5, day: 1 } });
+    expect(m.range.start.toISOString()).toBe("1948-04-30T15:00:00.000Z");
+    expect(m.range.end.toISOString()).toBe("1948-05-01T15:00:00.000Z");
+  });
+
   it("出生地未入力なら明石を使い、その旨を持つこと", () => {
     const m = toBirthMoment(base);
     expect(m.location).toEqual({ ...AKASHI, isDefault: true });

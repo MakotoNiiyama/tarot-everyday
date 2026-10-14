@@ -20,7 +20,11 @@ export function toBirthMoment(profile: BirthProfile): BirthMoment {
   const [h0, h1] = hourRange(profile.time);
   const pref = profile.prefecture ? findPrefecture(profile.prefecture) : undefined;
   return {
-    range: { start: tokyoToUtc(year, month, day, h0, 0), end: tokyoToUtc(year, month, day, h1, 0) },
+    range: {
+      start: tokyoToUtc(year, month, day, h0, 0),
+      // 終了は「最後の1時間の始まり + 60分」。サマータイムの切り替わる夜でも最後の枠を60分に保つ
+      end: new Date(tokyoToUtc(year, month, day, h1 - 1, 0).getTime() + 60 * 60_000),
+    },
     location: pref
       ? { lat: pref.lat, lon: pref.lon, label: pref.name, isDefault: false }
       : { ...AKASHI, isDefault: true },
