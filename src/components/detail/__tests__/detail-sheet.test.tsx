@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DetailSheet } from "../detail-sheet";
 import { DetailPanelLayout } from "../detail-panel";
@@ -16,6 +16,24 @@ function mockWide(matches: boolean) {
     addEventListener: () => {},
     removeEventListener: () => {},
   }));
+}
+
+/** 幅を途中で変えられる matchMedia のモック。setWide で change イベントを発火する */
+function mockMutableWide(initial: boolean) {
+  let matches = initial;
+  const listeners = new Set<() => void>();
+  window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+    get matches() {
+      return matches;
+    },
+    media: query,
+    addEventListener: (_: string, l: () => void) => listeners.add(l),
+    removeEventListener: (_: string, l: () => void) => listeners.delete(l),
+  }));
+  return (next: boolean) => {
+    matches = next;
+    act(() => listeners.forEach((l) => l()));
+  };
 }
 
 const heading = { title: "星", subtitle: "大アルカナ", description: "The Star" };
@@ -71,9 +89,9 @@ describe("DetailSheet", () => {
     expect(panel).toHaveTextContent("本文テキスト");
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 
-    // パネルが開いている間、トリガーの aria-expanded は "true" にならないこと
-    // (Drawer は open={false} のまま維持されるため)
-    expect(trigger).not.toHaveAttribute("aria-expanded", "true");
+    // パネルを操作するボタンとして aria-controls / aria-expanded が付くこと
+    expect(trigger).toHaveAttribute("aria-controls", panel.id);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
 
     // フォーカスがパネルの内側に移動すること
     expect(panel.contains(document.activeElement) || document.activeElement === panel).toBe(true);
@@ -81,8 +99,10 @@ describe("DetailSheet", () => {
     await user.click(screen.getByRole("button", { name: "詳細を閉じる" }));
     expect(screen.queryByRole("complementary", { name: "詳細パネル" })).not.toBeInTheDocument();
 
-    // 閉じた後、フォーカスがトリガーに戻ること
+    // 閉じた後、フォーカスがトリガーに戻り、aria-controls が外れること
     expect(document.activeElement).toBe(trigger);
+    expect(trigger).not.toHaveAttribute("aria-controls");
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
   });
 
   it("2つ目の DetailSheet を開くとパネルの内容が置き換わること", async () => {
@@ -152,5 +172,67 @@ describe("DetailSheet", () => {
     await user.click(screen.getByRole("button", { name: "開く" }));
     await screen.findByRole("dialog");
     expect(screen.queryByRole("link", { name: "早見表で見る" })).not.toBeInTheDocument();
+  });
+
+  it("document.activeElement がトリガーでなくても、閉じるとフォーカスがトリガーに戻ること", async () => {
+    // Safari はボタンをクリックしてもフォーカスしないため、activeElement が body のままになる
+    mockWide(true);
+    render(
+      <DetailPanelLayout>
+        <DetailSheet heading={heading} body={<p>本文テキスト</p>}>
+          <span>開く</span>
+        </DetailSheet>
+      </DetailPanelLayout>,
+    );
+    const trigger = screen.getByRole("button", { name: "開く" });
+    (document.activeElement as HTMLElement | null)?.blur();
+    act(() => trigger.click());
+    expect(screen.getByRole("complementary", { name: "詳細パネル" })).toBeInTheDocument();
+
+    act(() => screen.getByRole("button", { name: "詳細を閉じる" }).click());
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  it("サイドパネルは Escape キーで閉じ、フォーカスがトリガーに戻ること", async () => {
+    mockWide(true);
+    const user = userEvent.setup();
+    render(
+      <DetailPanelLayout>
+        <DetailSheet heading={heading} body={<p>本文テキスト</p>}>
+          <span>開く</span>
+        </DetailSheet>
+      </DetailPanelLayout>,
+    );
+    const trigger = screen.getByRole("button", { name: "開く" });
+    await user.click(trigger);
+    expect(screen.getByRole("complementary", { name: "詳細パネル" })).toBeInTheDocument();
+
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("complementary", { name: "詳細パネル" })).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  it("幅が狭くなるとパネルの内容を破棄し、再び広げても表示しないこと", async () => {
+    const setWide = mockMutableWide(true);
+    const user = userEvent.setup();
+    render(
+      <DetailPanelLayout>
+        <DetailSheet heading={heading} body={<p>本文テキスト</p>}>
+          <span>開く</span>
+        </DetailSheet>
+      </DetailPanelLayout>,
+    );
+    await user.click(screen.getByRole("button", { name: "開く" }));
+    expect(screen.getByRole("complementary", { name: "詳細パネル" })).toBeInTheDocument();
+
+    setWide(false);
+    expect(screen.queryByRole("complementary", { name: "詳細パネル" })).not.toBeInTheDocument();
+
+    setWide(true);
+    expect(screen.queryByRole("complementary", { name: "詳細パネル" })).not.toBeInTheDocument();
+
+    // 広げた後に開き直せること
+    await user.click(screen.getByRole("button", { name: "開く" }));
+    expect(screen.getByRole("complementary", { name: "詳細パネル" })).toBeInTheDocument();
   });
 });

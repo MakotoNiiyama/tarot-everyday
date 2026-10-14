@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
 import { Drawer } from "@base-ui/react/drawer";
 import { useDetailPanel } from "./detail-panel";
 import { DetailGuideLink, DetailHeadingView, type DetailHeading } from "./detail-heading";
@@ -30,29 +30,32 @@ export function DetailSheet({
 }) {
   const [open, setOpen] = useState(false);
   const panel = useDetailPanel();
-
-  const handleOpenChange = (next: boolean) => {
-    if (next && panel?.enabled) {
-      panel.show({ heading, body, guideHref });
-      return;
-    }
-    setOpen(next);
-  };
+  const owner = useId();
+  const triggerClassName = `cursor-pointer ${className ?? ""}`;
 
   return (
-    <Drawer.Root open={open} onOpenChange={handleOpenChange}>
-      <Drawer.Trigger
-        render={(props) => (
-          <button
-            {...props}
-            type="button"
-            aria-label={triggerLabel}
-            className={`cursor-pointer ${className ?? ""}`}
-          >
-            {children}
-          </button>
-        )}
-      />
+    <Drawer.Root open={open} onOpenChange={setOpen}>
+      {panel?.enabled ? (
+        // サイドパネルを使うときは、パネルを操作する普通のボタンにする
+        <button
+          type="button"
+          aria-label={triggerLabel}
+          aria-expanded={panel.activeOwner === owner}
+          aria-controls={panel.activeOwner === owner ? panel.panelId : undefined}
+          onClick={(e) => panel.show({ heading, body, guideHref }, { owner, trigger: e.currentTarget })}
+          className={triggerClassName}
+        >
+          {children}
+        </button>
+      ) : (
+        <Drawer.Trigger
+          render={(props) => (
+            <button {...props} type="button" aria-label={triggerLabel} className={triggerClassName}>
+              {children}
+            </button>
+          )}
+        />
+      )}
       <Drawer.Portal>
         <Drawer.Backdrop
           className="fixed inset-0 bg-black/60 z-[60]

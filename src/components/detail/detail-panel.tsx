@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -17,7 +18,17 @@ import { DetailGuideLink, DetailHeadingView, type DetailContent } from "./detail
 interface DetailPanelContextValue {
   /** サイドパネルが使える状態か(DetailPanelLayout の中で、かつ 1280px 以上) */
   enabled: boolean;
-  show: (content: DetailContent | null) => void;
+  /** パネル要素の id(トリガーの aria-controls に使う) */
+  panelId: string;
+  /** いまパネルに内容を表示しているトリガーの owner。何も表示していなければ null */
+  activeOwner: string | null;
+  /**
+   * パネルに内容を表示する。owner はトリガーごとの一意な id、trigger は閉じたときにフォーカスを戻す要素。
+   * Safari はクリックでボタンにフォーカスしないため、document.activeElement ではなく trigger を明示的に受け取る
+   */
+  show: (content: DetailContent, options: { owner: string; trigger: HTMLElement }) => void;
+  /** パネルを閉じ、トリガーにフォーカスを戻す */
+  close: () => void;
 }
 
 const DetailPanelContext = createContext<DetailPanelContextValue | null>(null);
@@ -28,7 +39,7 @@ export function useDetailPanel(): DetailPanelContextValue | null {
 
 /** パネルの表示エントリ。id は show() 呼び出しごとに増える整数で、
  *  同じコンポーネント型が同じ位置に連続して表示されてもタブ状態がリセットされるよう key として使う */
-type PanelEntry = { id: number; content: DetailContent };
+type PanelEntry = { id: number; owner: string; content: DetailContent };
 
 /**
  * 1280px 以上で、詳細を右の第3カラム(340px)に表示するレイアウト。
@@ -37,37 +48,48 @@ type PanelEntry = { id: number; content: DetailContent };
 export function DetailPanelLayout({ children }: { children: ReactNode }) {
   const isWide = useMediaQuery("(min-width: 1280px)");
   const [entry, setEntry] = useState<PanelEntry | null>(null);
+  const panelId = useId();
+
+  // 幅が狭くなったら内容を破棄する(再び広げたときに古い内容が出てこないように)。
+  // useEffect で setState せず、描画中に前回の幅と比べて状態を調整する
+  const [prevIsWide, setPrevIsWide] = useState(isWide);
+  if (prevIsWide !== isWide) {
+    setPrevIsWide(isWide);
+    if (!isWide) setEntry(null);
+  }
 
   // show() 呼び出しごとにインクリメントする id カウンター
   const nextIdRef = useRef(0);
-  // パネルを開く前にフォーカスしていた要素を覚えておく
-  const returnFocusRef = useRef<Element | null>(null);
+  // パネルを閉じたときにフォーカスを戻すトリガー
+  const triggerRef = useRef<HTMLElement | null>(null);
   // フォーカス移動先のパネル要素への ref
   const panelRef = useRef<HTMLElement | null>(null);
 
-  const show = useCallback((content: DetailContent | null) => {
-    if (content === null) {
-      setEntry(null);
-    } else {
-      returnFocusRef.current = document.activeElement;
-      nextIdRef.current += 1;
-      setEntry({ id: nextIdRef.current, content });
-    }
+  const show = useCallback<DetailPanelContextValue["show"]>((content, { owner, trigger }) => {
+    triggerRef.current = trigger;
+    nextIdRef.current += 1;
+    setEntry({ id: nextIdRef.current, owner, content });
   }, []);
 
-  // パネルの開閉・内容切り替えに合わせてフォーカスを移動する。
+  const close = useCallback(() => {
+    setEntry(null);
+    triggerRef.current?.focus();
+    triggerRef.current = null;
+  }, []);
+
+  // パネルを開いたとき・内容を切り替えたときにパネルへフォーカスを移す。
   // setState は呼ばず focus() のみ呼ぶ(react-hooks/set-state-in-effect に抵触しない)。
+  const entryId = entry?.id;
   useEffect(() => {
-    if (entry !== null) {
-      panelRef.current?.focus();
-    } else {
-      (returnFocusRef.current as HTMLElement | null)?.focus();
-      returnFocusRef.current = null;
-    }
-  }, [entry]);
+    if (entryId !== undefined) panelRef.current?.focus();
+  }, [entryId]);
 
   const panel = isWide ? entry : null;
-  const value = useMemo(() => ({ enabled: isWide, show }), [isWide, show]);
+  const activeOwner = panel?.owner ?? null;
+  const value = useMemo(
+    () => ({ enabled: isWide, panelId, activeOwner, show, close }),
+    [isWide, panelId, activeOwner, show, close],
+  );
 
   return (
     <DetailPanelContext.Provider value={value}>
@@ -76,7 +98,14 @@ export function DetailPanelLayout({ children }: { children: ReactNode }) {
         {panel && (
           <aside
             ref={panelRef}
+            id={panelId}
             tabIndex={-1}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                e.stopPropagation();
+                close();
+              }
+            }}
             aria-label="詳細パネル"
             className="sticky top-0 h-dvh overflow-y-auto border-l border-gold/35 bg-popover outline-none"
           >
@@ -85,7 +114,7 @@ export function DetailPanelLayout({ children }: { children: ReactNode }) {
               <button
                 type="button"
                 aria-label="詳細を閉じる"
-                onClick={() => setEntry(null)}
+                onClick={close}
                 className="flex h-9 w-9 items-center justify-center rounded-full border border-gold/30 text-gold-light hover:bg-gold/10"
               >
                 <Icon name="close" size={16} />
