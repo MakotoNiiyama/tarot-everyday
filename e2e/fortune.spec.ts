@@ -3,7 +3,11 @@ import { test, expect } from "@playwright/test";
 test.describe("運勢ページ", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/fortune");
-    await page.evaluate(() => localStorage.removeItem("tarot-daily-draw"));
+    // 未登録(プロフィールなし)の状態で確認する
+    await page.evaluate(() => {
+      localStorage.removeItem("tarot-daily-draw");
+      localStorage.removeItem("tarot-birth-profile");
+    });
     await page.reload();
   });
 
@@ -36,6 +40,10 @@ test.describe("運勢ページ", () => {
       await panel.getByRole("button", { name: "詳細を閉じる" }).click();
       await expect(panel).toHaveCount(0);
     }
+  });
+
+  test("未登録のときは登録への誘導が表示されること", async ({ page }) => {
+    await expect(page.getByRole("link", { name: "生年月日を登録する" })).toBeVisible();
   });
 
   test("運勢ナビがアクティブであること", async ({ page }) => {

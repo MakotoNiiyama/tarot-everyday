@@ -3,7 +3,10 @@ import { test, expect } from "@playwright/test";
 test.describe("ホーム画面", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
-    await page.evaluate(() => localStorage.removeItem("tarot-daily-draw"));
+    await page.evaluate(() => {
+      localStorage.removeItem("tarot-daily-draw");
+      localStorage.removeItem("tarot-birth-profile");
+    });
     await page.reload();
   });
 
@@ -18,9 +21,23 @@ test.describe("ホーム画面", () => {
     await expect(today.getByText(/^(正位置|逆位置)$/)).toBeVisible();
   });
 
-  test("「詳しく見る」で運勢ページへ遷移すること", async ({ page }) => {
+  test("「詳しく見る」で運勢ページへ遷移すること(登録済み)", async ({ page }) => {
+    // 「詳しく見る」は登録済みのときだけ表示される
+    await page.evaluate(() =>
+      localStorage.setItem(
+        "tarot-birth-profile",
+        JSON.stringify({ version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "unknown" } }),
+      ),
+    );
+    await page.reload();
     await page.getByRole("link", { name: "詳しく見る" }).click();
     await expect(page).toHaveURL("/fortune");
+  });
+
+  test("未登録のときは「詳しく見る」の代わりに登録への誘導が表示されること", async ({ page }) => {
+    const today = page.getByRole("region", { name: "今日の運勢" });
+    await expect(today.getByRole("link", { name: "生年月日を登録する" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "詳しく見る" })).toHaveCount(0);
   });
 
   test("入口カードから各ページへ遷移できること", async ({ page }) => {
