@@ -1,0 +1,86 @@
+// src/lib/fortune/types.ts
+import type { LocalDate } from "./local-date";
+import type { PrefectureCode } from "./prefectures";
+
+export type SystemId = "numerology" | "kyusei" | "maya" | "shichu" | "sanmei" | "sukuyo" | "horoscope";
+export type Period = "day" | "month" | "year";
+
+export type BirthTime =
+  | { kind: "unknown" }
+  | { kind: "half"; half: "am" | "pm" }
+  | { kind: "hour"; hour: number };
+
+/** 端末に保存する入力(設計書 §4) */
+export interface BirthProfile {
+  version: 1;
+  date: LocalDate;
+  time: BirthTime;
+  prefecture?: PrefectureCode;
+  /** 大運の向きと五黄同士の中宮傾斜の判定にだけ使う */
+  gender?: "male" | "female";
+}
+
+/** 瞬間の範囲。end は含まない */
+export interface TimeRange {
+  start: Date;
+  end: Date;
+}
+
+export interface GeoLocation {
+  lat: number;
+  lon: number;
+  label: string;
+  /** 出生地未入力で明石を使っているとき true */
+  isDefault: boolean;
+}
+
+export interface BirthMoment {
+  range: TimeRange;
+  location: GeoLocation;
+  localDate: LocalDate;
+}
+
+export type Resolved<T> =
+  | { kind: "fixed"; value: T }
+  | { kind: "ambiguous"; options: { value: T; range: TimeRange }[] };
+
+/** 早見表の項目への参照(1C の辞書データの id と一致させる) */
+export interface ElementRef {
+  system: SystemId | "tarot";
+  id: string;
+}
+
+/** 表示用の事実。value は候補があれば「A(〜5:01) / B(5:01〜)」のように整形済み */
+export interface Fact {
+  label: string;
+  value: string;
+  refs: ElementRef[];
+}
+
+export interface PeriodResult {
+  period: Period;
+  /** その占術での期間。例: 2026/2/4〜2027/2/3 */
+  rangeLabel: string;
+  /** 一文のまとめの材料。画面側で `${text}。${ref の項目の periodNote}` の形に組み立てる */
+  headline: { text: string; ref: ElementRef };
+  chips: Fact[];
+}
+
+export interface SystemReading {
+  id: SystemId;
+  name: string;
+  nameEn: string;
+  /** 総合鑑定プロンプトに書く採用方式 */
+  method: string;
+  natal: Fact[];
+  periods: Record<Period, PeriodResult>;
+  /** 出生時刻の曖昧さで人物像の結果が分かれたか */
+  ambiguous: boolean;
+}
+
+export interface FortuneSystemModule {
+  id: SystemId;
+  name: string;
+  nameEn: string;
+  read(profile: BirthProfile, moment: BirthMoment, today: LocalDate): SystemReading;
+}
