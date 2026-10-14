@@ -20,9 +20,8 @@ test.describe("カード詳細ページ", () => {
 
   test("パンくずリストから早見表に戻れること", async ({ page }) => {
     await page.goto("/guide/tarot/major-00");
-    const breadcrumb = page.getByLabel("パンくずリスト");
-    await breadcrumb.getByRole("link", { name: "早見表" }).click();
-    await expect(page).toHaveURL("/guide");
+    await page.getByRole("link", { name: "早見表に戻る" }).click();
+    await expect(page).toHaveURL("/guide?tab=tarot");
   });
 
   test("正位置タブが初期表示されキーワードが見えること", async ({ page }) => {
@@ -49,7 +48,7 @@ test.describe("カード詳細ページ", () => {
 
   test("早見表のカードリンクから詳細に遷移できること", async ({ page }) => {
     await page.goto("/guide");
-    await page.getByRole("link", { name: "愚者の詳細を見る" }).click();
+    await page.getByRole("tabpanel").getByRole("link", { name: "愚者の詳細を見る" }).click();
     await expect(page).toHaveURL("/guide/tarot/major-00");
     await expect(
       page.getByRole("heading", { level: 1, name: "愚者" })
