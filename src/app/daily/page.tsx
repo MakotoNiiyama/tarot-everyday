@@ -1,5 +1,5 @@
-import { DailyTarot } from "@/components/daily-tarot";
+import { ClientRedirect } from "@/components/client-redirect";
 
-export default function DailyPage() {
-  return <DailyTarot />;
+export default function LegacyDailyPage() {
+  return <ClientRedirect to="/fortune" />;
 }
