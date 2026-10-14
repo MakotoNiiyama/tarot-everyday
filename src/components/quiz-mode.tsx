@@ -13,6 +13,8 @@ import {
 } from "@/lib/quiz";
 import { ScratchDivider } from "@/components/svg/scratch-decorations";
 import { CardDetailSheet } from "@/components/card-detail-sheet";
+import { Icon } from "@/components/icons/icon";
+import { OrientationBadge } from "@/components/orientation-badge";
 
 type Phase = "start" | "question" | "feedback" | "result";
 
@@ -211,15 +213,7 @@ function QuestionPhase({
       className="flex flex-col items-center gap-4 mt-2 w-full"
     >
       {/* 正位置/逆位置バッジ */}
-      <span
-        className={`text-xs font-heading px-3 py-1 rounded-full border ${
-          isReversed
-            ? "text-terracotta border-terracotta/40"
-            : "text-gold border-gold/40"
-        }`}
-      >
-        {isReversed ? "☽ 逆位置" : "☀ 正位置"}
-      </span>
+      <OrientationBadge isReversed={isReversed} className="self-center" />
 
       {/* カード画像フリップアニメーション */}
       <div className="relative w-36 h-[216px]">
@@ -307,7 +301,7 @@ function FeedbackPhase({
           isCorrect ? "text-gold" : "text-terracotta"
         }`}
       >
-        {isCorrect ? "✦ 正解！" : "✧ 不正解…"}
+        {isCorrect ? "正解！" : "不正解…"}
       </motion.div>
 
       {/* カード画像が左右に飛ぶ */}
@@ -455,7 +449,10 @@ function ResultScreen({
                     a.isCorrect ? "text-gold" : "text-terracotta"
                   }`}
                 >
-                  {a.isCorrect ? "○" : "✕"} {a.selectedKeyword}
+                  <span className="inline-flex items-center gap-1">
+                    <Icon name={a.isCorrect ? "check" : "close"} size={14} strokeWidth={1.8} />
+                    {a.selectedKeyword}
+                  </span>
                   {!a.isCorrect && (
                     <span className="text-gold/60 ml-1">
                       → {a.question.correctKeyword}

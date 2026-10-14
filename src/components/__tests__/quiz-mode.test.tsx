@@ -73,7 +73,7 @@ describe("QuizMode", () => {
 
     // 正解 or 不正解のフィードバック
     const feedback =
-      screen.queryByText("✦ 正解！") || screen.queryByText("✧ 不正解…");
+      screen.queryByText("正解！") || screen.queryByText("不正解…");
     expect(feedback).toBeInTheDocument();
   });
 

@@ -8,6 +8,8 @@ import { allCards } from "@/data/cards";
 import { shuffleDeck, cutDeck, drawCards, generatePrompt } from "@/lib/spread-reading";
 import { ScratchDivider } from "@/components/svg/scratch-decorations";
 import { SpreadLayout } from "@/components/spread-layout";
+import { Icon, type IconName } from "@/components/icons/icon";
+import { OrientationBadge } from "@/components/orientation-badge";
 
 type Phase =
   | "select"
@@ -139,11 +141,11 @@ function SelectPhase({
 }: {
   onSelect: (s: SpreadDefinition) => void;
 }) {
-  const icons: Record<string, string> = {
-    "three-card": "☆☆☆",
-    choice: "⟨A|B⟩",
-    hexagram: "✡",
-    "celtic-cross": "✚",
+  const icons: Record<string, IconName> = {
+    "three-card": "spread",
+    choice: "spread-choice",
+    hexagram: "spread-hexagram",
+    "celtic-cross": "spread-celtic",
   };
 
   return (
@@ -167,8 +169,8 @@ function SelectPhase({
               hover:border-gold/50 hover:bg-surface/80 transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-3">
-              <span className="text-gold text-lg w-12 text-center font-accent">
-                {icons[s.id]}
+              <span className="flex w-12 justify-center text-gold">
+                <Icon name={icons[s.id]} size={28} strokeWidth={1.5} />
               </span>
               <div className="flex-1">
                 <p className="text-gold font-heading font-bold">
@@ -415,11 +417,7 @@ function ResultPhase({
                 <span className="text-gold text-xs font-heading font-bold bg-gold/15 px-2 py-0.5 rounded">
                   {pos.label}
                 </span>
-                <span
-                  className={`text-xs ${dc.isReversed ? "text-terracotta" : "text-gold-dim"}`}
-                >
-                  {dc.isReversed ? "☽ 逆位置" : "☀ 正位置"}
-                </span>
+                <OrientationBadge isReversed={dc.isReversed} />
               </div>
               <p className="text-cream text-sm font-heading">
                 {dc.card.name.ja}
@@ -442,8 +440,9 @@ function ResultPhase({
 
       {/* AIプロンプト */}
       <div className="flex flex-col gap-2">
-        <h2 className="text-gold text-sm font-heading font-bold">
-          🤖 AI分析用プロンプト
+        <h2 className="text-gold text-sm font-heading font-bold inline-flex items-center gap-2">
+          <Icon name="copy" size={16} />
+          AI分析用プロンプト
         </h2>
         <p className="text-cream/50 text-xs">
           タップでコピー → ChatGPTなどに貼り付けて分析してもらえます
@@ -465,8 +464,9 @@ function ResultPhase({
               className="absolute inset-0 flex items-center justify-center
                 bg-background/80 rounded-xl"
             >
-              <span className="text-gold font-heading font-bold text-lg">
-                ✓ コピーしました
+              <span className="text-gold font-heading font-bold text-lg inline-flex items-center gap-2">
+                <Icon name="check" size={20} strokeWidth={1.8} />
+                コピーしました
               </span>
             </motion.div>
           )}
