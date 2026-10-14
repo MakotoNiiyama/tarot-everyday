@@ -51,10 +51,39 @@ function rangeLabel(range: TimeRange, index: number, count: number): string {
   return `${formatTokyoHm(range.start)}〜${formatTokyoHm(range.end)}`;
 }
 
-/** 表示用の文字列。候補は「A(〜5:02) / B(5:02〜)」。表記が同じ候補は1つにまとめる */
+/** 表記ごとの候補。隣り合う同じ表記の候補は範囲をつなげて1つにする */
+function labelGroups<T>(
+  options: { value: T; range: TimeRange }[],
+  format: (v: T) => string,
+): { value: string; range: TimeRange }[] {
+  const groups: { value: string; range: TimeRange }[] = [];
+  for (const o of options) {
+    const value = format(o.value);
+    const last = groups[groups.length - 1];
+    if (last && last.value === value) last.range = { start: last.range.start, end: o.range.end };
+    else groups.push({ value, range: o.range });
+  }
+  return groups;
+}
+
+/**
+ * 表記が分かれるときの候補(表記と時刻の範囲)。確定、または表記がすべて同じなら undefined。
+ * 表記のまとめ方は describeResolved と同じ。
+ */
+export function describeCandidates<T>(
+  r: Resolved<T>,
+  format: (v: T) => string,
+): { value: string; rangeLabel: string }[] | undefined {
+  if (r.kind === "fixed") return undefined;
+  const groups = labelGroups(r.options, format);
+  if (groups.length === 1) return undefined;
+  return groups.map((g, i) => ({ value: g.value, rangeLabel: rangeLabel(g.range, i, groups.length) }));
+}
+
+/** 表示用の文字列。候補は「A(〜5:02) / B(5:02〜)」。隣り合う同じ表記の候補は1つにまとめる */
 export function describeResolved<T>(r: Resolved<T>, format: (v: T) => string): string {
   if (r.kind === "fixed") return format(r.value);
-  const labels = r.options.map((o) => format(o.value));
-  if (labels.every((l) => l === labels[0])) return labels[0];
-  return r.options.map((o, i) => `${labels[i]}(${rangeLabel(o.range, i, r.options.length)})`).join(" / ");
+  const candidates = describeCandidates(r, format);
+  if (!candidates) return format(r.options[0].value);
+  return candidates.map((c) => `${c.value}(${c.rangeLabel})`).join(" / ");
 }

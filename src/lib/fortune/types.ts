@@ -57,6 +57,8 @@ export interface Fact {
   label: string;
   value: string;
   refs: ElementRef[];
+  /** 出生時刻によって表記が分かれるときだけの候補(value の「A(〜5:01) / B(5:01〜)」を分けたもの) */
+  candidates?: { value: string; rangeLabel: string }[];
 }
 
 export interface PeriodResult {

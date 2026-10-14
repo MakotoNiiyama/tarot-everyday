@@ -1,5 +1,5 @@
 // src/lib/fortune/kyusei/index.ts
-import { describeResolved, isAmbiguous, representative, resolvedValues, resolveOverRange } from "../ambiguity";
+import { describeCandidates, describeResolved, isAmbiguous, representative, resolvedValues, resolveOverRange } from "../ambiguity";
 import { jieBoundariesWithin, solarLongitudeTime, solarMonthAt } from "../astro/solar-terms";
 import { directionId, palaceId, starId, type Direction } from "../element-ids";
 import { addDays, formatSlash, type LocalDate } from "../local-date";
@@ -97,25 +97,26 @@ export const kyusei: FortuneSystemModule = {
       sameKyuseiNatal,
     );
     const values = resolvedValues(natal);
+    /** 候補で表記が分かれるときだけ candidates を付けた事実 */
+    const natalFact = (key: string, label: string, format: (n: KyuseiNatal) => string, refs: ElementRef[]): Fact => {
+      const candidates = describeCandidates(natal, format);
+      return {
+        key,
+        label,
+        value: describeResolved(natal, format),
+        refs: unique(refs, (r) => r.id),
+        ...(candidates ? { candidates } : {}),
+      };
+    };
     const facts: Fact[] = [
-      {
-        key: "honmei",
-        label: "本命星",
-        value: describeResolved(natal, (n) => STAR_NAMES[n.honmei - 1]),
-        refs: unique(values.map((n) => ref(starId(n.honmei))), (r) => r.id),
-      },
-      {
-        key: "getsumei",
-        label: "月命星",
-        value: describeResolved(natal, (n) => STAR_NAMES[n.getsumei - 1]),
-        refs: unique(values.map((n) => ref(starId(n.getsumei))), (r) => r.id),
-      },
-      {
-        key: "keisha",
-        label: "傾斜宮",
-        value: describeResolved(natal, (n) => keishaLabel(n.keisha)),
-        refs: unique(values.flatMap((n) => n.keisha.map((k) => ref(palaceId(k)))), (r) => r.id),
-      },
+      natalFact("honmei", "本命星", (n) => STAR_NAMES[n.honmei - 1], values.map((n) => ref(starId(n.honmei)))),
+      natalFact("getsumei", "月命星", (n) => STAR_NAMES[n.getsumei - 1], values.map((n) => ref(starId(n.getsumei)))),
+      natalFact(
+        "keisha",
+        "傾斜宮",
+        (n) => keishaLabel(n.keisha),
+        values.flatMap((n) => n.keisha.map((k) => ref(palaceId(k)))),
+      ),
     ];
     const base = representative(natal);
 

@@ -17,6 +17,7 @@ describe("kyusei.read", () => {
       { key: "keisha", label: "傾斜宮", value: "艮宮", refs: [{ system: "kyusei", id: palaceId("ne") }] },
     ]);
     expect(r.ambiguous).toBe(false);
+    for (const f of r.natal) expect(f.candidates).toBeUndefined();
   });
 
   it("立春当日で時刻不明なら本命星を候補にすること", () => {
@@ -24,6 +25,10 @@ describe("kyusei.read", () => {
     const r = kyusei.read(p, toBirthMoment(p), today);
     expect(r.ambiguous).toBe(true);
     expect(r.natal[0].value).toMatch(/^二黒土星\(〜11:1\d\) \/ 一白水星\(11:1\d〜\)$/);
+    expect(r.natal[0].candidates).toEqual([
+      { value: "二黒土星", rangeLabel: expect.stringMatching(/^〜11:1\d$/) },
+      { value: "一白水星", rangeLabel: expect.stringMatching(/^11:1\d〜$/) },
+    ]);
     expect(r.natal[0].refs).toEqual([
       { system: "kyusei", id: starId(2) },
       { system: "kyusei", id: starId(1) },
