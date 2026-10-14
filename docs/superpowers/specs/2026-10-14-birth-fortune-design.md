@@ -52,6 +52,7 @@
 - 「今日」は日本時間の0時で切り替える。
 - 各運勢カードには、その占術での期間(例「2026/2/4〜2027/2/3」)を必ず表示する。
 - 九星気学の日盤は、冬至・夏至に最も近い甲子の日に陽遁・陰遁を切り替える。
+- 九星気学の月盤・年盤は、暦の慣習どおり節入り日・立春の当日(節入りの時刻より前も含む)を新しい月・年に含める。期間の表示は節入り日〜次の節入り日の前日(例: 寒露が 2026/10/8 15:29 なら、2026/10/8 から戌月)。人物像(本命星・月命星)は従来どおり節入りの時刻で区切る。
 
 ## 4. 入力と保存
 
@@ -86,8 +87,8 @@ interface BirthProfile {
 
 `ambiguity.ts` の共通処理:
 
-1. 各占術の `boundaries(range)` が返す境界時刻(節入り、立春、朔、時柱の境目、月の星座移動、ASCの星座移動など)で範囲を区切る。
-2. 区切った各区間の中央の時刻で `computeNatal` を計算する。
+1. 各占術が `read` の中で求める境界時刻(節入り、立春、朔、時柱の境目、月の星座移動、ASCの星座移動など)で範囲を区切る(`resolveOverRange`)。
+2. 区切った各区間の中央の時刻で人物像を計算する。
 3. 結果が同じ区間はまとめる。
 4. 結果が1つなら「確定」、複数なら「候補」として、時刻範囲付きで返す。
 
@@ -123,27 +124,46 @@ type SystemId =
   | "numerology" | "kyusei" | "maya" | "shichu" | "sanmei" | "sukuyo" | "horoscope";
 type Period = "day" | "month" | "year";
 
-interface FortuneSystem<Natal> {
+interface FortuneSystemModule {
   id: SystemId;
-  boundaries(range: TimeRange, moment: BirthMoment): Date[];
-  computeNatal(at: Date, moment: BirthMoment, profile: BirthProfile): Natal;
-  summarizeNatal(natal: Resolved<Natal>): NatalSummary;
-  computePeriod(natal: Resolved<Natal>, period: Period, today: Date): PeriodResult;
+  name: string;   // 例: 九星気学
+  nameEn: string; // 例: Nine Star Ki
+  read(profile: BirthProfile, moment: BirthMoment, today: LocalDate): SystemReading;
 }
 
-type Resolved<T> =
-  | { kind: "fixed"; value: T }
-  | { kind: "ambiguous"; options: { value: T; range: TimeRange }[] };
+interface SystemReading {
+  id: SystemId;
+  name: string;
+  nameEn: string;
+  method: string;                          // 総合鑑定プロンプトに書く採用方式
+  natal: Fact[];                           // 人物像
+  periods: Record<Period, PeriodResult>;   // 今日・今月・今年
+  ambiguous: boolean;                      // 出生時刻の曖昧さで人物像が分かれたか
+}
 
-interface ElementRef { system: SystemId | "tarot"; id: string }
+interface ElementRef { system: SystemId | "tarot"; id: string } // id は element-ids.ts の ELEMENT_IDS のいずれか
+
+/** 表示用の事実(整形済み) */
+interface Fact {
+  key: string;        // 占術内で一意の安定した識別子(例: "honmei")。表記が変わっても変わらない
+  label: string;      // 例: 本命星
+  value: string;      // 候補があれば「A(〜5:01) / B(5:01〜)」
+  refs: ElementRef[]; // 早見表の項目
+  candidates?: { value: string; rangeLabel: string }[]; // 表記が分かれるときだけ。隣り合う同じ表記はまとめる
+}
 
 interface PeriodResult {
-  rangeLabel: string;                 // その占術での期間
-  headline: string;                   // テンプレートで組み立てた一文
-  chips: { label: string; ref: ElementRef; value: string }[];
-  details: { label: string; value: ElementRef | string }[];
+  period: Period;
+  rangeLabel: string;                         // その占術での期間(例: 2026/2/4〜2027/2/3)
+  headline: { text: string; ref: ElementRef }; // 画面側で `${text}。${ref の項目の periodNote}` に組み立てる
+  chips: Fact[];
+  note?: string; // 例: 本命星を二黒土星として計算(出生時刻により一白水星の可能性があります)
 }
 ```
+
+- 各占術の `read` が、境界時刻での分割(`resolveOverRange`)・人物像の計算・期間ごとの計算をまとめて行い、表示用に整形済みの `SystemReading` を返す。画面は `registry.ts` の `readAll(profile, today)` で全占術の結果を受け取る。
+- 運勢(期間の結果)は、人物像が候補に分かれるときは最初の候補で計算し、その前提を `note` に書く。
+- 早見表の項目 id は `element-ids.ts` の関数で作り、占術ごとの一覧 `ELEMENT_IDS` に含まれるものだけを使う。
 
 ### 6.3 読み込みの軽量化
 
