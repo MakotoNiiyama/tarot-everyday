@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DailyTarotCard } from "../daily-tarot-card";
+import { _resetModuleStateForTest } from "@/lib/use-daily-draw";
 
 const store: Record<string, string> = {};
 const localStorageMock = {
@@ -18,8 +19,19 @@ const localStorageMock = {
 };
 
 beforeEach(() => {
+  // Reset module-level snapshot cache and in-memory draw so tests don't leak state.
+  _resetModuleStateForTest();
   localStorageMock.clear();
-  Object.defineProperty(window, "localStorage", { value: localStorageMock, writable: true });
+  // Restore any mock overrides from throwing tests back to the default implementations.
+  localStorageMock.getItem.mockImplementation((key: string) => store[key] ?? null);
+  localStorageMock.setItem.mockImplementation((key: string, value: string) => {
+    store[key] = value;
+  });
+  Object.defineProperty(window, "localStorage", {
+    value: localStorageMock,
+    writable: true,
+    configurable: true,
+  });
 });
 
 function todayKey(): string {
@@ -62,5 +74,24 @@ describe("DailyTarotCard", () => {
     store["tarot-daily-draw"] = JSON.stringify({ cardId: "major-00", isReversed: false, date: "2000-01-01" });
     render(<DailyTarotCard variant="home" />);
     expect(screen.getByRole("button", { name: "カードを引く" })).toBeInTheDocument();
+  });
+
+  it("localStorage.getItem が例外を投げてもクラッシュせず未抽選状態を表示すること", () => {
+    localStorageMock.getItem.mockImplementation(() => {
+      throw new DOMException("Access denied", "SecurityError");
+    });
+    render(<DailyTarotCard variant="fortune" />);
+    expect(screen.getByText("今日のカードはまだ引いていません。")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "カードを引く" })).toBeInTheDocument();
+  });
+
+  it("localStorage.setItem が例外を投げても「カードを引く」を押すと結果を表示すること", async () => {
+    localStorageMock.setItem.mockImplementation(() => {
+      throw new DOMException("QuotaExceededError", "QuotaExceededError");
+    });
+    const user = userEvent.setup();
+    render(<DailyTarotCard variant="fortune" />);
+    await user.click(screen.getByRole("button", { name: "カードを引く" }));
+    expect(screen.getByText(/^(正位置|逆位置)$/)).toBeInTheDocument();
   });
 });

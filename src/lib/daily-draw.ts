@@ -7,7 +7,7 @@ export interface DailyDrawResult {
   date: string; // YYYY-MM-DD
 }
 
-const STORAGE_KEY = "tarot-daily-draw";
+export const DAILY_DRAW_STORAGE_KEY = "tarot-daily-draw";
 
 /** 今日の日付文字列 (YYYY-MM-DD) */
 export function getTodayKey(): string {
@@ -17,7 +17,7 @@ export function getTodayKey(): string {
 
 /** localStorageから今日の結果を取得。なければnull */
 export function loadTodayDraw(): DailyDrawResult | null {
-  const raw = localStorage.getItem(STORAGE_KEY);
+  const raw = localStorage.getItem(DAILY_DRAW_STORAGE_KEY);
   if (!raw) return null;
   try {
     const result: DailyDrawResult = JSON.parse(raw);
@@ -30,7 +30,7 @@ export function loadTodayDraw(): DailyDrawResult | null {
 
 /** 今日の結果をlocalStorageに保存 */
 export function saveDraw(result: DailyDrawResult): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(result));
+  localStorage.setItem(DAILY_DRAW_STORAGE_KEY, JSON.stringify(result));
 }
 
 /** 78枚からランダムに1枚引く + 正逆ランダム判定 */
