@@ -58,7 +58,7 @@ describe("HomeContent", () => {
 
   it("各ページへの入口リンクを表示すること", () => {
     render(<HomeContent />);
-    const menu = screen.getByRole("navigation", { name: "メニュー" });
+    const menu = screen.getByRole("region", { name: "メニュー" });
     expect(menu.querySelector('a[href="/tarot/reading"]')).toHaveTextContent("相談したいことがある");
     expect(menu.querySelector('a[href="/tarot/quiz"]')).toHaveTextContent("タロットクイズ");
     expect(menu.querySelector('a[href="/guide"]')).toHaveTextContent("早見表");

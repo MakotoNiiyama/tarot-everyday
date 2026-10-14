@@ -10,7 +10,7 @@ export function SideNav() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden lg:flex fixed inset-y-0 left-0 z-40 w-[232px] flex-col gap-7 border-r border-gold/15 bg-background px-4 py-7">
+    <div className="hidden lg:flex fixed inset-y-0 left-0 z-40 w-[232px] flex-col gap-7 border-r border-gold/15 bg-background px-4 py-7">
       <div className="flex flex-col gap-0.5 px-3">
         <span className="font-accent text-[26px] whitespace-nowrap leading-none text-gold">tarot-everyday</span>
         <span className="text-[11px] tracking-[0.15em] text-gold-dark">毎日の占いノート</span>
@@ -38,6 +38,6 @@ export function SideNav() {
           })}
         </ul>
       </nav>
-    </aside>
+    </div>
   );
 }

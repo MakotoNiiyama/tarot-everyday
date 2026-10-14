@@ -24,7 +24,7 @@ test.describe("ホーム画面", () => {
   });
 
   test("入口カードから各ページへ遷移できること", async ({ page }) => {
-    const menu = () => page.getByRole("navigation", { name: "メニュー" });
+    const menu = () => page.getByRole("region", { name: "メニュー" });
     await menu().getByRole("link", { name: /相談したいことがある/ }).click();
     await expect(page).toHaveURL("/tarot/reading");
     await page.goto("/");

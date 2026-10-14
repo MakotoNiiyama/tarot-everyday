@@ -51,7 +51,7 @@ export function HomeContent() {
           </Link>
         </section>
 
-        <nav aria-label="メニュー">
+        <section aria-label="メニュー">
           <ul className="flex flex-col gap-2.5 lg:grid lg:grid-cols-3 lg:gap-4">
             {entries.map((e) => (
               <li key={e.href}>
@@ -71,7 +71,7 @@ export function HomeContent() {
               </li>
             ))}
           </ul>
-        </nav>
+        </section>
       </PageContainer>
     </DetailPanelLayout>
   );

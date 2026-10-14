@@ -21,7 +21,9 @@ describe("SideNav", () => {
 
   it("lg 未満では非表示であること", () => {
     render(<SideNav />);
-    const aside = screen.getByRole("navigation").closest("aside");
-    expect(aside).toHaveClass("hidden", "lg:flex");
+    // サイドナビの外枠は補足情報(complementary)ではないので aside を使わない
+    expect(screen.queryByRole("complementary")).not.toBeInTheDocument();
+    const container = screen.getByRole("navigation").parentElement;
+    expect(container).toHaveClass("hidden", "lg:flex");
   });
 });
