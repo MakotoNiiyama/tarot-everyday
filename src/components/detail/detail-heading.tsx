@@ -3,10 +3,15 @@ import type { ElementType, ReactNode } from "react";
 import { Icon } from "@/components/icons/icon";
 import { outlineButton } from "@/lib/button-styles";
 
-/** 詳細表示の見出し。subtitle は分類(例「大アルカナ」)、description は補足(例: 英名・読み) */
+/** 詳細表示の見出し。subtitle は分類(例「大アルカナ」) */
 export interface DetailHeading {
   title: string;
   subtitle?: string;
+  /** 読み(ひらがな)。通常の書体で表示する */
+  reading?: string;
+  /** 英名。アクセントの書体で表示する */
+  nameEn?: string;
+  /** そのほかの補足 */
   description?: string;
 }
 
@@ -37,17 +42,22 @@ export function DetailHeadingView({
     <header className="text-center">
       {heading.subtitle && <p className="text-gold-dim text-xs mb-1">{heading.subtitle}</p>}
       <Title className="font-heading text-[26px] text-cream">{heading.title}</Title>
-      {heading.description && (
-        <Description className="text-gold-dim text-sm font-accent mt-1">{heading.description}</Description>
+      {/* 読み・英名・補足はまとめてダイアログの説明にする */}
+      {(heading.reading || heading.nameEn || heading.description) && (
+        <Description className="mt-1 flex flex-col items-center gap-0.5">
+          {heading.reading && <span className="text-gold-dim text-sm">{heading.reading}</span>}
+          {heading.nameEn && <span className="text-gold-dim text-sm font-accent">{heading.nameEn}</span>}
+          {heading.description && <span className="text-gold-dim text-sm font-accent">{heading.description}</span>}
+        </Description>
       )}
     </header>
   );
 }
 
 /** 詳細の末尾に置く、早見表の該当ページへのリンク。ボトムシートとサイドパネルで共通 */
-export function DetailGuideLink({ href }: { href: string }) {
+export function DetailGuideLink({ href, label }: { href: string; /** 同じ表示に複数並ぶときの、区別できる名前 */ label?: string }) {
   return (
-    <Link href={href} className={`${outlineButton} mt-2 w-full`}>
+    <Link href={href} aria-label={label} className={`${outlineButton} mt-2 w-full`}>
       早見表で見る
       <Icon name="right" size={16} />
     </Link>
