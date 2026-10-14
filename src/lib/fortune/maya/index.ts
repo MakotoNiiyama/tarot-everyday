@@ -53,7 +53,8 @@ export const maya: FortuneSystemModule = {
     const todayKin = kinOf(today);
     const moon = thirteenMoon(today);
     const birthday = lastBirthday(profile.date, today);
-    const nextBirthday = lastBirthday(profile.date, { year: birthday.year + 1, month: birthday.month, day: birthday.day });
+    // 次の誕生日 = birthday より後で最初の誕生日(2月29日生まれは平年2月28日・閏年2月29日を正しく扱う)
+    const nextBirthday = lastBirthday(profile.date, { year: birthday.year + 1, month: 12, day: 31 });
     const yearKin = kinOf(birthday);
     const yearEnd: LocalDate = addDays(nextBirthday, -1);
 

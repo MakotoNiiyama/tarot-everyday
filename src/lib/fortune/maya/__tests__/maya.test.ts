@@ -41,6 +41,13 @@ describe("maya.read", () => {
     expect(reading.periods.year.chips[0].value.startsWith(`${kinOf({ year: 2026, month: 7, day: 26 })} `)).toBe(true);
   });
 
+  it("2月29日生まれの年の範囲は次の誕生日の前日までにすること", () => {
+    const leap: BirthProfile = { version: 1, date: { year: 2000, month: 2, day: 29 }, time: { kind: "unknown" } };
+    const read = (t: { year: number; month: number; day: number }) => maya.read(leap, toBirthMoment(leap), t);
+    expect(read({ year: 2027, month: 6, day: 1 }).periods.year.rangeLabel).toBe("2027/2/28〜2028/2/28");
+    expect(read({ year: 2028, month: 3, day: 1 }).periods.year.rangeLabel).toBe("2028/2/29〜2029/2/27");
+  });
+
   it("時間をはずした日の今月", () => {
     const r = maya.read(profile, toBirthMoment(profile), { year: 2026, month: 7, day: 25 });
     expect(r.periods.month.headline).toEqual({ text: "時間をはずした日", ref: { system: "maya", id: moonId(0) } });
