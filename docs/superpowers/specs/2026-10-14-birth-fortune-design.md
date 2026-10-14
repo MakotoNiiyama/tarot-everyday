@@ -173,23 +173,29 @@ interface PeriodResult {
 ## 7. 早見表の辞書とテンプレート文
 
 ```ts
+// src/data/guide/types.ts(フェーズ1Bで実装した形)
+type GuideSystemId = "tarot" | "numerology" | "kyusei" | "maya"; // フェーズ2以降の占術を追加する
+
+type GuideImage =
+  | { kind: "glyph"; text: string; color?: string } // 漢字・数字のタイポグラフィ。"\n" で改行(3行まで)
+  | { kind: "photo"; path: string; alt: string };   // カード画像など
+
 interface GuideEntry {
-  system: SystemId | "tarot";
-  id: string;           // URLにも使う。例: "jikkan-kinoe"
-  category: string;     // 例: 「十干」「通変星」「三九の関係」
+  system: GuideSystemId;
+  id: string;           // ElementRef.id と同じ。URLにも使う。例: "star-1"
+  group: string;        // 一覧の見出し。例: 「九星」「太陽の紋章」「大アルカナ」
   name: string;
-  reading: string;
-  nameEn?: string;      // 例: "Yang Wood"(Caveat体で表示)
+  reading: string;      // 読み(ひらがな)。タロットは空文字
+  nameEn?: string;      // 例: "White Wizard"(Caveat体で表示)
   keywords: string[];   // 3〜5語
   summary: string;      // 人物像としての説明(2〜3文)
-  periodNote?: string;  // 運勢として出たときの一文
-  image:
-    | { kind: "glyph"; text: string; color?: string }
-    | { kind: "icon"; symbol: IconId }
-    | { kind: "photo"; path: string; credit: string; fallbackIcon: IconId };
-  related?: ElementRef[];
+  periodNote?: string;  // 運勢として出たときの一文(期間を表す語を含めない)。タロットは持たない
+  image: GuideImage;
+  related?: string[];   // 同じ占術の関連項目の id
 }
 ```
+
+- 画像の `{ kind: "icon"; symbol: IconId }`(SVGの記号)と、`photo` の `credit`(出典)・`fallbackIcon`(画像がないときの記号)は、星座・天体・十二支の画像を使うフェーズ2以降で追加する。
 
 - 運勢の一文は、「関係を表す要素」の `periodNote` をテンプレートに差し込んで作る。文章の量が組み合わせ数ではなく項目数に比例するようにする。
   - 例(宿曜):「今日の宿は{宿}。本命宿との関係は「{関係}」。{関係.periodNote}」
@@ -200,7 +206,7 @@ interface GuideEntry {
 
 | 占術 | グループ |
 |---|---|
-| タロット | 既存の `CardBrowser` |
+| タロット | 大アルカナ、ワンド、カップ、ソード、ペンタクル(カードデータを `GuideEntry` に変換して同じ一覧に載せる) |
 | 数秘術 | ルートナンバー(1〜9)、マスターナンバー(11/22/33)、パーソナルナンバーの意味 |
 | 九星気学 | 九星、八方位+中宮、傾斜宮 |
 | マヤ暦 | 太陽の紋章(20)、銀河の音(13)、13の月(13) |
