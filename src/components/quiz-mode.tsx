@@ -3,7 +3,6 @@
 import { useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import type { TarotCard } from "@/data/types";
 import { allCards } from "@/data/cards";
 import {
   generateQuiz,
@@ -100,7 +99,6 @@ export function QuizMode() {
             <FeedbackPhase
               key={`fb-${currentIndex}`}
               question={currentQuestion}
-              selectedKeyword={selectedKeyword}
               isCorrect={selectedKeyword === currentQuestion.correctKeyword}
               onNext={handleNext}
             />
@@ -278,12 +276,10 @@ function QuestionPhase({
 
 function FeedbackPhase({
   question,
-  selectedKeyword,
   isCorrect,
   onNext,
 }: {
   question: QuizQuestion;
-  selectedKeyword: string;
   isCorrect: boolean;
   onNext: () => void;
 }) {
