@@ -90,6 +90,53 @@ describe("ProfileForm", () => {
     expect(push).toHaveBeenCalledWith("/fortune");
   });
 
+  it("ラジオボタンは選択中の1つだけがタブ移動の対象になること", () => {
+    render(<ProfileForm initial={null} />);
+    const group = screen.getByRole("radiogroup", { name: "出生時刻の入力方式" });
+    const radios = within(group).getAllByRole("radio");
+    expect(radios.map((r) => r.tabIndex)).toEqual([0, -1, -1]);
+  });
+
+  it("矢印キーで前後のラジオボタンを選び、端では反対側に回ること", async () => {
+    const user = userEvent.setup();
+    render(<ProfileForm initial={null} />);
+    const group = screen.getByRole("radiogroup", { name: "性別" });
+    const radio = (name: string) => within(group).getByRole("radio", { name });
+    radio("回答しない").focus();
+    await user.keyboard("{ArrowRight}");
+    expect(radio("男性")).toHaveAttribute("aria-checked", "true");
+    expect(radio("男性")).toHaveFocus();
+    expect(radio("男性").tabIndex).toBe(0);
+    expect(radio("回答しない").tabIndex).toBe(-1);
+    await user.keyboard("{ArrowDown}");
+    expect(radio("女性")).toHaveAttribute("aria-checked", "true");
+    await user.keyboard("{ArrowUp}");
+    expect(radio("男性")).toHaveAttribute("aria-checked", "true");
+    await user.keyboard("{ArrowLeft}");
+    expect(radio("回答しない")).toHaveAttribute("aria-checked", "true");
+    expect(radio("回答しない")).toHaveFocus();
+    await user.keyboard("{Home}");
+    expect(radio("男性")).toHaveAttribute("aria-checked", "true");
+    await user.keyboard("{End}");
+    expect(radio("回答しない")).toHaveAttribute("aria-checked", "true");
+  });
+
+  it("午前・午後も矢印キーで切り替えられること", async () => {
+    const user = userEvent.setup();
+    render(<ProfileForm initial={null} />);
+    await user.click(screen.getByRole("radio", { name: "午前・午後" }));
+    const group = screen.getByRole("radiogroup", { name: "午前・午後" });
+    const am = within(group).getByRole("radio", { name: /午前/ });
+    const pm = within(group).getByRole("radio", { name: /午後/ });
+    expect([am.tabIndex, pm.tabIndex]).toEqual([0, -1]);
+    am.focus();
+    await user.keyboard("{ArrowRight}");
+    expect(pm).toHaveAttribute("aria-checked", "true");
+    expect(pm).toHaveFocus();
+    await user.keyboard("{ArrowRight}");
+    expect(am).toHaveAttribute("aria-checked", "true");
+  });
+
   it("データが端末内にのみ保存される旨を表示すること", () => {
     render(<ProfileForm initial={null} />);
     expect(screen.getByText("データは端末内にのみ保存されます")).toBeInTheDocument();

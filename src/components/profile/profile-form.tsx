@@ -11,10 +11,18 @@ import { prefectures, type PrefectureCode } from "@/lib/fortune/prefectures";
 import { clearBirthProfile, saveBirthProfile } from "@/lib/fortune/profile-storage";
 import { todayInTokyo } from "@/lib/fortune/tokyo-time";
 import type { BirthProfile, BirthTime } from "@/lib/fortune/types";
+import { useRovingSelection } from "@/lib/use-roving-selection";
 
 const ProfilePreview = dynamic(() => import("./profile-preview").then((m) => m.ProfilePreview), { ssr: false });
 
 type TimeMode = BirthTime["kind"];
+type Half = "am" | "pm";
+
+const HALVES = [
+  ["am", "午前", "0:00〜11:59"],
+  ["pm", "午後", "12:00〜23:59"],
+] as const;
+const HALF_VALUES: readonly Half[] = HALVES.map(([v]) => v);
 
 const SELECT =
   "w-full min-h-12 appearance-none rounded-xl border border-gold/30 bg-surface pl-3.5 pr-8 text-[15px] text-cream focus:border-gold/60 focus:outline-none";
@@ -46,13 +54,16 @@ function Select({ label, value, onChange, children }: { label: string; value: st
 }
 
 function Segment<T extends string>({ label, value, options, onChange }: { label: string; value: T; options: { value: T; label: string }[]; onChange: (v: T) => void }) {
+  const values = options.map((o) => o.value);
+  const { itemProps } = useRovingSelection({ values, value, onChange });
   return (
     <div role="radiogroup" aria-label={label} className="grid grid-cols-3 gap-1 rounded-[14px] border border-gold/25 bg-popover p-1">
-      {options.map((o) => {
+      {options.map((o, i) => {
         const checked = o.value === value;
         return (
           <button
             key={o.value}
+            {...itemProps(i)}
             type="button"
             role="radio"
             aria-checked={checked}
@@ -75,12 +86,13 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
   const [month, setMonth] = useState(initial ? String(initial.date.month) : "");
   const [day, setDay] = useState(initial ? String(initial.date.day) : "");
   const [timeMode, setTimeMode] = useState<TimeMode>(initial?.time.kind ?? "unknown");
-  const [half, setHalf] = useState<"am" | "pm">(initial?.time.kind === "half" ? initial.time.half : "am");
+  const [half, setHalf] = useState<Half>(initial?.time.kind === "half" ? initial.time.half : "am");
   const [hour, setHour] = useState(initial?.time.kind === "hour" ? String(initial.time.hour) : "12");
   const [prefecture, setPrefecture] = useState<string>(initial?.prefecture ?? "");
   const [gender, setGender] = useState<"male" | "female" | "none">(initial?.gender ?? "none");
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [error, setError] = useState("");
+  const halfRoving = useRovingSelection({ values: HALF_VALUES, value: half, onChange: setHalf });
 
   const lastDay = year && month ? daysInMonth(Number(year), Number(month)) : 31;
 
@@ -173,14 +185,10 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
             )}
             {timeMode === "half" && (
               <div role="radiogroup" aria-label="午前・午後" className="grid grid-cols-2 gap-2">
-                {(
-                  [
-                    ["am", "午前", "0:00〜11:59"],
-                    ["pm", "午後", "12:00〜23:59"],
-                  ] as const
-                ).map(([value, label, sub]) => (
+                {HALVES.map(([value, label, sub], i) => (
                   <button
                     key={value}
+                    {...halfRoving.itemProps(i)}
                     type="button"
                     role="radio"
                     aria-checked={half === value}
