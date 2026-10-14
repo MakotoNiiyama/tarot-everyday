@@ -1,52 +1,28 @@
-"use client";
-
-import Link from "next/link";
 import Image from "next/image";
 import type { TarotCard } from "@/data/types";
-import { ScratchDivider } from "@/components/svg/scratch-decorations";
+import { GuideDetailFrame, GuideDetailLayout } from "@/components/guide/guide-detail-layout";
 import { TarotCardMeaningTabs } from "@/components/tarot-card-meaning-tabs";
 import { arcanaLabel } from "@/lib/tarot-utils";
 
+/** タロットのカードの詳細ページ(早見表の共通レイアウト+正逆タブ) */
 export function CardDetail({ card }: { card: TarotCard }) {
-  const subTitle = arcanaLabel(card);
-
+  const group = arcanaLabel(card);
   return (
-    <div className="flex flex-col flex-1 px-4 py-6 gap-6 max-w-lg mx-auto">
-      {/* パンくず */}
-      <nav aria-label="パンくずリスト" className="text-xs text-gold-dim">
-        <Link href="/guide" className="hover:text-gold transition-colors">
-          早見表
-        </Link>
-        <span className="mx-1">/</span>
-        <span>タロット</span>
-        <span className="mx-1">/</span>
-        <span className="text-cream">{card.name.ja}</span>
-      </nav>
-
-      {/* ヘッダー */}
-      <header className="text-center">
-        <p className="text-gold-dim text-xs mb-1">{subTitle}</p>
-        <h1 className="font-heading text-2xl font-bold text-gold">{card.name.ja}</h1>
-        <p className="text-gold-dim text-sm mt-1 font-accent">{card.name.en}</p>
+    <GuideDetailLayout
+      system="tarot"
+      systemLabel="タロット"
+      group={group}
+      image={
+        <GuideDetailFrame portrait>
+          <Image src={card.imagePath} alt={card.name.ja} width={300} height={500} className="h-auto w-full" priority />
+        </GuideDetailFrame>
+      }
+    >
+      <header className="flex flex-col gap-1 text-center lg:text-left">
+        <h1 className="font-heading text-[30px] leading-tight lg:text-4xl">{card.name.ja}</h1>
+        <p className="font-accent text-base leading-none text-gold-dark lg:text-xl">{card.name.en}</p>
       </header>
-
-      {/* カード画像 */}
-      <div className="flex justify-center">
-        <div className="w-40 h-auto rounded-lg overflow-hidden border border-gold/30 shadow-lg shadow-black/40">
-          <Image
-            src={card.imagePath}
-            alt={card.name.ja}
-            width={160}
-            height={267}
-            className="w-full h-auto"
-            priority
-          />
-        </div>
-      </div>
-
-      <ScratchDivider className="text-gold" />
-
       <TarotCardMeaningTabs card={card} />
-    </div>
+    </GuideDetailLayout>
   );
 }

@@ -53,12 +53,13 @@ describe("CardDetail", () => {
     expect(screen.getByText("ワンド（杖）")).toBeInTheDocument();
   });
 
-  it("パンくずリストが表示されること", () => {
+  it("パンくずリストと戻るリンクが表示されること", () => {
     render(<CardDetail card={mockCard} />);
     const nav = screen.getByLabelText("パンくずリスト");
     expect(nav).toHaveTextContent("早見表");
     expect(nav).toHaveTextContent("タロット");
-    expect(screen.getByRole("link", { name: "早見表" })).toHaveAttribute("href", "/guide");
+    expect(nav).toHaveTextContent("大アルカナ");
+    expect(screen.getByRole("link", { name: "早見表に戻る" })).toHaveAttribute("href", "/guide?tab=tarot");
   });
 
   it("正位置タブが初期表示されること", () => {
