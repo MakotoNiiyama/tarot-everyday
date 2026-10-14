@@ -46,6 +46,17 @@ describe("kyusei.read", () => {
     expect(r.periods.day.rangeLabel).toBe("2026/10/14");
   });
 
+  it("節入り・立春の当日は新しい月・年に含めること", () => {
+    const p: BirthProfile = { version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "unknown" } };
+    // 2026/10/8 15:29 寒露 → 当日から戌月(一白の年の戌月は九紫が中宮)
+    const oct8 = kyusei.read(p, toBirthMoment(p), { year: 2026, month: 10, day: 8 });
+    expect(oct8.periods.month.rangeLabel).toBe("2026/10/8〜2026/11/6");
+    expect(oct8.periods.month.chips[2].value).toBe("九紫火星");
+    // 2028/2/4 16:31 立春 → 当日から2028年。次の立春は 2029/2/3 22:20 なので 2/3 は2029年に含まれる
+    const feb4 = kyusei.read(p, toBirthMoment(p), { year: 2028, month: 2, day: 4 });
+    expect(feb4.periods.year.rangeLabel).toBe("2028/2/4〜2029/2/2");
+  });
+
   it("期間の結果に本命星の位置と吉方位のチップを持つこと", () => {
     const p: BirthProfile = { version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "unknown" } };
     const r = kyusei.read(p, toBirthMoment(p), today);

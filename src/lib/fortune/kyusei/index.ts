@@ -48,8 +48,9 @@ const PERIOD_WORD: Record<Period, string> = { day: "今日", month: "今月", ye
 const BOARD_LABEL: Record<Period, string> = { day: "日盤の中宮", month: "月盤の中宮", year: "年盤の中宮" };
 
 function boardFor(period: Period, today: LocalDate) {
-  const noon = tokyoToUtc(today.year, today.month, today.day, 12, 0);
-  const month = solarMonthAt(noon);
+  // 暦の慣習どおり節入り・立春の当日は新しい月・年に含めるため、今日の終わり(23:59)で判定する
+  const endOfToday = tokyoToUtc(today.year, today.month, today.day, 23, 59);
+  const month = solarMonthAt(endOfToday);
   const ky = month.kyuseiYear;
   if (period === "year") {
     const start = jstLocalDate(solarLongitudeTime(ky, 315));
