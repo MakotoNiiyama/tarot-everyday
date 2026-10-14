@@ -94,4 +94,16 @@ describe("DailyTarotCard", () => {
     await user.click(screen.getByRole("button", { name: "カードを引く" }));
     expect(screen.getByText(/^(正位置|逆位置)$/)).toBeInTheDocument();
   });
+
+  it("前日の結果が保存されたまま setItem が失敗しても、引いた結果を表示すること", async () => {
+    store["tarot-daily-draw"] = JSON.stringify({ cardId: "major-00", isReversed: false, date: "2000-01-01" });
+    localStorageMock.setItem.mockImplementation(() => {
+      throw new DOMException("QuotaExceededError", "QuotaExceededError");
+    });
+    const user = userEvent.setup();
+    render(<DailyTarotCard variant="fortune" />);
+    await user.click(screen.getByRole("button", { name: "カードを引く" }));
+    expect(screen.getByText(/^(正位置|逆位置)$/)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "カードを引く" })).not.toBeInTheDocument();
+  });
 });

@@ -18,38 +18,36 @@ let cacheKey: string | null = null;
 let cacheValue: DailyDrawResult | null = null;
 
 /**
- * In-memory fallback for when localStorage is unavailable (Safari private mode,
- * security restrictions, etc.) or when a write fails. Holds the most recent
- * draw result for this session only — not persisted across page loads.
+ * localStorage が使えない(Safari のプライベートモード、セキュリティ制限など)か、
+ * 書き込みに失敗したときの代わりにメモリに持つ結果。直近に引いた結果をこのセッションの間だけ保持し、
+ * ページを読み込み直すと消える。
  */
 let memoryDraw: DailyDrawResult | null = null;
-/** Incremented each time memoryDraw changes so the cache key detects the update. */
+/** memoryDraw を変えるたびに増やし、キャッシュのキーで変更を検知できるようにする */
 let memoryDrawSeq = 0;
 
 /**
- * Returns today's draw result, stable by reference until localStorage or the date changes.
- * Wrapped in try/catch so a throwing localStorage (e.g. Safari private mode) never
- * crashes the component tree — it falls back to the in-memory draw instead.
+ * 今日の抽選結果を返す。localStorage の中身か日付が変わるまでは同じ参照を返す。
+ * localStorage が例外を投げても(Safari のプライベートモードなど)画面が壊れないよう try/catch で囲み、
+ * その場合はメモリの結果を使う。
  */
 function getSnapshot(): DailyDrawResult | null {
   try {
     const rawStorage = localStorage.getItem(DAILY_DRAW_STORAGE_KEY);
     const today = getTodayKey();
-    // Include memoryDrawSeq so the cache busts when drawNow sets a memory fallback.
+    // drawNow がメモリの結果を更新したときにキャッシュが外れるよう memoryDrawSeq もキーに含める
     const key = `${rawStorage}|${today}|${memoryDrawSeq}`;
     if (key !== cacheKey) {
       cacheKey = key;
       const fromStorage = loadTodayDraw();
-      // Use the in-memory result only when storage is completely empty (rawStorage === null),
-      // which happens when saveDraw threw and nothing was persisted. If storage has any
-      // value (even an outdated one) we trust storage so that cleared storage reads as null.
-      const fromMemory =
-        rawStorage === null && memoryDraw?.date === today ? memoryDraw : null;
+      // localStorage に今日の結果がなければ、今日引いたメモリの結果を使う。
+      // 前日の結果が残ったまま saveDraw が失敗した場合も、引いた結果を表示できるようにするため
+      const fromMemory = memoryDraw?.date === today ? memoryDraw : null;
       cacheValue = fromStorage ?? fromMemory;
     }
     return cacheValue;
   } catch {
-    // Storage completely unavailable — return whatever we drew in memory this session.
+    // localStorage がまったく使えない。このセッションでメモリに持っている結果を返す
     const today = getTodayKey();
     return memoryDraw?.date === today ? memoryDraw : null;
   }
@@ -82,14 +80,13 @@ export function useDailyDraw(): DailyDrawState {
 
   const drawNow = useCallback(() => {
     const result = drawRandomCard(allCards);
-    // Set the in-memory fallback first so the result is always visible even if
-    // the storage write fails (e.g. private browsing, quota exceeded).
+    // 保存に失敗しても(プライベートブラウズ、容量超過など)結果を表示できるよう、先にメモリに持つ
     memoryDraw = result;
     memoryDrawSeq++;
     try {
       saveDraw(result);
     } catch {
-      // Storage unavailable; result is held in memory for this session only.
+      // 保存できない。結果はこのセッションの間だけメモリに残る
     }
     listeners.forEach((l) => l());
   }, []);
@@ -98,9 +95,8 @@ export function useDailyDraw(): DailyDrawState {
 }
 
 /**
- * Resets all module-level state. Call from `beforeEach` in tests to prevent
- * memoryDraw and the snapshot cache from leaking across test cases.
- * Not intended for production use.
+ * モジュール内の状態をすべて初期化する。テストの beforeEach で呼び、
+ * memoryDraw やスナップショットのキャッシュがテスト間で持ち越されないようにする。本番では使わない。
  */
 export function _resetModuleStateForTest(): void {
   cacheKey = null;
