@@ -157,17 +157,24 @@ function monthResult(today: LocalDate, natalCusps: number[]): PeriodResult {
   };
 }
 
-/** 年の中で星座が最初に変わる瞬間(1日ごとに調べ、変わった日の中を二分法で詰める) */
-function firstSignChange(start: Date, end: Date, lonAt: (at: Date) => number): Date | null {
+/**
+ * 範囲の中で星座が変わる瞬間をすべて返す(1日ごとに調べ、両端で星座が違う日の中を二分法で詰める)。
+ * 木星・土星は1日に 0.25 度ほどしか動かないので、1日の中で行って戻ることは考えない
+ */
+function signChangesByDay(start: Date, end: Date, lonAt: (at: Date) => number): Date[] {
   const DAY = 86_400_000;
-  const s0 = signOf(lonAt(start));
+  const result: Date[] = [];
+  let s0 = signOf(lonAt(start));
   for (let t = start.getTime(); t < end.getTime(); t += DAY) {
     const next = Math.min(t + DAY, end.getTime());
-    if (signOf(lonAt(new Date(next))) !== s0) {
-      return signChangesWithin({ start: new Date(t), end: new Date(next) }, lonAt)[0] ?? new Date(next);
+    const s1 = signOf(lonAt(new Date(next)));
+    if (s1 !== s0) {
+      const found = signChangesWithin({ start: new Date(t), end: new Date(next) }, lonAt);
+      result.push(...(found.length ? found : [new Date(next)]));
     }
+    s0 = s1;
   }
-  return null;
+  return result;
 }
 
 function yearResult(today: LocalDate, natalCusps: number[]): PeriodResult {
@@ -178,15 +185,12 @@ function yearResult(today: LocalDate, natalCusps: number[]): PeriodResult {
     const lon = lonAt(noon(today));
     const sign = signOf(lon);
     const house = houseOf(lon, natalCusps);
-    const change = firstSignChange(start, end, lonAt);
-    let signs = signName(sign);
-    let refs = [signRef(sign)];
-    if (change) {
-      const from = signOf(lonAt(start));
-      const to = signOf(lonAt(change));
-      signs = `${signName(from)}→${signName(to)}(${monthDay(change)}〜)`;
-      refs = [signRef(from), signRef(to)];
-    }
+    // 年の中で星座が変わるときは「魚座→牡羊座(5/25〜)→魚座(9/1〜)」のようにつなぐ
+    const steps = [{ sign: signOf(lonAt(start)), label: "" }].concat(
+      signChangesByDay(start, end, lonAt).map((at) => ({ sign: signOf(lonAt(at)), label: `(${monthDay(at)}〜)` })),
+    );
+    const signs = steps.length > 1 ? steps.map((x) => `${signName(x.sign)}${x.label}`).join("→") : signName(sign);
+    const refs = [...new Set(steps.length > 1 ? steps.map((x) => x.sign) : [sign])].map(signRef);
     return { fact: { key: body, label: BODY_NAME[body], value: `${signs}・第${house}ハウス`, refs: [...refs, houseRef(house)] }, house };
   };
   const jupiter = chip("jupiter");
