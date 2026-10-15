@@ -9,7 +9,9 @@ export type Period = "day" | "month" | "year";
 export type BirthTime =
   | { kind: "unknown" }
   | { kind: "half"; half: "am" | "pm" }
-  | { kind: "hour"; hour: number };
+  /** 分は分からない(その時の30分として計算する) */
+  | { kind: "hour"; hour: number }
+  | { kind: "minute"; hour: number; minute: number };
 
 /** 端末に保存する入力(設計書 §4) */
 export interface BirthProfile {

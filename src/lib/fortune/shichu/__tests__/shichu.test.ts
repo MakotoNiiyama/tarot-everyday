@@ -81,11 +81,22 @@ describe("shichu.read 人物像", () => {
     expect(r.ambiguous).toBe(false);
   });
 
-  it("東京の14時台は時柱を候補にすること(地方平均時 15:00 = 14:41 ごろ)", () => {
+  it("東京の14時台(分不明)は14:30で計算し、時柱を候補にしないこと(地方平均時 15:00 = 14:41 ごろ)", () => {
     const r = read({ ...p, prefecture: "13" });
-    expect(fact(r, "hour-pillar")?.value).toMatch(/^己未\(〜14:4\d\) \/ 庚申\(14:4\d〜\)$/);
-    expect(r.ambiguous).toBe(true);
-    expect(fact(r, "meishiki")?.candidates).toBeUndefined();
+    expect(fact(r, "hour-pillar")?.value).toBe("己未");
+    expect(r.ambiguous).toBe(false);
+  });
+
+  it("分まで指定すると、東京の時柱は 14:41 ごろの境目の前後で分かれること", () => {
+    const at = (minute: number) => read({ ...p, time: { kind: "minute", hour: 14, minute }, prefecture: "13" });
+    expect(fact(at(40), "hour-pillar")?.value).toBe("己未");
+    expect(fact(at(42), "hour-pillar")?.value).toBe("庚申");
+    expect(at(42).ambiguous).toBe(false);
+    // 境目を含む1分は候補になる
+    const edge = at(41);
+    expect(fact(edge, "hour-pillar")?.value).toMatch(/^己未\(〜14:41\) \/ 庚申\(14:41〜\)$/);
+    expect(edge.ambiguous).toBe(true);
+    expect(fact(edge, "meishiki")?.candidates).toBeUndefined();
   });
 
   it("サマータイム中の0時台は標準時で前日の日柱にすること", () => {
@@ -95,10 +106,21 @@ describe("shichu.read 人物像", () => {
     expect(fact(r, "hour-pillar")?.value).toBe("庚子");
   });
 
-  it("東京の23時台は地方平均時の0時(23:41ごろ)で日柱を候補にし、時柱は子の刻のままにすること", () => {
+  it("東京の23時台(分不明)は23:30で計算し、地方平均時の0時(23:41ごろ)より前の日柱にすること", () => {
     // 23時台はどちらの日柱でも翌日(甲)の子の刻で甲子
     const r = read({ ...p, time: { kind: "hour", hour: 23 }, prefecture: "13" });
-    expect(fact(r, "day-pillar")?.value).toMatch(/^癸巳\(〜23:4\d\) \/ 甲午\(23:4\d〜\)$/);
+    expect(fact(r, "day-pillar")?.value).toBe("癸巳");
+    expect(fact(r, "hour-pillar")?.value).toBe("甲子");
+    expect(r.ambiguous).toBe(false);
+    for (const period of ["day", "month", "year"] as const) expect(r.periods[period].note).toBeUndefined();
+  });
+
+  it("東京の23:41(地方平均時の0時を含む1分)は日柱を候補にし、時柱は子の刻のままにすること", () => {
+    const at = (minute: number) => read({ ...p, time: { kind: "minute", hour: 23, minute }, prefecture: "13" });
+    expect(fact(at(40), "day-pillar")?.value).toBe("癸巳");
+    expect(fact(at(42), "day-pillar")?.value).toBe("甲午");
+    const r = at(41);
+    expect(fact(r, "day-pillar")?.value).toBe("癸巳(〜23:41) / 甲午(23:41〜)");
     expect(fact(r, "hour-pillar")?.value).toBe("甲子");
     expect(r.ambiguous).toBe(true);
     for (const period of ["day", "month", "year"] as const) {
@@ -186,29 +208,29 @@ describe("shichu.read 運勢", () => {
     expect(r.periods.year.note).toBe("大運を10歳運・逆行として計算(出生時刻により10歳運・順行の可能性があります)");
   });
 
-  it("日柱と大運の両方が候補に分かれるときは今年の注記をつなげること", () => {
-    // 東京の23時台: 地方平均時の0時(23:41ごろ)で日柱が、大雪 1991/12/7 23:56 で月柱と大運が分かれる
-    const r = read({
+  it("節入りを含む1分に生まれたときは大運を候補にし、今年の注記を付けること", () => {
+    // 大雪 1991/12/7 23:56 で月柱と大運が分かれる。23時台(分不明)なら 23:30 で計算して分かれない
+    const p = (time: BirthProfile["time"]): BirthProfile => ({
       version: 1,
       date: { year: 1991, month: 12, day: 7 },
-      time: { kind: "hour", hour: 23 },
+      time,
       prefecture: "13",
       gender: "female",
     });
-    expect(fact(r, "day-pillar")?.value).toMatch(/^辛亥\(〜23:4\d\) \/ 壬子\(23:4\d〜\)$/);
+    const hour = read(p({ kind: "hour", hour: 23 }));
+    expect(fact(hour, "day-pillar")?.value).toBe("辛亥");
+    expect(fact(hour, "daiun")?.value).toBe("1歳運・順行");
+    expect(hour.periods.year.note).toBeUndefined();
+    const r = read(p({ kind: "minute", hour: 23, minute: 56 }));
     expect(fact(r, "daiun")?.value).toBe("1歳運・順行(〜23:56) / 10歳運・順行(23:56〜)");
-    const dayNote = "日柱を辛亥として計算(出生時刻により壬子の可能性があります)";
-    expect(r.periods.day.note).toBe(dayNote);
-    expect(r.periods.month.note).toBe(dayNote);
-    expect(r.periods.year.note).toBe(`${dayNote}。大運を1歳運・順行として計算(出生時刻により10歳運・順行の可能性があります)`);
+    expect(r.periods.year.note).toBe("大運を1歳運・順行として計算(出生時刻により10歳運・順行の可能性があります)");
   });
 
-  it("日柱が候補に分かれるときは注記を付けること", () => {
-    // 福岡の0時台: 地方平均時 0:00 = 0:18 ごろ。0:00〜0:18 は前日の日柱
+  it("福岡の0時台(分不明)は0:30で計算し、地方平均時 0:00(0:18 ごろ)を過ぎた日柱にすること", () => {
     const r = read({ version: 1, date: { year: 1990, month: 3, day: 30 }, time: { kind: "hour", hour: 0 }, prefecture: "40" });
-    expect(r.natal.find((f) => f.key === "day-pillar")?.value).toMatch(/^癸巳\(〜0:1\d\) \/ 甲午\(0:1\d〜\)$/);
-    for (const period of ["day", "month", "year"] as const) {
-      expect(r.periods[period].note).toBe("日柱を癸巳として計算(出生時刻により甲午の可能性があります)");
-    }
+    expect(r.natal.find((f) => f.key === "day-pillar")?.value).toBe("甲午");
+    for (const period of ["day", "month", "year"] as const) expect(r.periods[period].note).toBeUndefined();
+    const before = read({ version: 1, date: { year: 1990, month: 3, day: 30 }, time: { kind: "minute", hour: 0, minute: 17 }, prefecture: "40" });
+    expect(before.natal.find((f) => f.key === "day-pillar")?.value).toBe("癸巳");
   });
 });

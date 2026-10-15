@@ -5,6 +5,7 @@ import type { BirthProfile, BirthTime } from "./types";
 export function formatBirthTime(time: BirthTime): string {
   if (time.kind === "unknown") return "時刻不明";
   if (time.kind === "half") return time.half === "am" ? "午前" : "午後";
+  if (time.kind === "minute") return `${time.hour}:${String(time.minute).padStart(2, "0")}`;
   return `${time.hour}時台`;
 }
 
@@ -18,7 +19,7 @@ export function formatGender(gender: BirthProfile["gender"]): string {
   return "回答なし";
 }
 
-/** 例: 1990/3/29 生 · 14時台 · 東京都(出生地未入力なら省く) */
+/** 例: 1990/3/29 生 · 14:35 · 東京都(分不明なら 14時台。出生地未入力なら省く) */
 export function formatProfileSummary(profile: BirthProfile): string {
   const { year, month, day } = profile.date;
   const parts = [`${year}/${month}/${day} 生`, formatBirthTime(profile.time)];

@@ -1,5 +1,6 @@
 import { SearchMoonPhase } from "astronomy-engine";
 import { isAmbiguous, resolveOverRange } from "../ambiguity";
+import { isTimeKnown, knownTime } from "../birth-moment";
 import { bodyId, houseId, signId } from "../element-ids";
 import { resolvedFact } from "../fact";
 import { daysInMonth, formatSlash, type LocalDate } from "../local-date";
@@ -52,10 +53,12 @@ export function signChangesWithin(range: TimeRange, lonAt: (at: Date) => number)
 }
 
 /** ASC・ハウスの計算に使う代表の時刻(日本時間)と、仮計算の注記 */
-function representativeHour(time: BirthTime): { hour: number; minute: number; note?: string } {
+export function representativeTime(time: BirthTime): { hour: number; minute: number; note?: string } {
   switch (time.kind) {
+    case "minute":
+      return knownTime(time);
     case "hour":
-      return { hour: time.hour, minute: 30 };
+      return { ...knownTime(time), note: `分が不明のため${time.hour}時30分で計算` };
     case "half":
       return time.half === "am"
         ? { hour: 6, minute: 0, note: "出生時刻が午前のため6時で仮計算" }
@@ -208,7 +211,7 @@ const withNote = (result: PeriodResult, note: string | undefined): PeriodResult 
 const NATAL_LABEL: Partial<Record<BodyKey, string>> = { sun: "太陽星座", moon: "月星座" };
 
 const METHOD =
-  "トロピカル。地心の視黄経(その日の真の黄道)。天体は10天体+ドラゴンヘッド(真)・キロン(JPL Horizons の表)・リリス(平均)。ハウスは Placidus(Koch・ホールサインに切り替え可)。出生時刻が不明・午前午後のときは正午・6時・18時で仮計算。アスペクトは主要5種+150度(マイナーは30・45・72・135・144度)。オーブは太陽・月を含む組で 0・180度 10、90・120度 8、60度 6、150度 3、マイナー 2、含まない組は 2 ずつ狭い(150度とマイナーは同じ)。感受点は主要5種・オーブ3";
+  "トロピカル。地心の視黄経(その日の真の黄道)。天体は10天体+ドラゴンヘッド(真)・キロン(JPL Horizons の表)・リリス(平均)。ハウスは Placidus(Koch・ホールサインに切り替え可)。出生時刻が不明・午前午後のときは正午・6時・18時で仮計算し、分が分からないときはその時の30分で計算。アスペクトは主要5種+150度(マイナーは30・45・72・135・144度)。オーブは太陽・月を含む組で 0・180度 10、90・120度 8、60度 6、150度 3、マイナー 2、含まない組は 2 ずつ狭い(150度とマイナーは同じ)。感受点は主要5種・オーブ3";
 
 export const horoscope: FortuneSystemModule = {
   id: "horoscope",
@@ -216,7 +219,7 @@ export const horoscope: FortuneSystemModule = {
   nameEn: "Horoscope",
   read(profile, moment, today) {
     const { date } = profile;
-    const rep = representativeHour(profile.time);
+    const rep = representativeTime(profile.time);
     const at = tokyoToUtc(date.year, date.month, date.day, rep.hour, rep.minute);
     const place: Place = { lat: moment.location.lat, lon: moment.location.lon };
     const notes = [...(rep.note ? [rep.note] : []), ...(moment.location.isDefault ? ["出生地未入力のため明石基準"] : [])];
@@ -234,9 +237,9 @@ export const horoscope: FortuneSystemModule = {
       return [{ key, name, lon: pos.lon, retrograde: pos.retrograde, houses, fact, resolved }];
     });
 
-    // ASC は時刻を指定したときだけ、その1時間で候補にする
+    // ASC は時刻を指定したときだけ出生の範囲(1分)で判定する。それ以外は仮の時刻の値
     const ascResolved: Resolved<number> =
-      profile.time.kind === "hour"
+      isTimeKnown(profile.time)
         ? resolveSign(moment.range, (t) => angles(t, place).asc)
         : { kind: "fixed", value: signOf(asc) };
     // 出生時刻を仮に置いたときは、その時刻に左右される ASC・MC・天体の位置の要約に印を付ける

@@ -1,6 +1,7 @@
 // src/lib/fortune/sukuyo/index.ts
 import { midpoint } from "../ambiguity";
 import { lunarMonthSpan, lunarNewYear, lunarYearOf, toLunar } from "../astro/lunar-calendar";
+import { isTimeKnown } from "../birth-moment";
 import { RELATION_KINDS, mansionId, relationId } from "../element-ids";
 import { addDays, formatSlash, mod, type LocalDate } from "../local-date";
 import { PERIOD_WORD } from "../period-labels";
@@ -59,7 +60,7 @@ export const sukuyo: FortuneSystemModule = {
   nameEn: "Sukuyo",
   read(profile, moment, today) {
     // 時刻を指定したときは標準時(サマータイムは1時間戻す)の日付、それ以外は入力された誕生日
-    const birthDate = profile.time.kind === "hour" ? standardDate(midpoint(moment.range)) : moment.localDate;
+    const birthDate = isTimeKnown(profile.time) ? standardDate(midpoint(moment.range)) : moment.localDate;
     const honmei = method(birthDate);
     const lunar = toLunar(birthDate);
     return {
@@ -67,7 +68,7 @@ export const sukuyo: FortuneSystemModule = {
       name: "宿曜",
       nameEn: "Sukuyo",
       method:
-        "27宿(牛宿を除く)。本命宿と日の宿は旧暦の月ごとの1日の宿(1月 室宿 … 12月 虚宿)から日ごとに1つ進める表の方式で、閏月は同じ名前の月の表を使う。月の宿はその旧暦月の1日の宿。年の宿は旧正月ごとに1つ進む28年周期(2011年 = 女宿。牛宿の年は斗宿とする)。関係は三九の秘法で、日・月は本命宿から、年は年の宿から数える。旧暦は朔と中気から求める(2033年は閏11月案)。生まれた日は、時刻を指定したときは標準時の日付、それ以外は誕生日",
+        "27宿(牛宿を除く)。本命宿と日の宿は旧暦の月ごとの1日の宿(1月 室宿 … 12月 虚宿)から日ごとに1つ進める表の方式で、閏月は同じ名前の月の表を使う。月の宿はその旧暦月の1日の宿。年の宿は旧正月ごとに1つ進む28年周期(2011年 = 女宿。牛宿の年は斗宿とする)。関係は三九の秘法で、日・月は本命宿から、年は年の宿から数える。旧暦は朔と中気から求める(2033年は閏11月案)。生まれた日は、時刻を指定したときは標準時の日付(分が分からないときはその時の30分)、それ以外は誕生日",
       natal: [
         mansionFact("honmei", "本命宿", honmei),
         mansionFact("gyo", "業宿", mod(honmei + 9, 27)),

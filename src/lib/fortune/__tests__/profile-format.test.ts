@@ -11,6 +11,9 @@ describe("profile-format", () => {
     expect(formatBirthTime({ kind: "half", half: "am" })).toBe("午前");
     expect(formatBirthTime({ kind: "half", half: "pm" })).toBe("午後");
     expect(formatBirthTime({ kind: "hour", hour: 14 })).toBe("14時台");
+    expect(formatBirthTime({ kind: "minute", hour: 14, minute: 35 })).toBe("14:35");
+    expect(formatBirthTime({ kind: "minute", hour: 9, minute: 5 })).toBe("9:05");
+    expect(formatBirthTime({ kind: "minute", hour: 0, minute: 0 })).toBe("0:00");
   });
 
   it("出生地と性別の表記", () => {
@@ -23,6 +26,7 @@ describe("profile-format", () => {
 
   it("要約(デザインの表記)", () => {
     expect(formatProfileSummary(base)).toBe("1990/3/29 生 · 14時台 · 東京都");
+    expect(formatProfileSummary({ ...base, time: { kind: "minute", hour: 14, minute: 35 } })).toBe("1990/3/29 生 · 14:35 · 東京都");
     expect(formatProfileSummary({ ...base, time: { kind: "unknown" }, prefecture: undefined })).toBe("1990/3/29 生 · 時刻不明");
   });
 });

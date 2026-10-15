@@ -2,6 +2,7 @@
 import { isAmbiguous, representative, resolvedValues, resolveOverRange } from "../ambiguity";
 import { calendarPeriod } from "../astro/calendar-period";
 import { jieBoundariesWithin } from "../astro/solar-terms";
+import { isTimeKnown } from "../birth-moment";
 import { ageOn, daiunAt, daiunNote, formatDaiunPlan, resolveDaiun, type DaiunPlan } from "../daiun";
 import { ijoId, isouId, mainStarId, shukumeiId, subStarId, tenchuId } from "../element-ids";
 import { resolvedFact } from "../fact";
@@ -111,7 +112,7 @@ export const sanmei: FortuneSystemModule = {
   nameEn: "Sanmeigaku",
   read(profile, moment, today) {
     // 日柱は、時刻指定なら標準時(サマータイムは1時間戻す)の日付、それ以外は誕生日の暦日
-    const hourKnown = profile.time.kind === "hour";
+    const hourKnown = isTimeKnown(profile.time);
     const natal = resolveOverRange(
       moment.range,
       jieBoundariesWithin(moment.range),
@@ -207,7 +208,7 @@ export const sanmei: FortuneSystemModule = {
       name: "算命学",
       nameEn: "Sanmeigaku",
       method:
-        "年・月・日の3柱(時柱は使わない)。年は立春、月は節入りで区切る。日柱の日付は、時刻指定時は標準時(サマータイムは1時間戻す)、それ以外は誕生日の暦日。蔵干は二十八元を節入り日を1日目とする日数で選ぶ(高尾学館式。日数は標準時の日付で数える)。人体星図は頭=年干、腹=月干、左手(東)=年支蔵干、胸=月支蔵干、右手(西)=日支蔵干、十二大従星は年支=初年・月支=中年・日支=晩年。天中殺は日干支の旬で決める。宿命中殺は生年・生月・生日・日座・日居、異常干支は通常6種と暗合7種、位相法は支合・半会・方三位・対冲・刑・害・破。大運は節入り日までの日数÷3を四捨五入(1〜10歳)",
+        "年・月・日の3柱(時柱は使わない)。年は立春、月は節入りで区切る。日柱の日付は、時刻指定時は標準時(サマータイムは1時間戻す。分が分からないときはその時の30分)、それ以外は誕生日の暦日。蔵干は二十八元を節入り日を1日目とする日数で選ぶ(高尾学館式。日数は標準時の日付で数える)。人体星図は頭=年干、腹=月干、左手(東)=年支蔵干、胸=月支蔵干、右手(西)=日支蔵干、十二大従星は年支=初年・月支=中年・日支=晩年。天中殺は日干支の旬で決める。宿命中殺は生年・生月・生日・日座・日居、異常干支は通常6種と暗合7種、位相法は支合・半会・方三位・対冲・刑・害・破。大運は節入り日までの日数÷3を四捨五入(1〜10歳)",
       natal: facts,
       ambiguous: isAmbiguous(natal),
       ...(highlights.length ? { highlights } : {}),

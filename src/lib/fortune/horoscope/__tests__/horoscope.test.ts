@@ -9,34 +9,53 @@ import { SIGNS, signOf } from "../zodiac";
 
 const today = { year: 2026, month: 10, day: 14 };
 const tokyo14: BirthProfile = { version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "hour", hour: 14 }, prefecture: "13" };
+/** 分まで指定。分不明の 14時台と同じ 14:30 の瞬間 */
+const tokyo1430: BirthProfile = { ...tokyo14, time: { kind: "minute", hour: 14, minute: 30 } };
 const read = (p: BirthProfile, t = today) => horoscope.read(p, toBirthMoment(p), t);
 const fact = (r: ReturnType<typeof read>, key: string) => r.natal.find((f) => f.key === key);
 
 describe("horoscope.read 人物像", () => {
   it("太陽・月・ASC を最初の3つにすること", () => {
-    const r = read(tokyo14);
+    const r = read(tokyo1430);
     expect(r.id).toBe("horoscope");
     expect(r.natal.slice(0, 3).map((f) => [f.key, f.label, f.value])).toEqual([
       ["sun", "太陽星座", "牡羊座"],
       ["moon", "月星座", "牡牛座"],
-      // ASC は 14:50 ごろ獅子座から乙女座へ移るので、14時台の生まれは候補になる
-      ["asc", "ASC", "獅子座(〜14:50) / 乙女座(14:50〜)"],
+      ["asc", "ASC", "獅子座"],
     ]);
-    expect(fact(r, "asc")?.candidates?.map((c) => c.value)).toEqual(["獅子座", "乙女座"]);
+    expect(fact(r, "asc")?.candidates).toBeUndefined();
     expect(fact(r, "sun")?.refs).toEqual([
       { system: "horoscope", id: "sign-aries" },
       { system: "horoscope", id: "body-sun" },
     ]);
-    expect(fact(r, "asc")?.refs).toEqual([
-      { system: "horoscope", id: "sign-leo" },
-      { system: "horoscope", id: "sign-virgo" },
-    ]);
+    expect(fact(r, "asc")?.refs).toEqual([{ system: "horoscope", id: "sign-leo" }]);
     expect(fact(r, "pluto")?.value).toBe("蠍座");
-    expect(r.ambiguous).toBe(true);
-    // 13時台は1時間を通して獅子座
-    const r13 = read({ ...tokyo14, time: { kind: "hour", hour: 13 } });
-    expect(fact(r13, "asc")?.value).toBe("獅子座");
-    expect(r13.ambiguous).toBe(false);
+    expect(r.ambiguous).toBe(false);
+  });
+
+  it("分まで指定すると ASC はその分で決まること(14:51 ごろ獅子座から乙女座へ移る)", () => {
+    const at = (hour: number, minute: number) => fact(read({ ...tokyo14, time: { kind: "minute", hour, minute } }), "asc")!;
+    expect(at(14, 0).value).toBe("獅子座");
+    expect(at(14, 0).candidates).toBeUndefined();
+    expect(at(14, 49).value).toBe("獅子座");
+    expect(at(14, 52).value).toBe("乙女座");
+  });
+
+  it("分不明の時台は 30分で計算し、ASC を候補にせず仮の印を付けること", () => {
+    // 以前は 14時台の1時間で 獅子座 / 乙女座 の候補だった
+    const r = read(tokyo14);
+    expect(fact(r, "asc")?.value).toBe("獅子座(仮)");
+    expect(fact(r, "asc")?.candidates).toBeUndefined();
+    expect(fact(r, "mc")?.value).toBe("牡牛座(仮)");
+    expect(fact(r, "positions")?.value).toMatch(/^分が不明のため14時30分で計算: 太陽 /);
+    expect(r.ambiguous).toBe(false);
+    if (r.chart?.kind !== "horoscope") throw new Error("ホロスコープがない");
+    expect(r.chart.notes).toEqual(["分が不明のため14時30分で計算"]);
+    for (const period of Object.values(r.periods)) expect(period.note).toBe("ハウスは分が不明のため14時30分で計算");
+    // 天体の位置は 14:30 の瞬間で、分を 30 と指定したときと同じ
+    const chart1430 = read(tokyo1430).chart;
+    if (chart1430?.kind !== "horoscope") throw new Error("ホロスコープがない");
+    expect(r.chart.asc).toBe(chart1430.asc);
   });
 
   it("人物像と運勢の参照 id は早見表の項目にあること", () => {
@@ -50,8 +69,8 @@ describe("horoscope.read 人物像", () => {
 
   it("天体の位置の要約(Placidus のハウス)", () => {
     // 代表の時刻は 14:30 なので、太陽・月の度数は 14:00 の値より少し進む
-    expect(fact(read(tokyo14), "positions")?.value).toMatch(/^太陽 牡羊座8°\d\d′\(第8ハウス\)、月 牡牛座1\d°\d\d′\(第9ハウス\)、/);
-    expect(fact(read(tokyo14), "positions")?.value).toMatch(/、ASC 獅子座\d+°\d\d′、MC 牡牛座\d+°\d\d′$/);
+    expect(fact(read(tokyo1430), "positions")?.value).toMatch(/^太陽 牡羊座8°\d\d′\(第8ハウス\)、月 牡牛座1\d°\d\d′\(第9ハウス\)、/);
+    expect(fact(read(tokyo1430), "positions")?.value).toMatch(/、ASC 獅子座\d+°\d\d′、MC 牡牛座\d+°\d\d′$/);
   });
 
   it("主なアスペクトの要約にマイナーを含めないこと", () => {
@@ -61,7 +80,7 @@ describe("horoscope.read 人物像", () => {
   });
 
   it("チャートを返すこと", () => {
-    const r = read(tokyo14);
+    const r = read(tokyo1430);
     if (r.chart?.kind !== "horoscope") throw new Error("ホロスコープがない");
     expect(r.chart.bodies.map((b) => b.key)).toHaveLength(13);
     expect(Object.keys(r.chart.cusps)).toEqual(["placidus", "koch", "whole"]);
@@ -88,8 +107,8 @@ describe("horoscope.read 人物像", () => {
     for (const period of Object.values(r.periods)) expect(period.note).toBe("ハウスは出生時刻不明のため正午で仮計算");
   });
 
-  it("時刻を指定したときは仮の印も運勢の注記も付けないこと", () => {
-    const r = read(tokyo14);
+  it("分まで指定したときは仮の印も運勢の注記も付けないこと", () => {
+    const r = read(tokyo1430);
     expect(fact(r, "mc")?.value).toBe("牡牛座");
     expect(fact(r, "positions")?.value).toMatch(/^太陽 /);
     for (const period of Object.values(r.periods)) expect(period.note).toBeUndefined();
@@ -118,13 +137,10 @@ describe("horoscope.read 人物像", () => {
     expect(r.ambiguous).toBe(true);
   });
 
-  it("時刻を指定してその1時間で ASC の星座が変わるなら ASC を候補にすること", () => {
-    // 1990/3/29 の東京で ASC が獅子座から乙女座へ移る時を探す
+  it("時刻を指定したときは時台でも分でも ASC を候補にしないこと(1分の範囲で判定する)", () => {
     const hours = Array.from({ length: 24 }, (_, hour) => hour);
     const results = hours.map((hour) => fact(read({ ...tokyo14, time: { kind: "hour", hour } }), "asc")!);
-    const split = results.filter((f) => f.candidates);
-    expect(split.length).toBeGreaterThan(0);
-    for (const f of split) expect(f.candidates!.length).toBeLessThanOrEqual(2);
+    expect(results.filter((f) => f.candidates)).toEqual([]);
   });
 
   it("1回の読み取りは 200ms 以内(CI の揺れを見込む)", () => {

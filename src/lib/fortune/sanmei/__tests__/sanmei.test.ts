@@ -69,6 +69,11 @@ describe("sanmei.read 人物像", () => {
     // 1949/7/1 0時台(サマータイム)は標準時で 6/30 23時台。日柱は 6/30 の辛卯
     const dst = read({ version: 1, date: { year: 1949, month: 7, day: 1 }, time: { kind: "hour", hour: 0 } });
     expect(values(dst).insen).toBe("己丑・庚午・辛卯");
+    // 分まで指定しても同じく標準時の日付(1:00 は標準時で 7/1 0:00)
+    const minute = (hour: number, m: number) =>
+      values(read({ version: 1, date: { year: 1949, month: 7, day: 1 }, time: { kind: "minute", hour, minute: m } })).insen;
+    expect(minute(0, 59)).toBe("己丑・庚午・辛卯");
+    expect(minute(1, 0)).toBe("己丑・庚午・壬辰");
     // 時刻不明なら誕生日の暦日(7/1 の壬辰)
     expect(values(read({ version: 1, date: { year: 1949, month: 7, day: 1 }, time: { kind: "unknown" } })).insen).toBe(
       "己丑・庚午・壬辰",

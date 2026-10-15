@@ -32,6 +32,12 @@ describe("sukuyo.read 人物像", () => {
     const at0 = read({ version: 1, date: { year: 1949, month: 7, day: 1 }, time: { kind: "hour", hour: 0 } });
     const prev = read({ version: 1, date: { year: 1949, month: 6, day: 30 }, time: { kind: "unknown" } });
     expect(at0.natal[0].value).toBe(prev.natal[0].value);
+    // 分まで指定しても同じ。1:00 は標準時で 7/1 0:00 なので当日
+    const m = (hour: number, minute: number) =>
+      read({ version: 1, date: { year: 1949, month: 7, day: 1 }, time: { kind: "minute", hour, minute } }).natal[0].value;
+    const same = read({ version: 1, date: { year: 1949, month: 7, day: 1 }, time: { kind: "unknown" } }).natal[0].value;
+    expect(m(0, 59)).toBe(prev.natal[0].value);
+    expect(m(1, 0)).toBe(same);
   });
 });
 

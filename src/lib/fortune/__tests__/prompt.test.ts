@@ -27,7 +27,7 @@ describe("generateFortunePrompt", () => {
   });
 
   it("基本情報と相談内容(未入力)", () => {
-    expect(prompt).toContain("■ 生年月日: 1990年3月29日 / 出生時刻: 14時台(14:00〜14:59) / 出生地: 東京都 / 性別: 回答なし");
+    expect(prompt).toContain("■ 生年月日: 1990年3月29日 / 出生時刻: 14時台(14:30として計算) / 出生地: 東京都 / 性別: 回答なし");
     expect(prompt).toContain("■ 鑑定日: 2026年10月14日 / 対象期間: 今日");
     expect(prompt).toContain("■ 相談内容: 特になし(総合的な鑑定)");
   });
@@ -58,8 +58,20 @@ describe("generateFortunePrompt", () => {
     expect(natalLine).toContain("天体の位置: 出生時刻不明のため正午で仮計算: 太陽 ");
     expect(gen("day")).toContain("注記: ハウスは出生時刻不明のため正午で仮計算");
     expect(gen("year")).toContain("注記: ハウスは出生時刻不明のため正午で仮計算");
-    // 時刻を指定したときは付けない
-    expect(prompt).not.toContain("(仮)");
+    // 分不明の時台は 30分で計算した印を付ける
+    expect(prompt).toContain("ASC: 獅子座(仮)");
+    expect(prompt).toContain("注記: ハウスは分が不明のため14時30分で計算");
+  });
+
+  it("分まで指定した出生時刻はその時刻を書き、仮の印を付けないこと", () => {
+    const minute: BirthProfile = { ...profile, time: { kind: "minute", hour: 14, minute: 35 } };
+    const p = generateFortunePrompt({ profile: minute, readings: readAll(minute, today), period: "day", today, question: "", tarot: null });
+    expect(p).toContain("■ 生年月日: 1990年3月29日 / 出生時刻: 14:35 / 出生地: 東京都");
+    expect(p).not.toContain("(仮)");
+    const early: BirthProfile = { ...profile, time: { kind: "minute", hour: 9, minute: 5 } };
+    expect(generateFortunePrompt({ profile: early, readings: readAll(early, today), period: "day", today, question: "", tarot: null })).toContain(
+      "出生時刻: 9:05 /",
+    );
   });
 
   it("1dayタロットの結果", () => {

@@ -24,11 +24,12 @@ function factText(f: Fact): string {
   return `${f.label}: ${f.value}`;
 }
 
-/** 出生時刻。生成AIが範囲を取り違えないよう、午前・午後と時刻指定は時刻の範囲も書く */
+/** 出生時刻。生成AIが取り違えないよう、午前・午後は時刻の範囲を、分が不明な時台は計算に使った時刻も書く */
 function birthTimeText(time: BirthTime): string {
   if (time.kind === "unknown") return "不明";
   if (time.kind === "half") return time.half === "am" ? "午前(0:00〜11:59)" : "午後(12:00〜23:59)";
-  return `${formatBirthTime(time)}(${time.hour}:00〜${time.hour}:59)`;
+  if (time.kind === "hour") return `${formatBirthTime(time)}(${time.hour}:30として計算)`;
+  return formatBirthTime(time);
 }
 
 /** 総合鑑定プロンプト(設計書 §8)。ユーザーが自分で契約している生成AIに貼り付けて使う */

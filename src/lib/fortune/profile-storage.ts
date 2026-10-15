@@ -25,12 +25,17 @@ function parseDate(v: unknown): LocalDate | null {
   return isFuture ? null : d;
 }
 
+function isIntIn(v: unknown, min: number, max: number): v is number {
+  return Number.isInteger(v) && (v as number) >= min && (v as number) <= max;
+}
+
 function parseTime(v: unknown): BirthTime | null {
   if (!isRecord(v)) return null;
   if (v.kind === "unknown") return { kind: "unknown" };
   if (v.kind === "half" && (v.half === "am" || v.half === "pm")) return { kind: "half", half: v.half };
-  if (v.kind === "hour" && Number.isInteger(v.hour) && (v.hour as number) >= 0 && (v.hour as number) <= 23) {
-    return { kind: "hour", hour: v.hour as number };
+  if (v.kind === "hour" && isIntIn(v.hour, 0, 23)) return { kind: "hour", hour: v.hour };
+  if (v.kind === "minute" && isIntIn(v.hour, 0, 23) && isIntIn(v.minute, 0, 59)) {
+    return { kind: "minute", hour: v.hour, minute: v.minute };
   }
   return null;
 }

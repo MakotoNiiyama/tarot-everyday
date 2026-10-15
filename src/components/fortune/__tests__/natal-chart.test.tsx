@@ -12,12 +12,12 @@ const readings = readAll(profile, { year: 2026, month: 10, day: 14 });
 const shichu = readings.find((r) => r.id === "shichu")!;
 const sanmei = readings.find((r) => r.id === "sanmei")!;
 
-// 時刻あり(東京 14時)プロファイル。
+// 時刻あり(東京 14:41)プロファイル。14:41 は時柱の境目(地方平均時 15:00)を含む1分なので時柱が候補になる。
 // 鳳閣星・癸巳・己未・庚申 などの値は 1990/3/29 の実計算値に固定されているため安定。
 const profileWithTime: BirthProfile = {
   version: 1,
   date: { year: 1990, month: 3, day: 29 },
-  time: { kind: "hour", hour: 14 },
+  time: { kind: "minute", hour: 14, minute: 41 },
   prefecture: "13",
   gender: "male",
 };
@@ -70,11 +70,11 @@ describe("NatalChartView", () => {
   });
 });
 
-describe("時柱あり(1990/3/29 14時 東京)", () => {
+describe("時柱あり(1990/3/29 14:41 東京)", () => {
   it("時柱の干支が候補を赤橙で表示すること", () => {
     render(<NatalChartView chart={shichuWithTime.chart!} systemName="四柱推命" />);
     const table = screen.getByRole("table", { name: "四柱推命の命式" });
-    // 己未 / 庚申 は 1990/3/29 東京 14時 の実計算値に固定
+    // 己未 / 庚申 は 1990/3/29 東京 14:41 の実計算値に固定
     const cell = within(table).getByText("己未 / 庚申");
     expect(cell).toHaveClass("text-terracotta");
   });

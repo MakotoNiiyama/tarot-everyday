@@ -2,6 +2,7 @@
 import { describeResolved, isAmbiguous, representative, resolvedValues, resolveOverRange } from "../ambiguity";
 import { calendarPeriod } from "../astro/calendar-period";
 import { jieBoundariesWithin } from "../astro/solar-terms";
+import { isTimeKnown } from "../birth-moment";
 import { ageOn, daiunAt, daiunNote, formatDaiunPlan, resolveDaiun, type DaiunPlan } from "../daiun";
 import { FIVE_ELEMENTS, branchId, elementId, stemId, tsuhenId, unseiId } from "../element-ids";
 import { resolvedFact } from "../fact";
@@ -135,7 +136,7 @@ export const shichu: FortuneSystemModule = {
   name: "四柱推命",
   nameEn: "Four Pillars",
   read(profile, moment, today) {
-    const hourKnown = profile.time.kind === "hour";
+    const hourKnown = isTimeKnown(profile.time);
     const options = { lon: moment.location.lon, hourKnown, localDate: moment.localDate };
     const boundaries = [
       ...jieBoundariesWithin(moment.range),
@@ -222,7 +223,7 @@ export const shichu: FortuneSystemModule = {
       name: "四柱推命",
       nameEn: "Four Pillars",
       method:
-        "年柱は立春、月柱は節入りで区切る。日柱は0時切替で、23時台は時柱だけ翌日の子の刻。日柱の日付は、時刻指定時は標準時(サマータイムは1時間戻す)を出生地の経度で地方平均時に補正して出し(出生地未入力は明石基準で補正なし)、それ以外は誕生日の暦日。時刻が不明・午前午後のときは時柱を出さない。蔵干は月律分野蔵干(申の余気は戊)を、節入り日を1日目とする日数(標準時の日付で数える)で全柱に当てる。大運は年干の陰陽と性別で順逆を決め、節入り日までの日数÷3を四捨五入(1〜10歳)。神殺は扱わない",
+        "年柱は立春、月柱は節入りで区切る。日柱は0時切替で、23時台は時柱だけ翌日の子の刻。日柱の日付は、時刻指定時は標準時(サマータイムは1時間戻す)を出生地の経度で地方平均時に補正して出し(出生地未入力は明石基準で補正なし)、それ以外は誕生日の暦日。時刻を指定して分が分からないときはその時の30分で計算する。時刻が不明・午前午後のときは時柱を出さない。蔵干は月律分野蔵干(申の余気は戊)を、節入り日を1日目とする日数(標準時の日付で数える)で全柱に当てる。大運は年干の陰陽と性別で順逆を決め、節入り日までの日数÷3を四捨五入(1〜10歳)。神殺は扱わない",
       natal: facts,
       ambiguous: isAmbiguous(natal),
       chart,

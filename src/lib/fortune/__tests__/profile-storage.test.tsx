@@ -49,6 +49,29 @@ describe("parseBirthProfile", () => {
     });
   });
 
+  it("分まで指定した出生時刻を読み込めること(時台だけの保存データもそのまま読めること)", () => {
+    const minute = { ...valid, time: { kind: "minute", hour: 14, minute: 35 } };
+    expect(parseBirthProfile(JSON.stringify(minute))).toEqual(minute);
+    expect(parseBirthProfile(JSON.stringify({ ...valid, time: { kind: "minute", hour: 0, minute: 0 } }))?.time).toEqual({
+      kind: "minute",
+      hour: 0,
+      minute: 0,
+    });
+    expect(parseBirthProfile(JSON.stringify({ ...valid, time: { kind: "minute", hour: 23, minute: 59 } }))).not.toBeNull();
+    expect(parseBirthProfile(JSON.stringify({ ...valid, time: { kind: "hour", hour: 0 } }))?.time).toEqual({ kind: "hour", hour: 0 });
+  });
+
+  it("分の範囲や型が不正なら null にすること", () => {
+    const withTime = (time: unknown) => parseBirthProfile(JSON.stringify({ ...valid, time }));
+    expect(withTime({ kind: "minute", hour: 14, minute: 60 })).toBeNull();
+    expect(withTime({ kind: "minute", hour: 14, minute: -1 })).toBeNull();
+    expect(withTime({ kind: "minute", hour: 14, minute: 1.5 })).toBeNull();
+    expect(withTime({ kind: "minute", hour: 14, minute: "35" })).toBeNull();
+    expect(withTime({ kind: "minute", hour: 14 })).toBeNull();
+    expect(withTime({ kind: "minute", hour: 24, minute: 0 })).toBeNull();
+    expect(withTime({ kind: "hour", hour: 13.5 })).toBeNull();
+  });
+
   it("不正なデータは null にすること", () => {
     expect(parseBirthProfile(null)).toBeNull();
     expect(parseBirthProfile("not json")).toBeNull();
@@ -90,6 +113,14 @@ describe("useBirthProfile", () => {
     expect(saveBirthProfile(invalid)).toBe(false);
     expect(localStorageMock.setItem).not.toHaveBeenCalledWith(BIRTH_PROFILE_STORAGE_KEY, expect.anything());
     expect(store[BIRTH_PROFILE_STORAGE_KEY]).toBeUndefined();
+    expect(saveBirthProfile({ ...valid, time: { kind: "minute", hour: 14, minute: 60 } })).toBe(false);
+    expect(store[BIRTH_PROFILE_STORAGE_KEY]).toBeUndefined();
+  });
+
+  it("分まで指定したプロフィールを保存できること", () => {
+    const minute: BirthProfile = { ...valid, time: { kind: "minute", hour: 14, minute: 35 } };
+    expect(saveBirthProfile(minute)).toBe(true);
+    expect(JSON.parse(store[BIRTH_PROFILE_STORAGE_KEY]).time).toEqual({ kind: "minute", hour: 14, minute: 35 });
   });
 
   it("localStorage が使えなくても落ちないこと", () => {
