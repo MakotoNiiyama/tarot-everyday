@@ -34,3 +34,12 @@
 5. **Service Worker**: `/guide-images/` もキャッシュ優先にし、`CACHE_NAME` を v3 に上げる。
 6. **README**: アプリの説明を今の内容(タロット+7占術の運勢・早見表)に書き直し、画像の準備に `node scripts/download-guide-images.mjs` を足す。キロンの表の生成(`node scripts/fetch-chiron.mjs`、通常は不要)も書く。
 7. **確かめる**: スクリプトを実行して34枚をダウンロードし、`npm run dev` でタイル・詳細のスクリーンショットを撮って切り抜きを確かめ、`focus` を調整する(特に魚座・天体・十二支)。テスト・lint・ビルド・E2E。E2E は画像がない環境でも通ること(画像の有無に依存しない)。
+
+## 追加(プレビューを見て決めたこと)
+
+8. **十二支のタイル**: `photos.json` の十二支12件に `tileOverlay: true`。タイルだけ絵を暗くし(`filter: brightness(.42) saturate(.85)`)、上に元の漢字(五行の色・タイルの大きさ・薄い影)を重ねる。シート・詳細は絵だけ。絵を読み込めなければ普通の文字のタイルに戻す。
+9. **太陽の紋章の線画**: Wikimedia Commons の「DaySign *.svg」(Ekwoman 作、PD-self。API でライセンスが Public domain であることを確認)。seal-1〜20 = Imix, Ik, Akbal, Kan, Chiccan, Cimi, Manik, Lamat, Muluc, Oc, Chuen, Eb, Ben, Ix, Men, Cib, Caban, Etznab, Cauac, Ahau。
+   - 版: 現在の版が Kilom691 の描き直しの10件(Ahau, Ben, Chiccan, Chuen, Etznab, Ik, Ix, Kan, Lamat, Muluc)は Ekwoman の元の版(2008年11月)、ほかの10件は現在の版(2022年12月、Vanisaac が不正な SVG 要素を取り除いただけ)。版の URL・作者・日時・SHA-1 を `src/data/guide/maya-glyphs.json` に記録する。
+   - ダウンロードのスクリプトで SHA-1 を確かめ、`scripts/clean-day-sign-svg.mjs`(依存なしの文字列処理)で線画に整えて `public/guide-images/maya/seal-N.svg` に保存する: XML 宣言・DOCTYPE・Illustrator の編集用データ・全面の白い背景・defs/clipPath を消し、白い塗りは none、黄色(Imix の #FDFB00 の2本)は消し、黒にそろえる。viewBox 81×81 を残し width/height も書く。整えた20枚を元の絵と並べて見比べ、すべて同じ線画になることを確かめた(Morley 1915 の図への差し替えは不要だった)。
+   - 表示: `mask-image` + `background-color`(紋章の色 `image.color`)で枠の約78%に描く(タイル・シート・詳細)。mask は読み込めないと何も描かないので、同じ画像を隠した `<img>` でも読み、`onError`(とハイドレーション前の失敗に備えて ref で `complete`・`naturalWidth`)で文字の画像に戻す。詳細ページの出典は「画像: 古代マヤの日の文字(Wikimedia Commons の DaySign シリーズ)・パブリックドメイン」。
+

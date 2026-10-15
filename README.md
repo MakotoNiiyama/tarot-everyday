@@ -34,13 +34,13 @@ public/cards/
 
 ### 早見表の画像の準備
 
-早見表の十二星座・天体・十二支には、Wikimedia Commons のパブリックドメインの絵画・写真(Sidney Hall『Urania's Mirror』、Sebald Beham『The Seven Planets』、NASA の天王星・海王星・冥王星、歌川国芳『道化十二支』)を表示します。画像はリポジトリに含まれていないので、以下のスクリプトでダウンロードしてください。
+早見表の十二星座・天体・十二支には、Wikimedia Commons のパブリックドメインの絵画・写真(Sidney Hall『Urania's Mirror』、Sebald Beham『The Seven Planets』、NASA の天王星・海王星・冥王星、歌川国芳『道化十二支』)を表示します。十二支のタイルは絵を暗くして漢字を重ねます。マヤ暦の太陽の紋章には、古代マヤの日の文字の線画(DaySign シリーズ、Ekwoman 作・パブリックドメイン)を紋章の色で塗って表示します。画像はリポジトリに含まれていないので、以下のスクリプトでダウンロードしてください。
 
 ```bash
 node scripts/download-guide-images.mjs
 ```
 
-使う画像の一覧(ファイル名・代替テキスト・出典・切り抜きの位置)は `src/data/guide/photos.json` にあり、`public/guide-images/` 以下に34枚が配置されます。画像がなければ、早見表は記号・文字の画像を表示します。
+使う画像の一覧(ファイル名・代替テキスト・出典・切り抜きの位置)は `src/data/guide/photos.json`、日の文字の一覧(使う版の URL・SHA-1)は `src/data/guide/maya-glyphs.json` にあり、`public/guide-images/` 以下に絵画・写真34枚と線画20枚が配置されます。線画はダウンロードのときに背景・白い塗り・編集用のデータを取り除き、`mask-image` 用の SVG に整えます(`scripts/clean-day-sign-svg.mjs`)。画像がなければ、早見表は記号・文字の画像を表示します。
 
 ### キロンの位置の表(通常は不要)
 
