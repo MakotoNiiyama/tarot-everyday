@@ -10,22 +10,16 @@ import { formatJaDate, formatJaWeekday } from "@/lib/date-format";
 import { formatProfileSummary } from "@/lib/fortune/profile-format";
 import { useBirthProfile } from "@/lib/fortune/profile-storage";
 import { useToday, useTodayLocalDate } from "@/lib/use-today";
+import { ReadingsLoading } from "./readings-loading";
 import { SignupCard } from "./signup-card";
+
+export { ReadingsLoading };
 
 /** 計算エンジン(astronomy-engine を含む)はこのページでだけ読み込む */
 const FortuneReadings = dynamic(() => import("./fortune-readings").then((m) => m.FortuneReadings), {
   ssr: false,
   loading: () => <ReadingsLoading />,
 });
-
-/** 計算エンジンを読み込んでいる間の置き場所 */
-export function ReadingsLoading() {
-  return (
-    <div role="status" className="h-40 rounded-[20px] bg-surface/40">
-      <span className="sr-only">運勢を計算しています</span>
-    </div>
-  );
-}
 
 /** 運勢ページ(設計書 §11.2) */
 export function FortuneContent() {
