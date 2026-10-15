@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ProfileForm } from "../profile-form";
 
@@ -101,24 +101,39 @@ describe("ProfileForm", () => {
     await user.click(checkbox);
     expect(checkbox).toBeChecked();
     expect(screen.getByText(/14時30分の生まれとして計算します/)).toBeInTheDocument();
-    // 時を変えると見出しの時台も変わる
-    await user.clear(input);
-    await user.type(input, "07:10");
+    // チェックを入れると時刻入力の分も30分にそろえる
+    expect(input).toHaveValue("14:30");
+    // 時を変えると見出しの時台も変わる(分が30のままならチェックは外れない)
+    // 時刻入力は完成した値でだけ変わる(ピッカーと同じ)ので、値をまとめて入れる
+    fireEvent.change(input, { target: { value: "07:30" } });
     expect(screen.getByRole("checkbox", { name: "分は分からない(7時台として計算)" })).toBeChecked();
     await user.click(screen.getByRole("button", { name: "保存" }));
     expect(JSON.parse(store["tarot-birth-profile"]).time).toEqual({ kind: "hour", hour: 7 });
   });
 
-  it("時台で登録済みなら「分は分からない」を付けた状態で HH:00 を表示すること", async () => {
+  it("時台で登録済みなら「分は分からない」を付けた状態で HH:30 を表示すること", async () => {
     const user = userEvent.setup();
     render(<ProfileForm initial={{ version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "hour", hour: 14 } }} />);
     expect(screen.getByRole("radio", { name: "時刻を指定" })).toHaveAttribute("aria-checked", "true");
-    expect(screen.getByLabelText("出生時刻")).toHaveValue("14:00");
+    expect(screen.getByLabelText("出生時刻")).toHaveValue("14:30");
     const checkbox = screen.getByRole("checkbox", { name: "分は分からない(14時台として計算)" });
     expect(checkbox).toBeChecked();
     await user.click(checkbox);
     await user.click(screen.getByRole("button", { name: "保存" }));
-    expect(JSON.parse(store["tarot-birth-profile"]).time).toEqual({ kind: "minute", hour: 14, minute: 0 });
+    expect(JSON.parse(store["tarot-birth-profile"]).time).toEqual({ kind: "minute", hour: 14, minute: 30 });
+  });
+
+  it("「分は分からない」の間に30分以外を選ぶとチェックを外し、外しているときに30分を選んでもチェックは入れないこと", async () => {
+    const user = userEvent.setup();
+    render(<ProfileForm initial={{ version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "hour", hour: 14 } }} />);
+    const input = screen.getByLabelText("出生時刻");
+    const checkbox = screen.getByRole("checkbox", { name: /分は分からない/ });
+    fireEvent.change(input, { target: { value: "14:45" } });
+    expect(checkbox).not.toBeChecked();
+    fireEvent.change(input, { target: { value: "14:30" } });
+    expect(checkbox).not.toBeChecked();
+    await user.click(screen.getByRole("button", { name: "保存" }));
+    expect(JSON.parse(store["tarot-birth-profile"]).time).toEqual({ kind: "minute", hour: 14, minute: 30 });
   });
 
   it("分まで登録済みならその時刻を表示し、「分は分からない」は外れていること", () => {

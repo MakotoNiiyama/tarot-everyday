@@ -31,10 +31,10 @@ function parseClock(v: string): { hour: number; minute: number } | null {
   return hour <= 23 && minute <= 59 ? { hour, minute } : null;
 }
 
-/** 登録済みの時刻を時刻入力の値にする。分が分からない時台は HH:00 */
+/** 登録済みの時刻を時刻入力の値にする。分が分からない時台は計算に使う HH:30 */
 function initialClock(time: BirthTime | undefined): string {
   if (time?.kind === "minute") return `${pad2(time.hour)}:${pad2(time.minute)}`;
-  if (time?.kind === "hour") return `${pad2(time.hour)}:00`;
+  if (time?.kind === "hour") return `${pad2(time.hour)}:30`;
   return "";
 }
 
@@ -142,6 +142,20 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
       setError("");
       set(v);
     };
+  // 「分は分からない」は計算に使う30分を時刻入力にも出す。チェック中に30分以外を選んだらチェックを外す
+  // (チェックを外しているときに30分を選んでもチェックは入れない)
+  const changeMinuteUnknown = (checked: boolean) => {
+    setError("");
+    setMinuteUnknown(checked);
+    const c = parseClock(clock);
+    if (checked && c) setClock(`${pad2(c.hour)}:30`);
+  };
+  const changeClock = (value: string) => {
+    setError("");
+    setClock(value);
+    const c = parseClock(value);
+    if (minuteUnknown && c && c.minute !== 30) setMinuteUnknown(false);
+  };
   const halfRoving = useRovingSelection({ values: HALF_VALUES, value: half, onChange: edit(setHalf) });
 
   const daysOf = (y: string, m: string) => (y && m ? daysInMonth(Number(y), Number(m)) : 31);
@@ -303,7 +317,7 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
                   aria-describedby={clockHintId}
                   aria-invalid={clockMissing || undefined}
                   value={clock}
-                  onChange={(e) => edit(setClock)(e.target.value)}
+                  onChange={(e) => changeClock(e.target.value)}
                   className={TIME_INPUT}
                 />
                 <label className="flex min-h-12 cursor-pointer items-center gap-3 px-1 text-[13px] text-cream">
@@ -311,7 +325,7 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
                     <input
                       type="checkbox"
                       checked={minuteUnknown}
-                      onChange={(e) => edit(setMinuteUnknown)(e.target.checked)}
+                      onChange={(e) => changeMinuteUnknown(e.target.checked)}
                       className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border border-gold/50 bg-surface checked:border-gold checked:bg-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
                     />
                     <Icon name="check" size={14} strokeWidth={2.6} className="pointer-events-none absolute left-[3px] top-[3px] hidden text-background peer-checked:block" />
