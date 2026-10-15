@@ -1,0 +1,308 @@
+[
+  {
+    "system": "horoscope",
+    "id": "sign-aries",
+    "file": "Sidney Hall - Urania's Mirror - Aries and Musca Borealis.jpg",
+    "path": "/guide-images/horoscope/sign-aries.jpg",
+    "alt": "牡羊座の星座絵(Sidney Hall『Urania's Mirror』)",
+    "credit": "Sidney Hall『Urania's Mirror』(1825)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "sign-taurus",
+    "file": "Sidney Hall - Urania's Mirror - Taurus.jpg",
+    "path": "/guide-images/horoscope/sign-taurus.jpg",
+    "alt": "牡牛座の星座絵(Sidney Hall『Urania's Mirror』)",
+    "credit": "Sidney Hall『Urania's Mirror』(1825)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "sign-gemini",
+    "file": "Sidney Hall - Urania's Mirror - Gemini.jpg",
+    "path": "/guide-images/horoscope/sign-gemini.jpg",
+    "alt": "双子座の星座絵(Sidney Hall『Urania's Mirror』)",
+    "credit": "Sidney Hall『Urania's Mirror』(1825)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "sign-cancer",
+    "file": "Sidney Hall - Urania's Mirror - Cancer.jpg",
+    "path": "/guide-images/horoscope/sign-cancer.jpg",
+    "alt": "蟹座の星座絵(Sidney Hall『Urania's Mirror』)",
+    "credit": "Sidney Hall『Urania's Mirror』(1825)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "sign-leo",
+    "file": "Sidney Hall - Urania's Mirror - Leo Major and Leo Minor.jpg",
+    "path": "/guide-images/horoscope/sign-leo.jpg",
+    "alt": "獅子座の星座絵(Sidney Hall『Urania's Mirror』)",
+    "credit": "Sidney Hall『Urania's Mirror』(1825)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "sign-virgo",
+    "file": "Sidney Hall - Urania's Mirror - Virgo.jpg",
+    "path": "/guide-images/horoscope/sign-virgo.jpg",
+    "alt": "乙女座の星座絵(Sidney Hall『Urania's Mirror』)",
+    "credit": "Sidney Hall『Urania's Mirror』(1825)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "sign-libra",
+    "file": "Sidney Hall - Urania's Mirror - Libra.jpg",
+    "path": "/guide-images/horoscope/sign-libra.jpg",
+    "alt": "天秤座の星座絵(Sidney Hall『Urania's Mirror』)",
+    "credit": "Sidney Hall『Urania's Mirror』(1825)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "sign-scorpio",
+    "file": "Sidney Hall - Urania's Mirror - Scorpio.jpg",
+    "path": "/guide-images/horoscope/sign-scorpio.jpg",
+    "alt": "蠍座の星座絵(Sidney Hall『Urania's Mirror』)",
+    "credit": "Sidney Hall『Urania's Mirror』(1825)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "sign-sagittarius",
+    "file": "Sidney Hall - Urania's Mirror - Sagittarius and Corona Australis, Microscopium, and Telescopium.png",
+    "path": "/guide-images/horoscope/sign-sagittarius.jpg",
+    "alt": "射手座の星座絵(Sidney Hall『Urania's Mirror』)",
+    "credit": "Sidney Hall『Urania's Mirror』(1825)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "sign-capricorn",
+    "file": "Sidney Hall - Urania's Mirror - Capricornus.jpg",
+    "path": "/guide-images/horoscope/sign-capricorn.jpg",
+    "alt": "山羊座の星座絵(Sidney Hall『Urania's Mirror』)",
+    "credit": "Sidney Hall『Urania's Mirror』(1825)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "sign-aquarius",
+    "file": "Sidney Hall - Urania's Mirror - Aquarius, Piscis Australis & Ballon Aerostatique.jpg",
+    "path": "/guide-images/horoscope/sign-aquarius.jpg",
+    "alt": "水瓶座の星座絵(Sidney Hall『Urania's Mirror』)",
+    "credit": "Sidney Hall『Urania's Mirror』(1825)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "sign-pisces",
+    "file": "Sidney Hall - Urania's Mirror - Pisces.jpg",
+    "path": "/guide-images/horoscope/sign-pisces.jpg",
+    "alt": "魚座の星座絵(Sidney Hall『Urania's Mirror』)",
+    "credit": "Sidney Hall『Urania's Mirror』(1825)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "body-sun",
+    "file": "Sebald Beham, Sol, NGA 4282.jpg",
+    "path": "/guide-images/horoscope/body-sun.jpg",
+    "alt": "太陽を擬人化した版画(Sebald Beham「The Seven Planets」)",
+    "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "body-moon",
+    "file": "Sebald Beham, Luna, NGA 4285.jpg",
+    "path": "/guide-images/horoscope/body-moon.jpg",
+    "alt": "月を擬人化した版画(Sebald Beham「The Seven Planets」)",
+    "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "body-mercury",
+    "file": "Sebald Beham, Mercury, NGA 4284.jpg",
+    "path": "/guide-images/horoscope/body-mercury.jpg",
+    "alt": "水星を擬人化した版画(Sebald Beham「The Seven Planets」)",
+    "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "body-venus",
+    "file": "Sebald Beham, Venus, NGA 4283.jpg",
+    "path": "/guide-images/horoscope/body-venus.jpg",
+    "alt": "金星を擬人化した版画(Sebald Beham「The Seven Planets」)",
+    "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "body-mars",
+    "file": "Sebald Beham, Mars, NGA 4281.jpg",
+    "path": "/guide-images/horoscope/body-mars.jpg",
+    "alt": "火星を擬人化した版画(Sebald Beham「The Seven Planets」)",
+    "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "body-jupiter",
+    "file": "Sebald Beham, Jupiter, NGA 4280.jpg",
+    "path": "/guide-images/horoscope/body-jupiter.jpg",
+    "alt": "木星を擬人化した版画(Sebald Beham「The Seven Planets」)",
+    "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "body-saturn",
+    "file": "Sebald Beham, Saturn, NGA 4279.jpg",
+    "path": "/guide-images/horoscope/body-saturn.jpg",
+    "alt": "土星を擬人化した版画(Sebald Beham「The Seven Planets」)",
+    "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "body-uranus",
+    "file": "Uranus2.jpg",
+    "path": "/guide-images/horoscope/body-uranus.jpg",
+    "alt": "ボイジャー2号が撮影した天王星",
+    "credit": "NASA/JPL(Voyager 2、1986)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "body-neptune",
+    "file": "Neptune Full.jpg",
+    "path": "/guide-images/horoscope/body-neptune.jpg",
+    "alt": "ボイジャー2号が撮影した海王星",
+    "credit": "NASA/JPL(Voyager 2、1989)",
+    "focus": "center"
+  },
+  {
+    "system": "horoscope",
+    "id": "body-pluto",
+    "file": "Nh-pluto-in-true-color 2x JPEG-edit-frame.jpg",
+    "path": "/guide-images/horoscope/body-pluto.jpg",
+    "alt": "ニュー・ホライズンズが撮影した冥王星",
+    "credit": "NASA/JHUAPL/SwRI(New Horizons、2015)",
+    "focus": "center"
+  },
+  {
+    "system": "shichu",
+    "id": "branch-1",
+    "file": "Ne Kinoe-ne matsuri (BM 1934,1013,0.42).jpg",
+    "path": "/guide-images/shichu/branch-1.jpg",
+    "alt": "「子」を描いた浮世絵(歌川国芳「道化十二支」)",
+    "credit": "歌川国芳『道化十二支』(1855)",
+    "focus": "center"
+  },
+  {
+    "system": "shichu",
+    "id": "branch-2",
+    "file": "Ushi ushi ni hikarete Zenkoji mairi (BM 1934,1013,0.49).jpg",
+    "path": "/guide-images/shichu/branch-2.jpg",
+    "alt": "「丑」を描いた浮世絵(歌川国芳「道化十二支」)",
+    "credit": "歌川国芳『道化十二支』(1855)",
+    "focus": "center"
+  },
+  {
+    "system": "shichu",
+    "id": "branch-3",
+    "file": "Tora (BM 1934,1013,0.44).jpg",
+    "path": "/guide-images/shichu/branch-3.jpg",
+    "alt": "「寅」を描いた浮世絵(歌川国芳「道化十二支」)",
+    "credit": "歌川国芳『道化十二支』(1855)",
+    "focus": "center"
+  },
+  {
+    "system": "shichu",
+    "id": "branch-4",
+    "file": "U Kashima-odori (BM 1934,1013,0.50).jpg",
+    "path": "/guide-images/shichu/branch-4.jpg",
+    "alt": "「卯」を描いた浮世絵(歌川国芳「道化十二支」)",
+    "credit": "歌川国芳『道化十二支』(1855)",
+    "focus": "center"
+  },
+  {
+    "system": "shichu",
+    "id": "branch-5",
+    "file": "Tatsu shogatsu tatsu no mizu (BM 1934,1013,0.46).jpg",
+    "path": "/guide-images/shichu/branch-5.jpg",
+    "alt": "「辰」を描いた浮世絵(歌川国芳「道化十二支」)",
+    "credit": "歌川国芳『道化十二支』(1855)",
+    "focus": "center"
+  },
+  {
+    "system": "shichu",
+    "id": "branch-6",
+    "file": "Mi megura hebi ni ojitsu (BM 1934,1013,0.52).jpg",
+    "path": "/guide-images/shichu/branch-6.jpg",
+    "alt": "「巳」を描いた浮世絵(歌川国芳「道化十二支」)",
+    "credit": "歌川国芳『道化十二支』(1855)",
+    "focus": "center"
+  },
+  {
+    "system": "shichu",
+    "id": "branch-7",
+    "file": "Uma hyaku de katta koma (BM 1934,1013,0.51).jpg",
+    "path": "/guide-images/shichu/branch-7.jpg",
+    "alt": "「午」を描いた浮世絵(歌川国芳「道化十二支」)",
+    "credit": "歌川国芳『道化十二支』(1855)",
+    "focus": "center"
+  },
+  {
+    "system": "shichu",
+    "id": "branch-8",
+    "file": "Hitsuji (BM 1934,1013,0.47).jpg",
+    "path": "/guide-images/shichu/branch-8.jpg",
+    "alt": "「未」を描いた浮世絵(歌川国芳「道化十二支」)",
+    "credit": "歌川国芳『道化十二支』(1855)",
+    "focus": "center"
+  },
+  {
+    "system": "shichu",
+    "id": "branch-9",
+    "file": "Saru Sanno Matsuri (BM 1934,1013,0.48).jpg",
+    "path": "/guide-images/shichu/branch-9.jpg",
+    "alt": "「申」を描いた浮世絵(歌川国芳「道化十二支」)",
+    "credit": "歌川国芳『道化十二支』(1855)",
+    "focus": "center"
+  },
+  {
+    "system": "shichu",
+    "id": "branch-10",
+    "file": "Tori Tori-mi machi (BM 1934,1013,0.53).jpg",
+    "path": "/guide-images/shichu/branch-10.jpg",
+    "alt": "「酉」を描いた浮世絵(歌川国芳「道化十二支」)",
+    "credit": "歌川国芳『道化十二支』(1855)",
+    "focus": "center"
+  },
+  {
+    "system": "shichu",
+    "id": "branch-11",
+    "file": "Inu yuki uchi asobi (BM 1934,1013,0.43).jpg",
+    "path": "/guide-images/shichu/branch-11.jpg",
+    "alt": "「戌」を描いた浮世絵(歌川国芳「道化十二支」)",
+    "credit": "歌川国芳『道化十二支』(1855)",
+    "focus": "center"
+  },
+  {
+    "system": "shichu",
+    "id": "branch-12",
+    "file": "I imo-hatake arashi (BM 1934,1013,0.45).jpg",
+    "path": "/guide-images/shichu/branch-12.jpg",
+    "alt": "「亥」を描いた浮世絵(歌川国芳「道化十二支」)",
+    "credit": "歌川国芳『道化十二支』(1855)",
+    "focus": "center"
+  }
+]
