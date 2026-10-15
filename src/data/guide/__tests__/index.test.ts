@@ -183,6 +183,7 @@ describe("guidePhotos(早見表の画像)", () => {
         focus: p.focus,
         zoom: p.zoom,
         tileOverlay: p.tileOverlay,
+        tileSymbol: p.tileSymbol,
       });
       expect(photo?.focus).not.toBe("");
       if (photo?.zoom !== undefined) expect(photo.zoom).toBeGreaterThan(1);
@@ -197,6 +198,12 @@ describe("guidePhotos(早見表の画像)", () => {
       expect(e.photo).toBeUndefined();
       expect(e.image.kind).toBe("photo");
     }
+  });
+
+  it("天体の10件(太陽〜冥王星)だけ、タイルでは記号を出すこと(tileSymbol)", () => {
+    const symbol = guidePhotos.filter((p) => p.tileSymbol).map((p) => p.id);
+    expect(symbol).toEqual(["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"].map((b) => `body-${b}`));
+    for (const p of guidePhotos) if (p.tileSymbol !== undefined) expect(p.tileSymbol).toBe(true);
   });
 
   it("十二支の12件だけ、タイルで絵に文字を重ねること(tileOverlay)", () => {

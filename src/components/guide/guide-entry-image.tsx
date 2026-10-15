@@ -109,14 +109,14 @@ export function GuideLineArtImage({
 
 /**
  * 早見表の項目の画像枠の中身。lineArt があれば線画を、photo があれば絵画・写真を出し、読み込めなければ image(記号・文字・カード)に戻す。
- * photo.tileOverlay の項目は、タイルだけ絵を暗くして上に image の文字を重ねる。
+ * photo.tileOverlay の項目は、タイルだけ絵を暗くして上に image の文字を重ねる。photo.tileSymbol の項目は、タイルだけ image(記号)を出す。
  * 枠は relative・overflow-hidden にすること
  */
 export function GuideEntryImage({ entry, size }: { entry: GuideEntry; size: Size }) {
   const { photo, onError } = useGuidePhoto(entry);
   const { lineArt, onError: onLineArtError } = useGuideLineArt(entry);
   if (lineArt) return <GuideLineArtImage lineArt={lineArt} color={imageColor(entry)} onError={onLineArtError} />;
-  if (!photo) return <GuideImageView image={entry.image} size={size} />;
+  if (!photo || (size === "tile" && photo.tileSymbol)) return <GuideImageView image={entry.image} size={size} />;
   if (size === "tile" && photo.tileOverlay) {
     // タイルは絵を暗くし、上に元の文字(十二支の漢字など)を重ねる。影は文字に受け継がれる
     return (

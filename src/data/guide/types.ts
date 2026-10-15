@@ -22,6 +22,8 @@ export interface GuidePhoto {
   zoom?: number;
   /** タイルでは絵を暗くし、上に image の文字(漢字など)を重ねる。シート・詳細は絵だけ */
   tileOverlay?: boolean;
+  /** タイルでは絵を出さず image の記号を出す(一覧で見分けやすくする)。シート・詳細は絵 */
+  tileSymbol?: boolean;
 }
 
 /**

@@ -114,7 +114,8 @@
     "path": "/guide-images/horoscope/body-sun.jpg",
     "alt": "太陽を擬人化した版画(Sebald Beham「The Seven Planets」)",
     "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
-    "focus": "center 3%"
+    "focus": "center 3%",
+    "tileSymbol": true
   },
   {
     "system": "horoscope",
@@ -123,7 +124,8 @@
     "path": "/guide-images/horoscope/body-moon.jpg",
     "alt": "月を擬人化した版画(Sebald Beham「The Seven Planets」)",
     "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
-    "focus": "center 3%"
+    "focus": "center 3%",
+    "tileSymbol": true
   },
   {
     "system": "horoscope",
@@ -132,7 +134,8 @@
     "path": "/guide-images/horoscope/body-mercury.jpg",
     "alt": "水星を擬人化した版画(Sebald Beham「The Seven Planets」)",
     "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
-    "focus": "center 3%"
+    "focus": "center 3%",
+    "tileSymbol": true
   },
   {
     "system": "horoscope",
@@ -141,7 +144,8 @@
     "path": "/guide-images/horoscope/body-venus.jpg",
     "alt": "金星を擬人化した版画(Sebald Beham「The Seven Planets」)",
     "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
-    "focus": "center 3%"
+    "focus": "center 3%",
+    "tileSymbol": true
   },
   {
     "system": "horoscope",
@@ -150,7 +154,8 @@
     "path": "/guide-images/horoscope/body-mars.jpg",
     "alt": "火星を擬人化した版画(Sebald Beham「The Seven Planets」)",
     "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
-    "focus": "center 3%"
+    "focus": "center 3%",
+    "tileSymbol": true
   },
   {
     "system": "horoscope",
@@ -159,7 +164,8 @@
     "path": "/guide-images/horoscope/body-jupiter.jpg",
     "alt": "木星を擬人化した版画(Sebald Beham「The Seven Planets」)",
     "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
-    "focus": "center 3%"
+    "focus": "center 3%",
+    "tileSymbol": true
   },
   {
     "system": "horoscope",
@@ -168,7 +174,8 @@
     "path": "/guide-images/horoscope/body-saturn.jpg",
     "alt": "土星を擬人化した版画(Sebald Beham「The Seven Planets」)",
     "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
-    "focus": "center 3%"
+    "focus": "center 3%",
+    "tileSymbol": true
   },
   {
     "system": "horoscope",
@@ -177,7 +184,8 @@
     "path": "/guide-images/horoscope/body-uranus.jpg",
     "alt": "ボイジャー2号が撮影した天王星",
     "credit": "NASA/JPL(Voyager 2、1986)",
-    "focus": "center"
+    "focus": "center",
+    "tileSymbol": true
   },
   {
     "system": "horoscope",
@@ -186,7 +194,8 @@
     "path": "/guide-images/horoscope/body-neptune.jpg",
     "alt": "ボイジャー2号が撮影した海王星",
     "credit": "NASA/JPL(Voyager 2、1989)",
-    "focus": "center"
+    "focus": "center",
+    "tileSymbol": true
   },
   {
     "system": "horoscope",
@@ -195,7 +204,8 @@
     "path": "/guide-images/horoscope/body-pluto.jpg",
     "alt": "ニュー・ホライズンズが撮影した冥王星",
     "credit": "NASA/JHUAPL/SwRI(New Horizons、2015)",
-    "focus": "center"
+    "focus": "center",
+    "tileSymbol": true
   },
   {
     "system": "shichu",

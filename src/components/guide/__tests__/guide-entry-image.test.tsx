@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import GuideEntryPage from "@/app/guide/[system]/[id]/page";
 import { getGuideEntry } from "@/data/guide";
 import { GuideDetailImage, GuideEntryImage } from "../guide-entry-image";
@@ -9,6 +9,7 @@ import { GuideTile } from "../guide-tile";
 const pisces = getGuideEntry("horoscope", "sign-pisces")!;
 const ox = getGuideEntry("shichu", "branch-2")!;
 const chiron = getGuideEntry("horoscope", "body-chiron")!;
+const venus = getGuideEntry("horoscope", "body-venus")!;
 const fool = getGuideEntry("tarot", "major-00")!;
 const dragon = getGuideEntry("maya", "seal-1")!;
 const sun = getGuideEntry("maya", "seal-20")!;
@@ -116,6 +117,19 @@ describe("十二支のタイル(tileOverlay)", () => {
     expect(screen.queryByRole("img")).toBeNull();
     expect(container.querySelector("[data-overlay]")).toBeNull();
     expect(container.querySelector("[data-shape]")).toHaveTextContent("丑");
+  });
+});
+
+describe("天体のタイル(tileSymbol)", () => {
+  it("タイルでは絵を出さず記号を出し、シート・詳細では絵を出すこと", () => {
+    const tile = render(<GuideEntryImage entry={venus} size="tile" />);
+    expect(tile.container.querySelector("img")).toBeNull();
+    expect(tile.container.querySelector("svg")).not.toBeNull();
+    tile.unmount();
+    render(<GuideEntryImage entry={venus} size="sheet" />);
+    expect(screen.getByRole("img", { name: venus.photo!.alt })).toBeInTheDocument();
+    const detail = render(<GuideDetailImage entry={venus} />);
+    expect(within(detail.container).getByRole("img", { name: venus.photo!.alt })).toBeInTheDocument();
   });
 });
 
