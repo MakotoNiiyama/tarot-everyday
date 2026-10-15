@@ -17,6 +17,7 @@ const HomeFortuneChips = dynamic(() => import("./home-fortune-chips").then((m) =
 const entries: { href: string; icon: IconName; title: string; sub: string }[] = [
   { href: "/tarot/reading", icon: "chat", title: "相談したいことがある", sub: "タロット占い" },
   { href: "/tarot/quiz", icon: "quiz", title: "タロットクイズ", sub: "カードの意味を練習する" },
+  { href: "/fortune/other", icon: "people", title: "好きな生年月日で占う", sub: "家族や友人の生年月日で7占術を見る" },
   { href: "/guide", icon: "guide", title: "早見表", sub: "タロットと7占術の要素を調べる" },
 ];
 
@@ -42,12 +43,12 @@ export function HomeContent() {
         </header>
 
         <section
-          aria-label="今日の運勢"
+          aria-label="今日のあなたの運勢"
           className="flex flex-col gap-3.5 rounded-[22px] border border-gold/30 bg-surface p-[18px] lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:gap-7 lg:rounded-3xl lg:p-7"
         >
           <div className="flex flex-col gap-3.5 lg:gap-3">
             <div className="flex items-baseline justify-between lg:justify-start lg:gap-2.5">
-              <h2 className="font-heading text-[19px] lg:text-[22px]">今日の運勢</h2>
+              <h2 className="font-heading text-[19px] lg:text-[22px]">今日のあなたの運勢</h2>
               <span className="font-accent text-base text-gold-dark lg:text-[17px]">Today&apos;s fortune</span>
             </div>
             <DailyTarotCard variant="home" />
@@ -63,12 +64,12 @@ export function HomeContent() {
         </section>
 
         <section aria-label="メニュー">
-          <ul className="flex flex-col gap-2.5 lg:grid lg:grid-cols-3 lg:gap-4">
+          <ul className="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:gap-4">
             {entries.map((e) => (
               <li key={e.href}>
                 <Link
                   href={e.href}
-                  className="flex min-h-[76px] items-center gap-3.5 rounded-[18px] border border-gold/25 bg-surface p-4 text-cream transition-colors hover:border-gold/50 lg:min-h-[150px] lg:flex-col lg:items-start lg:rounded-[20px] lg:p-[22px]"
+                  className="flex h-full min-h-[76px] items-center gap-3.5 rounded-[18px] border border-gold/25 bg-surface p-4 text-cream transition-colors hover:border-gold/50 lg:min-h-[104px] lg:gap-4 lg:rounded-[20px] lg:px-[22px] lg:py-5"
                 >
                   <span className="flex h-11 w-11 flex-none items-center justify-center rounded-xl bg-gold/12 text-gold-light lg:h-12 lg:w-12 lg:rounded-[14px]">
                     <Icon name={e.icon} size={22} />
@@ -77,7 +78,7 @@ export function HomeContent() {
                     <span className="font-heading text-base lg:text-[17px]">{e.title}</span>
                     <span className="text-xs text-gold-dim">{e.sub}</span>
                   </span>
-                  <Icon name="right" size={18} className="text-gold-dark lg:hidden" />
+                  <Icon name="right" size={18} className="flex-none text-gold-dark" />
                 </Link>
               </li>
             ))}

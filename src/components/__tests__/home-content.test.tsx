@@ -44,10 +44,15 @@ describe("HomeContent", () => {
     expect(screen.getByRole("heading", { level: 1, name: "tarot-everyday" })).toBeInTheDocument();
   });
 
-  it("「今日の運勢」カードに1dayタロットを表示すること", () => {
+  it("「今日のあなたの運勢」カードに1dayタロットを表示すること", () => {
     render(<HomeContent />);
-    const today = screen.getByRole("region", { name: "今日の運勢" });
+    const today = screen.getByRole("region", { name: "今日のあなたの運勢" });
     expect(today).toHaveTextContent("1dayタロット");
+  });
+
+  it("見出しは「今日のあなたの運勢」であること", () => {
+    render(<HomeContent />);
+    expect(screen.getByRole("heading", { level: 2, name: "今日のあなたの運勢" })).toBeInTheDocument();
   });
 
   it("登録済みなら「詳しく見る」を表示すること", () => {
@@ -73,7 +78,9 @@ describe("HomeContent", () => {
     const menu = screen.getByRole("region", { name: "メニュー" });
     expect(menu.querySelector('a[href="/tarot/reading"]')).toHaveTextContent("相談したいことがある");
     expect(menu.querySelector('a[href="/tarot/quiz"]')).toHaveTextContent("タロットクイズ");
+    expect(menu.querySelector('a[href="/fortune/other"]')).toHaveTextContent("好きな生年月日で占う");
     expect(menu.querySelector('a[href="/guide"]')).toHaveTextContent("早見表");
+    expect(menu.querySelectorAll("a")).toHaveLength(4);
   });
 
   it("絵文字を使わないこと", () => {
@@ -105,7 +112,7 @@ describe("HomeContent(生年月日)", () => {
   it("登録済みなら今日の運勢のチップを表示すること", () => {
     store["tarot-birth-profile"] = JSON.stringify({ version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "unknown" } });
     render(<HomeContent />);
-    const today = screen.getByRole("region", { name: "今日の運勢" });
+    const today = screen.getByRole("region", { name: "今日のあなたの運勢" });
     expect(today).toHaveTextContent("パーソナルデー");
     expect(today).toHaveTextContent("今日のKIN");
     expect(today).toHaveTextContent("本命星の位置");

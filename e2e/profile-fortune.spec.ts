@@ -123,8 +123,8 @@ test.describe("プロフィール登録から運勢ページまで", () => {
       ),
     );
     await page.goto("/");
-    await expect(page.getByRole("region", { name: "今日の運勢" })).toContainText("今日のKIN");
-    await expect(page.getByRole("region", { name: "今日の運勢" })).toContainText("本命宿との関係");
+    await expect(page.getByRole("region", { name: "今日のあなたの運勢" })).toContainText("今日のKIN");
+    await expect(page.getByRole("region", { name: "今日のあなたの運勢" })).toContainText("本命宿との関係");
     await page.goto("/fortune/profile");
     await page.getByRole("button", { name: "登録情報を削除" }).click();
     await page.getByRole("button", { name: "削除する" }).click();

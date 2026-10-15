@@ -16,7 +16,7 @@ test.describe("ホーム画面", () => {
   });
 
   test("今日の運勢カードからカードを引けること", async ({ page }) => {
-    const today = page.getByRole("region", { name: "今日の運勢" });
+    const today = page.getByRole("region", { name: "今日のあなたの運勢" });
     await today.getByRole("button", { name: "カードを引く" }).click();
     await expect(today.getByText(/^(正位置|逆位置)$/)).toBeVisible();
   });
@@ -35,7 +35,7 @@ test.describe("ホーム画面", () => {
   });
 
   test("未登録のときは「詳しく見る」の代わりに登録への誘導が表示されること", async ({ page }) => {
-    const today = page.getByRole("region", { name: "今日の運勢" });
+    const today = page.getByRole("region", { name: "今日のあなたの運勢" });
     await expect(today.getByRole("link", { name: "生年月日を登録する" })).toBeVisible();
     await expect(page.getByRole("link", { name: "詳しく見る" })).toHaveCount(0);
   });
@@ -47,6 +47,9 @@ test.describe("ホーム画面", () => {
     await page.goto("/");
     await menu().getByRole("link", { name: /タロットクイズ/ }).click();
     await expect(page).toHaveURL("/tarot/quiz");
+    await page.goto("/");
+    await menu().getByRole("link", { name: /好きな生年月日で占う/ }).click();
+    await expect(page).toHaveURL("/fortune/other");
     await page.goto("/");
     await menu().getByRole("link", { name: /早見表/ }).click();
     await expect(page).toHaveURL("/guide");
