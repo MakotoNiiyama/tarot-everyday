@@ -1,8 +1,10 @@
 // src/lib/fortune/daiun.ts
+import { midpoint, representative, resolvedValues } from "./ambiguity";
 import { solarMonthAt } from "./astro/solar-terms";
 import { mod, toJdn, type LocalDate } from "./local-date";
 import { isYangStem, stemOf } from "./sexagenary";
 import { jstLocalDate } from "./tokyo-time";
+import type { Resolved, TimeRange } from "./types";
 
 export interface DaiunPlan {
   /** 順行(月柱から進む)なら true、逆行(戻る)なら false */
@@ -24,6 +26,36 @@ export function daiunPlan(at: Date, yearCycle: number, monthCycle: number, gende
   const birth = toJdn(jstLocalDate(at));
   const days = forward ? toJdn(jstLocalDate(month.end)) - birth : birth - toJdn(jstLocalDate(month.start));
   return { forward, startAge: Math.min(10, Math.max(1, Math.round(days / 3))), monthCycle };
+}
+
+/**
+ * 命式の候補ごとの大運。各候補はその区間の中央の瞬間で、確定なら出生の範囲の中央の瞬間で計算する。
+ * 節入り・立春をまたぐと立運や向きが候補で分かれる
+ */
+export function resolveDaiun(
+  natal: Resolved<{ year: number; month: number }>,
+  range: TimeRange,
+  gender: "male" | "female",
+): Resolved<DaiunPlan> {
+  if (natal.kind === "fixed") {
+    return { kind: "fixed", value: daiunPlan(midpoint(range), natal.value.year, natal.value.month, gender) };
+  }
+  return {
+    kind: "ambiguous",
+    options: natal.options.map((o) => ({ value: daiunPlan(midpoint(o.range), o.value.year, o.value.month, gender), range: o.range })),
+  };
+}
+
+/** 例: 2歳運・順行 */
+export function formatDaiunPlan(plan: DaiunPlan): string {
+  return `${plan.startAge}歳運・${plan.forward ? "順行" : "逆行"}`;
+}
+
+/** 大運が候補で分かれるときの今年の運勢への注記。分かれなければ undefined */
+export function daiunNote(daiun: Resolved<DaiunPlan>): string | undefined {
+  const base = formatDaiunPlan(representative(daiun));
+  const others = [...new Set(resolvedValues(daiun).map(formatDaiunPlan))].filter((v) => v !== base);
+  return others.length ? `大運を${base}として計算(出生時刻により${others.join("・")}の可能性があります)` : undefined;
 }
 
 export interface DaiunPeriod {

@@ -2,7 +2,7 @@
 import { describeResolved, isAmbiguous, representative, resolvedValues, resolveOverRange } from "../ambiguity";
 import { calendarPeriod } from "../astro/calendar-period";
 import { jieBoundariesWithin } from "../astro/solar-terms";
-import { ageOn, daiunAt, daiunPlan, type DaiunPlan } from "../daiun";
+import { ageOn, daiunAt, daiunNote, formatDaiunPlan, resolveDaiun, type DaiunPlan } from "../daiun";
 import { FIVE_ELEMENTS, branchId, elementId, stemId, tsuhenId, unseiId } from "../element-ids";
 import { resolvedFact } from "../fact";
 import type { LocalDate } from "../local-date";
@@ -19,7 +19,7 @@ import {
   tenGodIndex,
   twelveStageIndex,
 } from "../sexagenary";
-import type { ElementRef, Fact, FortuneSystemModule, NatalChart, Period, PeriodResult, TimeRange } from "../types";
+import type { ElementRef, Fact, FortuneSystemModule, NatalChart, Period, PeriodResult } from "../types";
 import { elementCounts, hourBoundariesWithin, sameShichuNatal, shichuNatalAt, zokan, type ShichuNatal } from "./calc";
 
 const ref = (id: string): ElementRef => ({ system: "shichu", id });
@@ -144,9 +144,9 @@ export const shichu: FortuneSystemModule = {
     // 命式はプロンプト用の要約。候補の注記は柱ごとに出すので、ここでは candidates を付けない
     const meishiki: Fact = { key: "meishiki", label: "命式", value: describeResolved(natal, meishikiText), refs: [] };
     const base = representative(natal);
-    // 大運は代表の候補の区間の中央の瞬間で計算する
-    const repRange = natal.kind === "fixed" ? moment.range : natal.options[0].range;
-    const plan = profile.gender ? daiunPlan(midpoint(repRange), base.year, base.month, profile.gender) : null;
+    const daiunResolved = profile.gender ? resolveDaiun(natal, moment.range, profile.gender) : null;
+    // 運勢の大運は代表の候補で計算する
+    const plan = daiunResolved ? representative(daiunResolved) : null;
 
     const facts: Fact[] = [
       fact(
@@ -161,7 +161,7 @@ export const shichu: FortuneSystemModule = {
       ...pillarFacts,
       meishiki,
       fact("gogyo", "五行バランス", gogyoText, dominantElements),
-      ...(plan ? [{ key: "daiun", label: "大運", value: `${plan.startAge}歳運・${plan.forward ? "順行" : "逆行"}`, refs: [] }] : []),
+      ...(daiunResolved ? [resolvedFact(daiunResolved, "daiun", "大運", formatDaiunPlan, () => [])] : []),
     ];
 
     /** 命式表のセル。代表の命式で値がない(時刻不明の時柱)なら空き。label は詳細シートの見出しに出る(例「年柱の通変星」) */
@@ -240,6 +240,8 @@ export const shichu: FortuneSystemModule = {
     const note = otherDays.length
       ? `日柱を${cycleName(base.day)}として計算(出生時刻により${otherDays.map(cycleName).join("・")}の可能性があります)`
       : undefined;
+    // 大運が候補に分かれるときは今年の運勢にだけ添える
+    const yearNote = [note, daiunResolved && daiunNote(daiunResolved)].filter(Boolean).join("。") || undefined;
     const daiun = plan ? { plan, age: ageOn(profile.date, today) } : null;
 
     return {
@@ -254,12 +256,8 @@ export const shichu: FortuneSystemModule = {
       periods: {
         day: periodResult("day", base, today, daiun, note),
         month: periodResult("month", base, today, daiun, note),
-        year: periodResult("year", base, today, daiun, note),
+        year: periodResult("year", base, today, daiun, yearNote),
       },
     };
   },
 };
-
-function midpoint(range: TimeRange): Date {
-  return new Date((range.start.getTime() + range.end.getTime()) / 2);
-}

@@ -1,8 +1,9 @@
 // src/lib/fortune/__tests__/daiun.test.ts
 import { describe, it, expect } from "vitest";
-import { ageOn, daiunAt, daiunPlan } from "../daiun";
+import { ageOn, daiunAt, daiunNote, daiunPlan, formatDaiunPlan, resolveDaiun } from "../daiun";
 import { cycleName, monthCycleIndex, yearCycleIndex } from "../sexagenary";
 import { tokyoToUtc } from "../tokyo-time";
+import type { Resolved } from "../types";
 
 describe("daiunPlan", () => {
   it("陰年の女性は順行し、次の節入り日までの日数÷3を四捨五入すること", () => {
@@ -52,5 +53,36 @@ describe("ageOn", () => {
     expect(ageOn(birth, { year: 2026, month: 3, day: 28 })).toBe(35);
     expect(ageOn(birth, { year: 2026, month: 3, day: 29 })).toBe(36);
     expect(ageOn(birth, { year: 2026, month: 10, day: 14 })).toBe(36);
+  });
+});
+
+describe("resolveDaiun", () => {
+  const day = { start: tokyoToUtc(1990, 3, 6, 0, 0), end: tokyoToUtc(1990, 3, 6, 24, 0) };
+
+  it("確定なら範囲の中央の瞬間で計算すること", () => {
+    const natal: Resolved<{ year: number; month: number }> = {
+      kind: "fixed",
+      value: { year: yearCycleIndex(1990), month: monthCycleIndex(1990, 1) },
+    };
+    const r = resolveDaiun(natal, day, "male");
+    expect(r).toEqual({ kind: "fixed", value: { forward: true, startAge: 10, monthCycle: monthCycleIndex(1990, 1) } });
+    expect(daiunNote(r)).toBeUndefined();
+  });
+
+  it("候補ごとにその区間の中央の瞬間で計算すること", () => {
+    // 啓蟄 1990/3/6 5:19。前は寅月(節入り当日なので1歳運)、後は卯月(次の節入り 4/5 まで30日で10歳運)
+    const cut = tokyoToUtc(1990, 3, 6, 5, 19);
+    const natal: Resolved<{ year: number; month: number }> = {
+      kind: "ambiguous",
+      options: [
+        { value: { year: yearCycleIndex(1990), month: monthCycleIndex(1990, 0) }, range: { start: day.start, end: cut } },
+        { value: { year: yearCycleIndex(1990), month: monthCycleIndex(1990, 1) }, range: { start: cut, end: day.end } },
+      ],
+    };
+    const r = resolveDaiun(natal, day, "male");
+    if (r.kind !== "ambiguous") throw new Error("候補に分かれていない");
+    expect(r.options.map((o) => formatDaiunPlan(o.value))).toEqual(["1歳運・順行", "10歳運・順行"]);
+    expect(r.options.map((o) => o.value.monthCycle)).toEqual([monthCycleIndex(1990, 0), monthCycleIndex(1990, 1)]);
+    expect(daiunNote(r)).toBe("大運を1歳運・順行として計算(出生時刻により10歳運・順行の可能性があります)");
   });
 });

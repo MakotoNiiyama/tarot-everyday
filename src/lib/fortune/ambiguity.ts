@@ -2,6 +2,11 @@
 import { formatTokyoHm } from "./tokyo-time";
 import type { Resolved, TimeRange } from "./types";
 
+/** 範囲の中央の瞬間 */
+export function midpoint(range: TimeRange): Date {
+  return new Date((range.start.getTime() + range.end.getTime()) / 2);
+}
+
 /**
  * 範囲を境界時刻で区切り、各区間の中央で compute した結果をまとめる。
  * 結果が1つなら確定、複数なら区間付きの候補にする(設計書 §5)。
@@ -20,8 +25,7 @@ export function resolveOverRange<T>(
   const options: { value: T; range: TimeRange }[] = [];
   for (let i = 0; i < edges.length - 1; i++) {
     const segment = { start: edges[i], end: edges[i + 1] };
-    const mid = new Date((segment.start.getTime() + segment.end.getTime()) / 2);
-    const value = compute(mid);
+    const value = compute(midpoint(segment));
     const last = options[options.length - 1];
     if (last && equals(last.value, value)) {
       last.range = { start: last.range.start, end: segment.end };

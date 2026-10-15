@@ -70,6 +70,21 @@ describe("sanmei.read 人物像", () => {
     expect(read(p).natal.find((f) => f.key === "daiun")).toBeUndefined();
   });
 
+  it("節入り・立春の当日で時刻不明なら大運を候補にすること", () => {
+    // 啓蟄 1990/3/6 5:19。前は寅月で1歳運、後は卯月で10歳運
+    const r = read({ version: 1, date: { year: 1990, month: 3, day: 6 }, time: { kind: "unknown" }, gender: "male" });
+    expect(r.natal.find((f) => f.key === "daiun")?.candidates).toEqual([
+      { value: "1歳運・順行", rangeLabel: "〜5:19" },
+      { value: "10歳運・順行", rangeLabel: "5:19〜" },
+    ]);
+    expect(r.periods.year.note).toBe("大運を1歳運・順行として計算(出生時刻により10歳運・順行の可能性があります)");
+    expect(r.periods.day.note).toBeUndefined();
+    // 立春 2026/2/4 5:01。前は乙巳年(陰)で逆行、後は丙午年(陽)で順行
+    const risshun = read({ version: 1, date: { year: 2026, month: 2, day: 4 }, time: { kind: "unknown" }, gender: "male" });
+    expect(risshun.natal.find((f) => f.key === "daiun")?.value).toBe("10歳運・逆行(〜5:01) / 10歳運・順行(5:01〜)");
+    expect(risshun.periods.year.note).toBe("大運を10歳運・逆行として計算(出生時刻により10歳運・順行の可能性があります)");
+  });
+
   it("節入り当日で時刻不明なら月の星を候補にすること", () => {
     // 啓蟄 1990/3/6 5:19
     const r = read({ version: 1, date: { year: 1990, month: 3, day: 6 }, time: { kind: "unknown" } });

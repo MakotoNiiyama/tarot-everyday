@@ -132,6 +132,50 @@ describe("shichu.read 運勢", () => {
     expect(year.chips.map((c) => c.key)).toEqual(["ganshi", "tsuhen", "unsei"]);
   });
 
+  it("節入り当日で時刻不明なら大運を候補にし、今年の注記で知らせること", () => {
+    // 啓蟄 1990/3/6 5:19。前は寅月で1歳運、後は卯月で10歳運
+    const r = read({ version: 1, date: { year: 1990, month: 3, day: 6 }, time: { kind: "unknown" }, gender: "male" });
+    expect(fact(r, "daiun")).toEqual({
+      key: "daiun",
+      label: "大運",
+      value: "1歳運・順行(〜5:19) / 10歳運・順行(5:19〜)",
+      refs: [],
+      candidates: [
+        { value: "1歳運・順行", rangeLabel: "〜5:19" },
+        { value: "10歳運・順行", rangeLabel: "5:19〜" },
+      ],
+    });
+    expect(r.periods.year.chips.find((c) => c.key === "daiun")?.value).toBe("壬午(食神、31〜40歳)");
+    expect(r.periods.year.note).toBe("大運を1歳運・順行として計算(出生時刻により10歳運・順行の可能性があります)");
+    expect(r.periods.day.note).toBeUndefined();
+    expect(r.periods.month.note).toBeUndefined();
+  });
+
+  it("立春当日で時刻不明なら大運の向きが候補に分かれること", () => {
+    // 立春 2026/2/4 5:01。前は乙巳年(陰)で逆行、後は丙午年(陽)で順行
+    const r = read({ version: 1, date: { year: 2026, month: 2, day: 4 }, time: { kind: "unknown" }, gender: "male" });
+    expect(fact(r, "daiun")?.value).toBe("10歳運・逆行(〜5:01) / 10歳運・順行(5:01〜)");
+    expect(r.periods.year.chips.find((c) => c.key === "daiun")?.value).toBe("立運前(10歳から)");
+    expect(r.periods.year.note).toBe("大運を10歳運・逆行として計算(出生時刻により10歳運・順行の可能性があります)");
+  });
+
+  it("日柱と大運の両方が候補に分かれるときは今年の注記をつなげること", () => {
+    // 東京の23時台: 地方平均時の0時(23:41ごろ)で日柱が、大雪 1991/12/7 23:56 で月柱と大運が分かれる
+    const r = read({
+      version: 1,
+      date: { year: 1991, month: 12, day: 7 },
+      time: { kind: "hour", hour: 23 },
+      prefecture: "13",
+      gender: "female",
+    });
+    expect(fact(r, "day-pillar")?.value).toMatch(/^辛亥\(〜23:4\d\) \/ 壬子\(23:4\d〜\)$/);
+    expect(fact(r, "daiun")?.value).toBe("1歳運・順行(〜23:56) / 10歳運・順行(23:56〜)");
+    const dayNote = "日柱を辛亥として計算(出生時刻により壬子の可能性があります)";
+    expect(r.periods.day.note).toBe(dayNote);
+    expect(r.periods.month.note).toBe(dayNote);
+    expect(r.periods.year.note).toBe(`${dayNote}。大運を1歳運・順行として計算(出生時刻により10歳運・順行の可能性があります)`);
+  });
+
   it("日柱が候補に分かれるときは注記を付けること", () => {
     // 福岡の0時台: 地方平均時 0:00 = 0:18 ごろ。0:00〜0:18 は前日の日柱
     const r = read({ version: 1, date: { year: 1990, month: 3, day: 30 }, time: { kind: "hour", hour: 0 }, prefecture: "40" });

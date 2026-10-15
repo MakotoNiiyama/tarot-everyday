@@ -2,12 +2,12 @@
 import { isAmbiguous, representative, resolveOverRange } from "../ambiguity";
 import { calendarPeriod } from "../astro/calendar-period";
 import { jieBoundariesWithin } from "../astro/solar-terms";
-import { ageOn, daiunAt, daiunPlan, type DaiunPlan } from "../daiun";
+import { ageOn, daiunAt, daiunNote, formatDaiunPlan, resolveDaiun, type DaiunPlan } from "../daiun";
 import { ijoId, isouId, mainStarId, shukumeiId, subStarId, tenchuId } from "../element-ids";
 import { resolvedFact } from "../fact";
 import type { LocalDate } from "../local-date";
 import { BRANCHES, STEMS, branchOf, cycleName, stemOf, tenGodIndex, twelveStageIndex } from "../sexagenary";
-import type { ElementRef, Fact, FortuneSystemModule, NatalChart, Period, PeriodResult, TimeRange } from "../types";
+import type { ElementRef, Fact, FortuneSystemModule, NatalChart, Period, PeriodResult } from "../types";
 import {
   MAIN_STAR_NAMES,
   SUB_STAR_NAMES,
@@ -68,6 +68,7 @@ function periodResult(
   base: SanmeiNatal,
   today: LocalDate,
   daiun: { plan: DaiunPlan; age: number } | null,
+  note?: string,
 ): PeriodResult {
   const cal = calendarPeriod(period, today);
   const c = cal.cycleIndex;
@@ -96,10 +97,9 @@ function periodResult(
           ref: mainRef(main),
         },
     chips,
+    ...(note ? { note } : {}),
   };
 }
-
-const midpoint = (range: TimeRange) => new Date((range.start.getTime() + range.end.getTime()) / 2);
 
 export const sanmei: FortuneSystemModule = {
   id: "sanmei",
@@ -128,8 +128,9 @@ export const sanmei: FortuneSystemModule = {
     ) as Record<(typeof BODY)[number]["key"], Fact>;
 
     const base = representative(natal);
-    const repRange = natal.kind === "fixed" ? moment.range : natal.options[0].range;
-    const plan = profile.gender ? daiunPlan(midpoint(repRange), base.year, base.month, profile.gender) : null;
+    const daiunResolved = profile.gender ? resolveDaiun(natal, moment.range, profile.gender) : null;
+    // 運勢の大運は代表の候補で計算し、候補に分かれるときは今年の運勢に注記を添える
+    const plan = daiunResolved ? representative(daiunResolved) : null;
 
     const facts: Fact[] = [
       bodyFacts.center,
@@ -142,7 +143,7 @@ export const sanmei: FortuneSystemModule = {
       bodyFacts.early,
       bodyFacts.middle,
       bodyFacts.late,
-      ...(plan ? [{ key: "daiun", label: "大運", value: `${plan.startAge}歳運・${plan.forward ? "順行" : "逆行"}`, refs: [] }] : []),
+      ...(daiunResolved ? [resolvedFact(daiunResolved, "daiun", "大運", formatDaiunPlan, () => [])] : []),
       fact(
         "shukumei",
         "宿命中殺",
@@ -192,7 +193,7 @@ export const sanmei: FortuneSystemModule = {
       periods: {
         day: periodResult("day", base, today, daiun),
         month: periodResult("month", base, today, daiun),
-        year: periodResult("year", base, today, daiun),
+        year: periodResult("year", base, today, daiun, daiunResolved ? daiunNote(daiunResolved) : undefined),
       },
     };
   },
