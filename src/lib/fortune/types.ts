@@ -72,6 +72,25 @@ export interface PeriodResult {
   note?: string;
 }
 
+/**
+ * 人物像の専用の図(設計書 §11.2)。セルは表示用の事実(タップで詳細)。
+ * factKeys は natal のうちこの図が表している事実の key で、図があるときは一覧に重ねて出さない
+ */
+export type NatalChart =
+  | {
+      /** 四柱推命の命式表。columns は柱の名前、rows は「干支・通変星・蔵干・十二運」。空きのセルは null */
+      kind: "pillars";
+      columns: string[];
+      rows: { label: string; cells: (Fact | null)[] }[];
+      factKeys: string[];
+    }
+  | {
+      /** 算命学の人体星図。3×3 を左上から行ごとに並べる。空きのマスは null */
+      kind: "body-stars";
+      cells: ({ fact: Fact; tone: "center" | "main" | "sub" } | null)[];
+      factKeys: string[];
+    };
+
 export interface SystemReading {
   id: SystemId;
   name: string;
@@ -82,6 +101,8 @@ export interface SystemReading {
   periods: Record<Period, PeriodResult>;
   /** 出生時刻の曖昧さで人物像の結果が分かれたか */
   ambiguous: boolean;
+  /** 人物像の専用の図(四柱推命の命式表・算命学の人体星図)。なければタイルで表示する */
+  chart?: NatalChart;
 }
 
 export interface FortuneSystemModule {

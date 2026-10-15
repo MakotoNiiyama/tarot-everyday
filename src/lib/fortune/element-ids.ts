@@ -25,11 +25,61 @@ export const sealId = (n: number) => `seal-${n}`;
 export const toneId = (n: number) => `tone-${n}`;
 export const moonId = (n: number) => `moon-${n}`;
 
+/** 四柱推命の十干(1 = 甲 … 10 = 癸)・十二支(1 = 子 … 12 = 亥)・通変星(1 = 比肩 … 10 = 印綬)・十二運(1 = 長生 … 12 = 養) */
+export const stemId = (n: number) => `stem-${n}`;
+export const branchId = (n: number) => `branch-${n}`;
+export const tsuhenId = (n: number) => `tsuhen-${n}`;
+export const unseiId = (n: number) => `unsei-${n}`;
+
+/** 五行(sexagenary.ts の ELEMENT_NAMES と同じ順) */
+export type FiveElement = "wood" | "fire" | "earth" | "metal" | "water";
+export const FIVE_ELEMENTS: readonly FiveElement[] = ["wood", "fire", "earth", "metal", "water"];
+export const elementId = (e: FiveElement) => `element-${e}`;
+
+/** 算命学の十大主星(1 = 貫索星 … 10 = 玉堂星。通変星と同じ順)・十二大従星(1 = 天貴星 … 12 = 天印星。十二運と同じ順) */
+export const mainStarId = (n: number) => `main-${n}`;
+export const subStarId = (n: number) => `sub-${n}`;
+/** 天中殺(1 = 子丑 … 6 = 戌亥) */
+export const tenchuId = (n: number) => `tenchu-${n}`;
+
+/** 宿命中殺の種類(生年・生月・生日・日座・日居) */
+export type ShukumeiKind = "year" | "month" | "day" | "nichiza" | "nikkyo";
+export const SHUKUMEI_KINDS: readonly ShukumeiKind[] = ["year", "month", "day", "nichiza", "nikkyo"];
+export const shukumeiId = (k: ShukumeiKind) => `shukumei-${k}`;
+
+/** 異常干支の干支番号(甲子 = 1)。通常異常干支6種のあとに暗合異常干支7種 */
+export const IJO_NORMAL = [11, 12, 35, 37, 48, 54] as const;
+export const IJO_ANGOU = [18, 19, 23, 24, 25, 30, 36] as const;
+export const ijoId = (cycleNumber: number) => `ijo-${cycleNumber}`;
+
+/** 位相法の種類(支合・半会・方三位・対冲・刑・害・破) */
+export type IsouKind = "shigo" | "hankai" | "hosani" | "taichu" | "kei" | "gai" | "ha";
+export const ISOU_KINDS: readonly IsouKind[] = ["shigo", "hankai", "hosani", "taichu", "kei", "gai", "ha"];
+export const isouId = (k: IsouKind) => `isou-${k}`;
+
 const range = (from: number, to: number) => Array.from({ length: to - from + 1 }, (_, i) => from + i);
 
+/** 早見表の項目を持つ実装済みの占術 */
+export type ElementSystemId = "numerology" | "kyusei" | "maya" | "shichu" | "sanmei";
+
 /** 占術ごとの早見表の項目 id の一覧 */
-export const ELEMENT_IDS: Record<"numerology" | "kyusei" | "maya", readonly string[]> = {
+export const ELEMENT_IDS: Record<ElementSystemId, readonly string[]> = {
   numerology: [...range(1, 9), 11, 22, 33].map(numberId),
   kyusei: [...range(1, 9).map(starId), ...PALACES.map(palaceId), ...DIRECTIONS.map(directionId)],
   maya: [...range(1, 20).map(sealId), ...range(1, 13).map(toneId), ...range(0, 13).map(moonId)],
+  shichu: [
+    ...range(1, 10).map(stemId),
+    ...range(1, 12).map(branchId),
+    ...range(1, 10).map(tsuhenId),
+    ...range(1, 12).map(unseiId),
+    ...FIVE_ELEMENTS.map(elementId),
+  ],
+  sanmei: [
+    ...range(1, 10).map(mainStarId),
+    ...range(1, 12).map(subStarId),
+    ...range(1, 6).map(tenchuId),
+    ...SHUKUMEI_KINDS.map(shukumeiId),
+    ...[...IJO_NORMAL, ...IJO_ANGOU].map(ijoId),
+    ...ISOU_KINDS.map(isouId),
+  ],
 };
