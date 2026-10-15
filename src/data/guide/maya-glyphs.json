@@ -1,0 +1,242 @@
+[
+  {
+    "id": "seal-1",
+    "sign": "Imix",
+    "file": "DaySign Imix.svg",
+    "path": "/guide-images/maya/seal-1.svg",
+    "revision": {
+      "user": "Vanisaac",
+      "timestamp": "2022-12-18T09:06:11Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/6e/DaySign_Imix.svg",
+      "sha1": "716ad9586e76c5010a5b096013ef3003f924aa11"
+    }
+  },
+  {
+    "id": "seal-2",
+    "sign": "Ik",
+    "file": "DaySign Ik.svg",
+    "path": "/guide-images/maya/seal-2.svg",
+    "revision": {
+      "user": "Ekwoman",
+      "timestamp": "2008-11-23T19:48:00Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/archive/5/5d/20110205200357%21DaySign_Ik.svg",
+      "sha1": "2e1c5226162507c2092a16532353c0a3f6459fab"
+    }
+  },
+  {
+    "id": "seal-3",
+    "sign": "Akbal",
+    "file": "DaySign Akbal.svg",
+    "path": "/guide-images/maya/seal-3.svg",
+    "revision": {
+      "user": "Vanisaac",
+      "timestamp": "2022-12-18T08:48:24Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/d8/DaySign_Akbal.svg",
+      "sha1": "526875a151e9e9832bad40f993cc5f4b657e01ed"
+    }
+  },
+  {
+    "id": "seal-4",
+    "sign": "Kan",
+    "file": "DaySign Kan.svg",
+    "path": "/guide-images/maya/seal-4.svg",
+    "revision": {
+      "user": "Ekwoman",
+      "timestamp": "2008-11-23T19:55:11Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/archive/8/80/20110826115351%21DaySign_Kan.svg",
+      "sha1": "15ad0bff15c2bcef7fd9f4b43b5b5a80c1877568"
+    }
+  },
+  {
+    "id": "seal-5",
+    "sign": "Chiccan",
+    "file": "DaySign Chiccan.svg",
+    "path": "/guide-images/maya/seal-5.svg",
+    "revision": {
+      "user": "Ekwoman",
+      "timestamp": "2008-11-23T19:56:38Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/archive/c/c9/20110205194949%21DaySign_Chiccan.svg",
+      "sha1": "5c65c22af1265feee0d45e163ee777213e8b66ed"
+    }
+  },
+  {
+    "id": "seal-6",
+    "sign": "Cimi",
+    "file": "DaySign Cimi.svg",
+    "path": "/guide-images/maya/seal-6.svg",
+    "revision": {
+      "user": "Vanisaac",
+      "timestamp": "2022-12-18T09:02:23Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/6e/DaySign_Cimi.svg",
+      "sha1": "871dcdf3abdd33036bd0dd295679e7f7f09851af"
+    }
+  },
+  {
+    "id": "seal-7",
+    "sign": "Manik",
+    "file": "DaySign Manik.svg",
+    "path": "/guide-images/maya/seal-7.svg",
+    "revision": {
+      "user": "Vanisaac",
+      "timestamp": "2022-12-18T13:51:21Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/c/cb/DaySign_Manik.svg",
+      "sha1": "26579440945b6df834bafb6107be62fdf8b4ed01"
+    }
+  },
+  {
+    "id": "seal-8",
+    "sign": "Lamat",
+    "file": "DaySign Lamat.svg",
+    "path": "/guide-images/maya/seal-8.svg",
+    "revision": {
+      "user": "Ekwoman",
+      "timestamp": "2008-11-23T19:59:28Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/archive/b/bc/20110211200627%21DaySign_Lamat.svg",
+      "sha1": "d86c5b02038f992e6f98db364848f970d7ffa032"
+    }
+  },
+  {
+    "id": "seal-9",
+    "sign": "Muluc",
+    "file": "DaySign Muluc.svg",
+    "path": "/guide-images/maya/seal-9.svg",
+    "revision": {
+      "user": "Ekwoman",
+      "timestamp": "2008-11-23T20:00:44Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/archive/c/c0/20110126193307%21DaySign_Muluc.svg",
+      "sha1": "62781c7cb05f2a6b230901ef4f55b9252d08900b"
+    }
+  },
+  {
+    "id": "seal-10",
+    "sign": "Oc",
+    "file": "DaySign Oc.svg",
+    "path": "/guide-images/maya/seal-10.svg",
+    "revision": {
+      "user": "Vanisaac",
+      "timestamp": "2022-12-18T09:11:09Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/d9/DaySign_Oc.svg",
+      "sha1": "686cf5511c086a55289f17cfc14a5b585e4dd5c6"
+    }
+  },
+  {
+    "id": "seal-11",
+    "sign": "Chuen",
+    "file": "DaySign Chuen.svg",
+    "path": "/guide-images/maya/seal-11.svg",
+    "revision": {
+      "user": "Ekwoman",
+      "timestamp": "2008-11-23T20:02:37Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/archive/0/0b/20110228201537%21DaySign_Chuen.svg",
+      "sha1": "a6769308339f1b6ca4e7d382e8033ac7789c05be"
+    }
+  },
+  {
+    "id": "seal-12",
+    "sign": "Eb",
+    "file": "DaySign Eb.svg",
+    "path": "/guide-images/maya/seal-12.svg",
+    "revision": {
+      "user": "Vanisaac",
+      "timestamp": "2022-12-18T09:04:05Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/f6/DaySign_Eb.svg",
+      "sha1": "1f98e749ae2be6258f41877181e5ca41ba981993"
+    }
+  },
+  {
+    "id": "seal-13",
+    "sign": "Ben",
+    "file": "DaySign Ben.svg",
+    "path": "/guide-images/maya/seal-13.svg",
+    "revision": {
+      "user": "Ekwoman",
+      "timestamp": "2008-11-23T20:04:33Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/archive/2/2d/20210531194934%21DaySign_Ben.svg",
+      "sha1": "73c99bd52061b966e5aad7652464cfe6d66b7d4c"
+    }
+  },
+  {
+    "id": "seal-14",
+    "sign": "Ix",
+    "file": "DaySign Ix.svg",
+    "path": "/guide-images/maya/seal-14.svg",
+    "revision": {
+      "user": "Ekwoman",
+      "timestamp": "2008-11-23T20:05:25Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/archive/8/82/20110826181211%21DaySign_Ix.svg",
+      "sha1": "e1d983b06c867a38fbd0b3c71b5931cfb75e22ed"
+    }
+  },
+  {
+    "id": "seal-15",
+    "sign": "Men",
+    "file": "DaySign Men.svg",
+    "path": "/guide-images/maya/seal-15.svg",
+    "revision": {
+      "user": "Vanisaac",
+      "timestamp": "2022-12-18T09:09:31Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/d6/DaySign_Men.svg",
+      "sha1": "9ec4463c8c3c4d550bc72a9abaed2ac0b3b0c099"
+    }
+  },
+  {
+    "id": "seal-16",
+    "sign": "Cib",
+    "file": "DaySign Cib.svg",
+    "path": "/guide-images/maya/seal-16.svg",
+    "revision": {
+      "user": "Vanisaac",
+      "timestamp": "2022-12-18T09:00:50Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/5/5f/DaySign_Cib.svg",
+      "sha1": "99bb25492446d7e2d7f7e9a50c8a9e7fdec99e54"
+    }
+  },
+  {
+    "id": "seal-17",
+    "sign": "Caban",
+    "file": "DaySign Caban.svg",
+    "path": "/guide-images/maya/seal-17.svg",
+    "revision": {
+      "user": "Vanisaac",
+      "timestamp": "2022-12-18T08:57:16Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/8/82/DaySign_Caban.svg",
+      "sha1": "84e2e9b2506f8122c1ba29ac11f2a6bc8bb79148"
+    }
+  },
+  {
+    "id": "seal-18",
+    "sign": "Etznab",
+    "file": "DaySign Etznab.svg",
+    "path": "/guide-images/maya/seal-18.svg",
+    "revision": {
+      "user": "Ekwoman",
+      "timestamp": "2008-11-23T20:08:39Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/archive/d/d6/20110126194145%21DaySign_Etznab.svg",
+      "sha1": "9a967b228c6380059812b9a98ca50533e630930f"
+    }
+  },
+  {
+    "id": "seal-19",
+    "sign": "Cauac",
+    "file": "DaySign Cauac.svg",
+    "path": "/guide-images/maya/seal-19.svg",
+    "revision": {
+      "user": "Vanisaac",
+      "timestamp": "2022-12-18T08:55:47Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/74/DaySign_Cauac.svg",
+      "sha1": "5dbedddd87f9b839f9637e127f2457272691fd89"
+    }
+  },
+  {
+    "id": "seal-20",
+    "sign": "Ahau",
+    "file": "DaySign Ahau.svg",
+    "path": "/guide-images/maya/seal-20.svg",
+    "revision": {
+      "user": "Ekwoman",
+      "timestamp": "2008-11-23T20:10:28Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/archive/b/bb/20110827125609%21DaySign_Ahau.svg",
+      "sha1": "8bea67955f1fb87c75e453004e07ef6f67870a7c"
+    }
+  }
+]
