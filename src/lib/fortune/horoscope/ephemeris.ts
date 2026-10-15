@@ -67,7 +67,8 @@ export function chironLongitude(at: Date): number | null {
   return mod(sum, 360);
 }
 
-function longitudeAt(body: BodyKey, at: Date): number | null {
+/** 天体の視黄経(度)。キロンが表の範囲外なら null */
+export function bodyLongitude(body: BodyKey, at: Date): number | null {
   if (body === "moon") return eclipticLongitudeOfDate(GeoMoon(at), at);
   if (body === "node") return trueNode(at);
   if (body === "lilith") return meanLilith(at);
@@ -84,10 +85,10 @@ export interface BodyPosition {
 
 /** 天体の視黄経(その日の真の黄道)と逆行。キロンが表の範囲外なら null */
 export function bodyPosition(body: BodyKey, at: Date): BodyPosition | null {
-  const lon = longitudeAt(body, at);
+  const lon = bodyLongitude(body, at);
   if (lon === null) return null;
-  const before = longitudeAt(body, new Date(at.getTime() - 43_200_000));
-  const after = longitudeAt(body, new Date(at.getTime() + 43_200_000));
+  const before = bodyLongitude(body, new Date(at.getTime() - 43_200_000));
+  const after = bodyLongitude(body, new Date(at.getTime() + 43_200_000));
   if (before === null || after === null) return null;
   const speed = ((after - before + 540) % 360) - 180;
   return { lon, retrograde: speed < 0 };
