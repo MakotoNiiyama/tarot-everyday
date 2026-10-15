@@ -6,6 +6,7 @@ import { ageOn, daiunAt, daiunNote, formatDaiunPlan, resolveDaiun, type DaiunPla
 import { ijoId, isouId, mainStarId, shukumeiId, subStarId, tenchuId } from "../element-ids";
 import { resolvedFact } from "../fact";
 import type { LocalDate } from "../local-date";
+import { GANSHI_LABEL, PERIOD_WORD } from "../period-labels";
 import { BRANCHES, STEMS, branchOf, cycleName, stemOf, tenGodIndex, twelveStageIndex } from "../sexagenary";
 import { standardDate } from "../tokyo-time";
 import type { ElementRef, Fact, FortuneSystemModule, NatalChart, Period, PeriodResult } from "../types";
@@ -38,16 +39,17 @@ const BODY = [
   { key: "late", label: "右足(晩年)", kind: "sub" },
 ] as const satisfies readonly { key: keyof BodyStars; label: string; kind: "main" | "sub" }[];
 
+type BodyKey = (typeof BODY)[number]["key"];
+const BODY_BY_KEY = Object.fromEntries(BODY.map((b) => [b.key, b])) as Record<BodyKey, (typeof BODY)[number]>;
+
 /** 図のマスの並び(左上から行ごと。null は空き) */
-const LAYOUT: readonly ((typeof BODY)[number]["key"] | null)[] = [
+const LAYOUT: readonly (BodyKey | null)[] = [
   null, "north", "early",
   "west", "center", "east",
   "late", "south", "middle",
 ];
 
-const PERIOD_WORD: Record<Period, string> = { day: "今日", month: "今月", year: "今年" };
 const PERIOD_UNIT: Record<Period, string> = { day: "日", month: "月", year: "年" };
-const GANSHI_LABEL: Record<Period, string> = { day: "日の干支", month: "月の干支", year: "年の干支" };
 
 const voidLabel = (cycle: number) => tenchuOf(cycle).branches.map((b) => BRANCHES[b]).join("");
 
@@ -128,7 +130,7 @@ export const sanmei: FortuneSystemModule = {
           (n) => [(kind === "main" ? mainRef : subRef)(bodyStars(n)[key])],
         ),
       ]),
-    ) as Record<(typeof BODY)[number]["key"], Fact>;
+    ) as Record<BodyKey, Fact>;
 
     const base = representative(natal);
     const daiunResolved = profile.gender ? resolveDaiun(natal, moment.range, profile.gender) : null;
@@ -177,7 +179,7 @@ export const sanmei: FortuneSystemModule = {
       kind: "body-stars",
       cells: LAYOUT.map((key) => {
         if (key === null) return null;
-        const tone = key === "center" ? "center" : BODY.find((b) => b.key === key)!.kind;
+        const tone = key === "center" ? "center" : BODY_BY_KEY[key].kind;
         return { fact: bodyFacts[key], tone };
       }),
       factKeys: BODY.map((b) => b.key),

@@ -85,3 +85,13 @@ export function twelveStageIndex(dayStem: number, branch: number): number {
   const start = CHOSEI_BRANCH[mod(dayStem, 10)];
   return isYangStem(dayStem) ? mod(branch - start, 12) : mod(start - branch, 12);
 }
+
+/** 蔵干の表。十二支ごとに [十干, その蔵干が受け持つ最後の日(節入り日を1日目)] を並べ、最後の lastDay は Infinity */
+export type HiddenStemTable = readonly (readonly (readonly [stem: number, lastDay: number])[])[];
+
+/** 蔵干の表から、節入り日を1日目とする日数で十干を1つ選ぶ */
+export function hiddenStemOn(table: HiddenStemTable, branch: number, dayNumber: number): number {
+  const found = table[mod(branch, 12)].find(([, lastDay]) => dayNumber <= lastDay);
+  if (!found) throw new Error(`${BRANCHES[mod(branch, 12)]} の蔵干の表が Infinity で終わっていません`);
+  return found[0];
+}

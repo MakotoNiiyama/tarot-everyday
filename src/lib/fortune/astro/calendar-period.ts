@@ -7,7 +7,7 @@ import { solarLongitudeTime, solarMonthAt } from "./solar-terms";
 
 export interface CalendarPeriod {
   /** 立春で区切った年 */
-  kyuseiYear: number;
+  solarYear: number;
   /** 節月(0 = 寅月 … 11 = 丑月) */
   solarMonthIndex: number;
   /** その期間の干支の番号(年柱・月柱・日柱と同じ数え方) */
@@ -27,7 +27,7 @@ export function calendarPeriod(period: Period, today: LocalDate): CalendarPeriod
   const endOfToday = tokyoToUtc(today.year, today.month, today.day, 23, 59);
   const month = solarMonthAt(endOfToday);
   const ky = month.kyuseiYear;
-  const base = { kyuseiYear: ky, solarMonthIndex: month.index };
+  const base = { solarYear: ky, solarMonthIndex: month.index };
   if (period === "year") {
     return {
       ...base,

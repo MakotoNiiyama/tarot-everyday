@@ -5,12 +5,14 @@ import {
   branchElement,
   branchOf,
   dayCycleIndex,
+  hiddenStemOn,
   hourBranchIndex,
   hourCycleIndex,
   monthCycleIndex,
   stemElement,
   stemOf,
   yearCycleIndex,
+  type HiddenStemTable,
 } from "../sexagenary";
 import type { TimeRange } from "../types";
 
@@ -18,7 +20,7 @@ import type { TimeRange } from "../types";
  * 月律分野蔵干。十二支ごとに [十干, その蔵干が受け持つ最後の日(節入り日を1日目)] を余気・中気・本気の順に並べる。
  * 日本で最も一般的な表(『星平会海』『淵海子平』系)。申の余気は戊とする
  */
-const ZOKAN: readonly (readonly (readonly [stem: number, lastDay: number])[])[] = [
+const ZOKAN: HiddenStemTable = [
   [[8, 10], [9, Infinity]], // 子 壬10・癸
   [[9, 9], [7, 12], [5, Infinity]], // 丑 癸9・辛3・己
   [[4, 7], [2, 14], [0, Infinity]], // 寅 戊7・丙7・甲
@@ -35,8 +37,7 @@ const ZOKAN: readonly (readonly (readonly [stem: number, lastDay: number])[])[] 
 
 /** 十二支の蔵干(節入り日を1日目とする日数で1つに絞る) */
 export function zokan(branch: number, dayNumber: number): number {
-  const found = ZOKAN[branch].find(([, lastDay]) => dayNumber <= lastDay);
-  return (found ?? ZOKAN[branch][ZOKAN[branch].length - 1])[0];
+  return hiddenStemOn(ZOKAN, branch, dayNumber);
 }
 
 export interface ShichuNatal {

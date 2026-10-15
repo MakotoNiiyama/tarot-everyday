@@ -4,6 +4,7 @@ import { calendarPeriod } from "../astro/calendar-period";
 import { jieBoundariesWithin } from "../astro/solar-terms";
 import { directionId, palaceId, starId, type Direction } from "../element-ids";
 import type { LocalDate } from "../local-date";
+import { PERIOD_WORD } from "../period-labels";
 import { monthBranchIndex, yearBranchIndex } from "../sexagenary";
 import type { ElementRef, Fact, FortuneSystemModule, Period, PeriodResult } from "../types";
 import {
@@ -38,17 +39,16 @@ function keishaLabel(k: Direction[]): string {
   return PALACE_NAMES[k[0]];
 }
 
-const PERIOD_WORD: Record<Period, string> = { day: "今日", month: "今月", year: "今年" };
 const BOARD_LABEL: Record<Period, string> = { day: "日盤の中宮", month: "月盤の中宮", year: "年盤の中宮" };
 
 function boardFor(period: Period, today: LocalDate) {
   const cal = calendarPeriod(period, today);
   if (period === "year") {
-    return { center: yearStar(cal.kyuseiYear), branch: yearBranchIndex(cal.kyuseiYear), range: cal.rangeLabel };
+    return { center: yearStar(cal.solarYear), branch: yearBranchIndex(cal.solarYear), range: cal.rangeLabel };
   }
   if (period === "month") {
     return {
-      center: monthStar(yearStar(cal.kyuseiYear), cal.solarMonthIndex),
+      center: monthStar(yearStar(cal.solarYear), cal.solarMonthIndex),
       branch: monthBranchIndex(cal.solarMonthIndex),
       range: cal.rangeLabel,
     };

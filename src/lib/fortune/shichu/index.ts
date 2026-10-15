@@ -6,6 +6,7 @@ import { ageOn, daiunAt, daiunNote, formatDaiunPlan, resolveDaiun, type DaiunPla
 import { FIVE_ELEMENTS, branchId, elementId, stemId, tsuhenId, unseiId } from "../element-ids";
 import { resolvedFact } from "../fact";
 import type { LocalDate } from "../local-date";
+import { GANSHI_LABEL, PERIOD_WORD } from "../period-labels";
 import {
   ELEMENT_NAMES,
   STEMS,
@@ -35,23 +36,43 @@ const PILLARS = [
 
 const UNKNOWN_HOUR = "時刻不明";
 
-/** 柱の通変星。日柱は「日主」 */
-function pillarTsuhen(n: ShichuNatal, cycle: number, isDay: boolean): string {
-  return isDay ? "日主" : TEN_GOD_NAMES[tenGodIndex(stemOf(n.day), stemOf(cycle))];
+type Pillar = (typeof PILLARS)[number];
+
+/** 命式表の行(干支の下に並べる柱の詳細) */
+const DETAIL_ROWS = [
+  { field: "tsuhen", label: "通変星" },
+  { field: "zokan", label: "蔵干" },
+  { field: "unsei", label: "十二運" },
+] as const;
+
+type PillarDetail = Record<(typeof DETAIL_ROWS)[number]["field"], { name: string; ref: ElementRef }>;
+
+/** 柱の通変星・蔵干・十二運。日柱の通変星は「日主」で、参照は日干 */
+function pillarDetail(n: ShichuNatal, cycle: number, isDay: boolean): PillarDetail {
+  const dayStem = stemOf(n.day);
+  const god = tenGodIndex(dayStem, stemOf(cycle));
+  const hidden = zokan(branchOf(cycle), n.dayNumber);
+  const stage = twelveStageIndex(dayStem, branchOf(cycle));
+  return {
+    tsuhen: isDay ? { name: "日主", ref: stemRef(dayStem) } : { name: TEN_GOD_NAMES[god], ref: ref(tsuhenId(god + 1)) },
+    zokan: { name: STEMS[hidden], ref: stemRef(hidden) },
+    unsei: { name: TWELVE_STAGE_NAMES[stage], ref: ref(unseiId(stage + 1)) },
+  };
+}
+
+/** その命式での柱の詳細。時刻不明の時柱は null */
+function detailOf(n: ShichuNatal, pillar: Pillar): PillarDetail | null {
+  const c = pillar.pick(n);
+  return c === null ? null : pillarDetail(n, c, pillar.key === "day-pillar");
 }
 
 function meishikiText(n: ShichuNatal): string {
-  return PILLARS.map(({ label, pick }) => {
-    const c = pick(n);
-    if (c === null) return `${label} ${UNKNOWN_HOUR}`;
-    const dayStem = stemOf(n.day);
-    const detail = [
-      pillarTsuhen(n, c, label === "日柱"),
-      STEMS[zokan(branchOf(c), n.dayNumber)],
-      TWELVE_STAGE_NAMES[twelveStageIndex(dayStem, branchOf(c))],
-    ].join("・");
-    return `${label} ${cycleName(c)}(${detail})`;
-  }).join(" / ");
+  return PILLARS.map((pillar) => {
+    const c = pillar.pick(n);
+    const d = detailOf(n, pillar);
+    if (c === null || d === null) return `${pillar.label} ${UNKNOWN_HOUR}`;
+    return `${pillar.label} ${cycleName(c)}(${DETAIL_ROWS.map(({ field }) => d[field].name).join("・")})`;
+  }).join("、");
 }
 
 function gogyoText(n: ShichuNatal): string {
@@ -65,9 +86,6 @@ function dominantElements(n: ShichuNatal): ElementRef[] {
   const max = Math.max(...counts);
   return FIVE_ELEMENTS.filter((_, i) => counts[i] === max).map((e) => ref(elementId(e)));
 }
-
-const PERIOD_WORD: Record<Period, string> = { day: "今日", month: "今月", year: "今年" };
-const GANSHI_LABEL: Record<Period, string> = { day: "日の干支", month: "月の干支", year: "年の干支" };
 
 function daiunChip(plan: DaiunPlan, dayStem: number, age: number): Fact {
   const current = daiunAt(plan, age);
@@ -164,73 +182,28 @@ export const shichu: FortuneSystemModule = {
       ...(daiunResolved ? [resolvedFact(daiunResolved, "daiun", "大運", formatDaiunPlan, () => [])] : []),
     ];
 
-    /** 命式表のセル。代表の命式で値がない(時刻不明の時柱)なら空き。label は詳細シートの見出しに出る(例「年柱の通変星」) */
-    const cell = (
-      key: string,
-      label: string,
-      format: (n: ShichuNatal) => string | null,
-      refsOf: (n: ShichuNatal) => ElementRef[],
-    ): Fact | null => {
-      if (format(base) === null) return null;
-      return fact(key, label, (n) => format(n) ?? UNKNOWN_HOUR, refsOf);
-    };
     const chart: NatalChart = {
       kind: "pillars",
       columns: PILLARS.map((p) => p.label),
       rows: [
         { label: "干支", cells: pillarFacts },
-        {
-          label: "通変星",
-          cells: PILLARS.map(({ key, label, pick }) =>
-            cell(
-              `${key}-tsuhen`,
-              `${label}の通変星`,
-              (n) => {
-                const c = pick(n);
-                return c === null ? null : pillarTsuhen(n, c, label === "日柱");
-              },
-              (n) => {
-                const c = pick(n);
-                if (c === null) return [];
-                return label === "日柱" ? [stemRef(stemOf(n.day))] : [ref(tsuhenId(tenGodIndex(stemOf(n.day), stemOf(c)) + 1))];
-              },
-            ),
+        // 代表の命式で値がない(時刻不明の時柱)セルは空き。label は詳細シートの見出しに出る(例「年柱の通変星」)
+        ...DETAIL_ROWS.map(({ field, label }) => ({
+          label,
+          cells: PILLARS.map((pillar) =>
+            detailOf(base, pillar) === null
+              ? null
+              : fact(
+                  `${pillar.key}-${field}`,
+                  `${pillar.label}の${label}`,
+                  (n) => detailOf(n, pillar)?.[field].name ?? UNKNOWN_HOUR,
+                  (n) => {
+                    const d = detailOf(n, pillar);
+                    return d ? [d[field].ref] : [];
+                  },
+                ),
           ),
-        },
-        {
-          label: "蔵干",
-          cells: PILLARS.map(({ key, label, pick }) =>
-            cell(
-              `${key}-zokan`,
-              `${label}の蔵干`,
-              (n) => {
-                const c = pick(n);
-                return c === null ? null : STEMS[zokan(branchOf(c), n.dayNumber)];
-              },
-              (n) => {
-                const c = pick(n);
-                return c === null ? [] : [stemRef(zokan(branchOf(c), n.dayNumber))];
-              },
-            ),
-          ),
-        },
-        {
-          label: "十二運",
-          cells: PILLARS.map(({ key, label, pick }) =>
-            cell(
-              `${key}-unsei`,
-              `${label}の十二運`,
-              (n) => {
-                const c = pick(n);
-                return c === null ? null : TWELVE_STAGE_NAMES[twelveStageIndex(stemOf(n.day), branchOf(c))];
-              },
-              (n) => {
-                const c = pick(n);
-                return c === null ? [] : [ref(unseiId(twelveStageIndex(stemOf(n.day), branchOf(c)) + 1))];
-              },
-            ),
-          ),
-        },
+        })),
       ],
       factKeys: [...PILLARS.map((p) => p.key), "meishiki"],
     };

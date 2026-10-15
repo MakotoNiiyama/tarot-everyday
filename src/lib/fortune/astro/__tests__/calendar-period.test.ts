@@ -8,7 +8,7 @@ const today = { year: 2026, month: 10, day: 14 };
 describe("calendarPeriod", () => {
   it("年は立春から次の立春の前日まで", () => {
     const p = calendarPeriod("year", today);
-    expect(p.kyuseiYear).toBe(2026);
+    expect(p.solarYear).toBe(2026);
     expect(p.rangeLabel).toBe("2026/2/4〜2027/2/3");
     expect(cycleName(p.cycleIndex)).toBe("丙午");
   });

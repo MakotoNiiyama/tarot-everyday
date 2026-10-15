@@ -38,7 +38,7 @@ describe("shichu.read 人物像", () => {
     expect(fact(r, "day-pillar")?.value).toBe("癸巳");
     expect(fact(r, "hour-pillar")?.value).toBe("己未");
     expect(fact(r, "meishiki")?.value).toBe(
-      "年柱 庚午(印綬・丁・絶) / 月柱 己卯(偏官・乙・長生) / 日柱 癸巳(日主・丙・胎) / 時柱 己未(偏官・己・墓)",
+      "年柱 庚午(印綬・丁・絶)、月柱 己卯(偏官・乙・長生)、日柱 癸巳(日主・丙・胎)、時柱 己未(偏官・己・墓)",
     );
     expect(fact(r, "gogyo")).toEqual({
       key: "gogyo",
@@ -61,6 +61,15 @@ describe("shichu.read 人物像", () => {
       ["十二運", ["絶", "長生", "胎", "墓"]],
     ]);
     expect(r.chart.factKeys).toEqual(["year-pillar", "month-pillar", "day-pillar", "hour-pillar", "meishiki"]);
+    const [, tsuhen, zokanRow, unsei] = r.chart.rows;
+    expect(tsuhen.cells.map((c) => [c?.key, c?.label, c?.refs])).toEqual([
+      ["year-pillar-tsuhen", "年柱の通変星", [{ system: "shichu", id: "tsuhen-10" }]],
+      ["month-pillar-tsuhen", "月柱の通変星", [{ system: "shichu", id: "tsuhen-7" }]],
+      ["day-pillar-tsuhen", "日柱の通変星", [{ system: "shichu", id: "stem-10" }]],
+      ["hour-pillar-tsuhen", "時柱の通変星", [{ system: "shichu", id: "tsuhen-7" }]],
+    ]);
+    expect(zokanRow.cells[0]?.refs).toEqual([{ system: "shichu", id: "stem-4" }]);
+    expect(unsei.cells[0]?.refs).toEqual([{ system: "shichu", id: "unsei-10" }]);
   });
 
   it("時刻不明なら時柱を「時刻不明」にし、五行は3柱で数えること", () => {

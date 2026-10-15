@@ -1,7 +1,17 @@
 // src/lib/fortune/sanmei/calc.ts
 import { dayNumberInSolarMonth, solarMonthAt } from "../astro/solar-terms";
 import { mod, type LocalDate } from "../local-date";
-import { branchOf, dayCycleIndex, monthCycleIndex, stemOf, tenGodIndex, twelveStageIndex, yearCycleIndex } from "../sexagenary";
+import {
+  branchOf,
+  dayCycleIndex,
+  hiddenStemOn,
+  monthCycleIndex,
+  stemOf,
+  tenGodIndex,
+  twelveStageIndex,
+  yearCycleIndex,
+  type HiddenStemTable,
+} from "../sexagenary";
 
 /** 十大主星(通変星と同じ順: 比肩=貫索星 … 印綬=玉堂星) */
 export const MAIN_STAR_NAMES = [
@@ -19,7 +29,7 @@ export const TENCHU_NAMES = ["子丑天中殺", "寅卯天中殺", "辰巳天中
 /**
  * 二十八元。十二支ごとに [十干, その蔵干が受け持つ最後の日(節入り日を1日目)] を初元・中元・本元の順に並べる(高尾学館式)
  */
-const NIJUHACHIGEN: readonly (readonly (readonly [stem: number, lastDay: number])[])[] = [
+const NIJUHACHIGEN: HiddenStemTable = [
   [[9, Infinity]], // 子 癸
   [[9, 9], [7, 12], [5, Infinity]], // 丑 癸1-9・辛10-12・己
   [[4, 7], [2, 14], [0, Infinity]], // 寅 戊1-7・丙8-14・甲
@@ -36,8 +46,7 @@ const NIJUHACHIGEN: readonly (readonly (readonly [stem: number, lastDay: number]
 
 /** 十二支の蔵干(二十八元を節入り日を1日目とする日数で選ぶ) */
 export function nijuhachigen(branch: number, dayNumber: number): number {
-  const list = NIJUHACHIGEN[branch];
-  return (list.find(([, lastDay]) => dayNumber <= lastDay) ?? list[list.length - 1])[0];
+  return hiddenStemOn(NIJUHACHIGEN, branch, dayNumber);
 }
 
 export interface SanmeiNatal {
