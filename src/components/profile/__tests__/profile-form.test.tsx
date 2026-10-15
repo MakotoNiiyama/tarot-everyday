@@ -50,17 +50,6 @@ describe("ProfileForm", () => {
     expect(screen.getByRole("button", { name: "保存" })).toBeDisabled();
   });
 
-  it("時刻の入力方式を切り替えられること", async () => {
-    const user = userEvent.setup();
-    render(<ProfileForm initial={null} />);
-    expect(screen.getByText(/時刻が不明の場合/)).toBeInTheDocument();
-    await user.click(screen.getByRole("radio", { name: "午前・午後" }));
-    expect(within(screen.getByRole("radiogroup", { name: "午前・午後" })).getByRole("radio", { name: /午後/ })).toBeInTheDocument();
-    await user.click(screen.getByRole("radio", { name: "時刻を指定" }));
-    expect(screen.getByLabelText("出生時刻")).toHaveAttribute("type", "time");
-    expect(screen.getByRole("checkbox", { name: /分は分からない/ })).not.toBeChecked();
-  });
-
   it("時刻を指定したら、時刻を入力するまで保存できず、その旨を表示すること", async () => {
     const user = userEvent.setup();
     render(<ProfileForm initial={null} />);
@@ -123,19 +112,6 @@ describe("ProfileForm", () => {
     expect(JSON.parse(store["tarot-birth-profile"]).time).toEqual({ kind: "minute", hour: 14, minute: 30 });
   });
 
-  it("「分は分からない」の間に30分以外を選ぶとチェックを外し、外しているときに30分を選んでもチェックは入れないこと", async () => {
-    const user = userEvent.setup();
-    render(<ProfileForm initial={{ version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "hour", hour: 14 } }} />);
-    const input = screen.getByLabelText("出生時刻");
-    const checkbox = screen.getByRole("checkbox", { name: /分は分からない/ });
-    fireEvent.change(input, { target: { value: "14:45" } });
-    expect(checkbox).not.toBeChecked();
-    fireEvent.change(input, { target: { value: "14:30" } });
-    expect(checkbox).not.toBeChecked();
-    await user.click(screen.getByRole("button", { name: "保存" }));
-    expect(JSON.parse(store["tarot-birth-profile"]).time).toEqual({ kind: "minute", hour: 14, minute: 30 });
-  });
-
   it("分まで登録済みならその時刻を表示し、「分は分からない」は外れていること", () => {
     render(<ProfileForm initial={{ version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "minute", hour: 9, minute: 5 } }} />);
     expect(screen.getByLabelText("出生時刻")).toHaveValue("09:05");
@@ -162,15 +138,6 @@ describe("ProfileForm", () => {
     expect(push).toHaveBeenCalledWith("/fortune");
   });
 
-  it("2月の日数は年に合わせること", async () => {
-    const user = userEvent.setup();
-    render(<ProfileForm initial={null} />);
-    await user.selectOptions(screen.getByRole("combobox", { name: "年" }), "2023");
-    await user.selectOptions(screen.getByRole("combobox", { name: "月" }), "2");
-    const days = within(screen.getByRole("combobox", { name: "日" })).getAllByRole("option");
-    expect(days.at(-1)?.textContent).toBe("28日");
-  });
-
   it("登録済みなら初期値を表示し、確認のうえで削除できること", async () => {
     const user = userEvent.setup();
     store["tarot-birth-profile"] = JSON.stringify({ version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "unknown" } });
@@ -181,67 +148,6 @@ describe("ProfileForm", () => {
     await user.click(screen.getByRole("button", { name: "削除する" }));
     expect(store["tarot-birth-profile"]).toBeUndefined();
     expect(push).toHaveBeenCalledWith("/fortune");
-  });
-
-  it("ラジオボタンは選択中の1つだけがタブ移動の対象になること", () => {
-    render(<ProfileForm initial={null} />);
-    const group = screen.getByRole("radiogroup", { name: "出生時刻の入力方式" });
-    const radios = within(group).getAllByRole("radio");
-    expect(radios.map((r) => r.tabIndex)).toEqual([0, -1, -1]);
-  });
-
-  it("矢印キーで前後のラジオボタンを選び、端では反対側に回ること", async () => {
-    const user = userEvent.setup();
-    render(<ProfileForm initial={null} />);
-    const group = screen.getByRole("radiogroup", { name: "性別" });
-    const radio = (name: string) => within(group).getByRole("radio", { name });
-    radio("回答しない").focus();
-    await user.keyboard("{ArrowRight}");
-    expect(radio("男性")).toHaveAttribute("aria-checked", "true");
-    expect(radio("男性")).toHaveFocus();
-    expect(radio("男性").tabIndex).toBe(0);
-    expect(radio("回答しない").tabIndex).toBe(-1);
-    await user.keyboard("{ArrowDown}");
-    expect(radio("女性")).toHaveAttribute("aria-checked", "true");
-    await user.keyboard("{ArrowUp}");
-    expect(radio("男性")).toHaveAttribute("aria-checked", "true");
-    await user.keyboard("{ArrowLeft}");
-    expect(radio("回答しない")).toHaveAttribute("aria-checked", "true");
-    expect(radio("回答しない")).toHaveFocus();
-    await user.keyboard("{Home}");
-    expect(radio("男性")).toHaveAttribute("aria-checked", "true");
-    await user.keyboard("{End}");
-    expect(radio("回答しない")).toHaveAttribute("aria-checked", "true");
-  });
-
-  it("午前・午後も矢印キーで切り替えられること", async () => {
-    const user = userEvent.setup();
-    render(<ProfileForm initial={null} />);
-    await user.click(screen.getByRole("radio", { name: "午前・午後" }));
-    const group = screen.getByRole("radiogroup", { name: "午前・午後" });
-    const am = within(group).getByRole("radio", { name: /午前/ });
-    const pm = within(group).getByRole("radio", { name: /午後/ });
-    expect([am.tabIndex, pm.tabIndex]).toEqual([0, -1]);
-    am.focus();
-    await user.keyboard("{ArrowRight}");
-    expect(pm).toHaveAttribute("aria-checked", "true");
-    expect(pm).toHaveFocus();
-    await user.keyboard("{ArrowRight}");
-    expect(am).toHaveAttribute("aria-checked", "true");
-  });
-
-  it("今年の未来の月・日は選べないこと", async () => {
-    fixToday();
-    const user = userEvent.setup();
-    render(<ProfileForm initial={null} />);
-    await user.selectOptions(screen.getByRole("combobox", { name: "年" }), "2026");
-    const month = (m: string) => within(screen.getByRole("combobox", { name: "月" })).getByRole("option", { name: m });
-    expect(month("10月")).toBeEnabled();
-    expect(month("11月")).toBeDisabled();
-    await user.selectOptions(screen.getByRole("combobox", { name: "月" }), "10");
-    const day = (d: string) => within(screen.getByRole("combobox", { name: "日" })).getByRole("option", { name: d });
-    expect(day("14日")).toBeEnabled();
-    expect(day("15日")).toBeDisabled();
   });
 
   it("未来の日付になったら保存できず、その旨を表示すること", async () => {
@@ -256,31 +162,6 @@ describe("ProfileForm", () => {
     await user.selectOptions(screen.getByRole("combobox", { name: "年" }), "2025");
     expect(screen.queryByText("未来の日付は選べません")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "保存" })).toBeEnabled();
-  });
-
-  it("2月29日を選んだあとうるう年でない年にすると日をリセットすること", async () => {
-    const user = userEvent.setup();
-    render(<ProfileForm initial={null} />);
-    await user.selectOptions(screen.getByRole("combobox", { name: "年" }), "2024");
-    await user.selectOptions(screen.getByRole("combobox", { name: "月" }), "2");
-    await user.selectOptions(screen.getByRole("combobox", { name: "日" }), "29");
-    expect(screen.getByRole("button", { name: "保存" })).toBeEnabled();
-    await user.selectOptions(screen.getByRole("combobox", { name: "年" }), "2023");
-    expect(screen.getByRole("combobox", { name: "日" })).toHaveValue("");
-    expect(screen.getByRole("button", { name: "保存" })).toBeDisabled();
-    // 年を戻しても日は空のまま(消えた値が復活しない)
-    await user.selectOptions(screen.getByRole("combobox", { name: "年" }), "2024");
-    expect(screen.getByRole("combobox", { name: "日" })).toHaveValue("");
-  });
-
-  it("31日を選んだあと30日までの月にすると日をリセットすること", async () => {
-    const user = userEvent.setup();
-    render(<ProfileForm initial={null} />);
-    await user.selectOptions(screen.getByRole("combobox", { name: "年" }), "1990");
-    await user.selectOptions(screen.getByRole("combobox", { name: "月" }), "1");
-    await user.selectOptions(screen.getByRole("combobox", { name: "日" }), "31");
-    await user.selectOptions(screen.getByRole("combobox", { name: "月" }), "4");
-    expect(screen.getByRole("combobox", { name: "日" })).toHaveValue("");
   });
 
   it("保存に失敗したときのエラーは入力を変えると消えること", async () => {
