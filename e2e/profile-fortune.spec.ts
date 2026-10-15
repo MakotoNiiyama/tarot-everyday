@@ -9,7 +9,7 @@ test.describe("プロフィール登録から運勢ページまで", () => {
     });
   });
 
-  test("登録すると運勢ページに3占術の運勢が表示されること", async ({ page }) => {
+  test("登録すると運勢ページに5占術の運勢が表示されること", async ({ page }) => {
     await page.goto("/fortune");
     await page.getByRole("link", { name: "生年月日を登録する" }).click();
     await expect(page).toHaveURL("/fortune/profile");
@@ -23,11 +23,26 @@ test.describe("プロフィール登録から運勢ページまで", () => {
 
     await expect(page).toHaveURL("/fortune");
     await expect(page.getByText("1990/3/29 生 · 14時台 · 東京都")).toBeVisible();
-    for (const name of ["数秘術", "九星気学", "マヤ暦"]) {
+    for (const name of ["数秘術", "九星気学", "マヤ暦", "四柱推命", "算命学"]) {
       await expect(page.getByRole("article", { name })).toBeVisible();
     }
     await page.getByRole("tab", { name: "今年" }).click();
     await expect(page.getByRole("article", { name: "数秘術" })).toContainText("パーソナルイヤー");
+  });
+
+  test("人物像に命式表と人体星図が表示されること", async ({ page }) => {
+    await page.evaluate(() =>
+      localStorage.setItem(
+        "tarot-birth-profile",
+        JSON.stringify({ version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "unknown" }, gender: "male" }),
+      ),
+    );
+    await page.goto("/fortune");
+    const natal = page.getByRole("region", { name: "あなたについて" });
+    await natal.getByRole("button", { name: "四柱推命" }).click();
+    await expect(natal.getByRole("table", { name: "四柱推命の命式" })).toContainText("癸巳");
+    await natal.getByRole("button", { name: "算命学" }).click();
+    await expect(natal.getByRole("list", { name: "算命学の人体星図" })).toContainText("鳳閣星");
   });
 
   test("チップから要素の詳細を開けること", async ({ page, isMobile }) => {

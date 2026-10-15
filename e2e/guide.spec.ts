@@ -38,6 +38,15 @@ test.describe("早見表", () => {
     await expect(page).toHaveURL("/guide?tab=numerology");
   });
 
+  test("四柱推命・算命学のタブがあること", async ({ page }) => {
+    await page.goto("/guide?tab=shichu");
+    await expect(page.getByRole("tab", { name: "四柱推命" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("heading", { name: /十干/ })).toBeVisible();
+    await page.getByRole("tab", { name: "算命学" }).click();
+    await expect(page).toHaveURL("/guide?tab=sanmei");
+    await expect(page.getByRole("heading", { name: /十大主星/ })).toBeVisible();
+  });
+
   test("早見表ナビがアクティブであること", async ({ page }) => {
     await page.goto("/guide");
     await expect(

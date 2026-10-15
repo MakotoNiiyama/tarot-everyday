@@ -231,7 +231,7 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
             />
             {timeMode === "unknown" && (
               <p className="px-1 text-xs leading-relaxed text-gold-dim">
-                時刻が不明の場合、出生時刻で結果が変わる項目は「候補」として時刻範囲付きで表示されます。
+                時刻が不明の場合、出生時刻で結果が変わる項目は「候補」として時刻範囲付きで表示されます。四柱推命の時柱は、時刻を指定したときだけ表示されます。
               </p>
             )}
             {timeMode === "half" && (
