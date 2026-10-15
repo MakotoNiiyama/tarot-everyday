@@ -15,7 +15,7 @@
     "path": "/guide-images/horoscope/sign-taurus.jpg",
     "alt": "牡牛座の星座絵(Sidney Hall『Urania's Mirror』)",
     "credit": "Sidney Hall『Urania's Mirror』(1825)",
-    "focus": "center"
+    "focus": "60% center"
   },
   {
     "system": "horoscope",
@@ -24,7 +24,7 @@
     "path": "/guide-images/horoscope/sign-gemini.jpg",
     "alt": "双子座の星座絵(Sidney Hall『Urania's Mirror』)",
     "credit": "Sidney Hall『Urania's Mirror』(1825)",
-    "focus": "center"
+    "focus": "45% center"
   },
   {
     "system": "horoscope",
@@ -51,7 +51,7 @@
     "path": "/guide-images/horoscope/sign-virgo.jpg",
     "alt": "乙女座の星座絵(Sidney Hall『Urania's Mirror』)",
     "credit": "Sidney Hall『Urania's Mirror』(1825)",
-    "focus": "center"
+    "focus": "65% center"
   },
   {
     "system": "horoscope",
@@ -69,7 +69,7 @@
     "path": "/guide-images/horoscope/sign-scorpio.jpg",
     "alt": "蠍座の星座絵(Sidney Hall『Urania's Mirror』)",
     "credit": "Sidney Hall『Urania's Mirror』(1825)",
-    "focus": "center"
+    "focus": "center 25%"
   },
   {
     "system": "horoscope",
@@ -78,7 +78,7 @@
     "path": "/guide-images/horoscope/sign-sagittarius.jpg",
     "alt": "射手座の星座絵(Sidney Hall『Urania's Mirror』)",
     "credit": "Sidney Hall『Urania's Mirror』(1825)",
-    "focus": "center"
+    "focus": "45% center"
   },
   {
     "system": "horoscope",
@@ -87,7 +87,7 @@
     "path": "/guide-images/horoscope/sign-capricorn.jpg",
     "alt": "山羊座の星座絵(Sidney Hall『Urania's Mirror』)",
     "credit": "Sidney Hall『Urania's Mirror』(1825)",
-    "focus": "center"
+    "focus": "62% center"
   },
   {
     "system": "horoscope",
@@ -105,7 +105,7 @@
     "path": "/guide-images/horoscope/sign-pisces.jpg",
     "alt": "魚座の星座絵(Sidney Hall『Urania's Mirror』)",
     "credit": "Sidney Hall『Urania's Mirror』(1825)",
-    "focus": "center"
+    "focus": "62% center"
   },
   {
     "system": "horoscope",
@@ -114,7 +114,7 @@
     "path": "/guide-images/horoscope/body-sun.jpg",
     "alt": "太陽を擬人化した版画(Sebald Beham「The Seven Planets」)",
     "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
-    "focus": "center"
+    "focus": "center 3%"
   },
   {
     "system": "horoscope",
@@ -123,7 +123,7 @@
     "path": "/guide-images/horoscope/body-moon.jpg",
     "alt": "月を擬人化した版画(Sebald Beham「The Seven Planets」)",
     "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
-    "focus": "center"
+    "focus": "center 3%"
   },
   {
     "system": "horoscope",
@@ -132,7 +132,7 @@
     "path": "/guide-images/horoscope/body-mercury.jpg",
     "alt": "水星を擬人化した版画(Sebald Beham「The Seven Planets」)",
     "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
-    "focus": "center"
+    "focus": "center 3%"
   },
   {
     "system": "horoscope",
@@ -141,7 +141,7 @@
     "path": "/guide-images/horoscope/body-venus.jpg",
     "alt": "金星を擬人化した版画(Sebald Beham「The Seven Planets」)",
     "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
-    "focus": "center"
+    "focus": "center 3%"
   },
   {
     "system": "horoscope",
@@ -150,7 +150,7 @@
     "path": "/guide-images/horoscope/body-mars.jpg",
     "alt": "火星を擬人化した版画(Sebald Beham「The Seven Planets」)",
     "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
-    "focus": "center"
+    "focus": "center 3%"
   },
   {
     "system": "horoscope",
@@ -159,7 +159,7 @@
     "path": "/guide-images/horoscope/body-jupiter.jpg",
     "alt": "木星を擬人化した版画(Sebald Beham「The Seven Planets」)",
     "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
-    "focus": "center"
+    "focus": "center 3%"
   },
   {
     "system": "horoscope",
@@ -168,7 +168,7 @@
     "path": "/guide-images/horoscope/body-saturn.jpg",
     "alt": "土星を擬人化した版画(Sebald Beham「The Seven Planets」)",
     "credit": "Sebald Beham『The Seven Planets』(1539ごろ)",
-    "focus": "center"
+    "focus": "center 3%"
   },
   {
     "system": "horoscope",
@@ -213,7 +213,7 @@
     "path": "/guide-images/shichu/branch-2.jpg",
     "alt": "「丑」を描いた浮世絵(歌川国芳「道化十二支」)",
     "credit": "歌川国芳『道化十二支』(1855)",
-    "focus": "center"
+    "focus": "40% center"
   },
   {
     "system": "shichu",
@@ -222,7 +222,8 @@
     "path": "/guide-images/shichu/branch-3.jpg",
     "alt": "「寅」を描いた浮世絵(歌川国芳「道化十二支」)",
     "credit": "歌川国芳『道化十二支』(1855)",
-    "focus": "center"
+    "focus": "center 30%",
+    "zoom": 1.35
   },
   {
     "system": "shichu",
@@ -249,7 +250,7 @@
     "path": "/guide-images/shichu/branch-6.jpg",
     "alt": "「巳」を描いた浮世絵(歌川国芳「道化十二支」)",
     "credit": "歌川国芳『道化十二支』(1855)",
-    "focus": "center"
+    "focus": "55% center"
   },
   {
     "system": "shichu",
@@ -267,7 +268,7 @@
     "path": "/guide-images/shichu/branch-8.jpg",
     "alt": "「未」を描いた浮世絵(歌川国芳「道化十二支」)",
     "credit": "歌川国芳『道化十二支』(1855)",
-    "focus": "center"
+    "focus": "55% center"
   },
   {
     "system": "shichu",
@@ -276,7 +277,7 @@
     "path": "/guide-images/shichu/branch-9.jpg",
     "alt": "「申」を描いた浮世絵(歌川国芳「道化十二支」)",
     "credit": "歌川国芳『道化十二支』(1855)",
-    "focus": "center"
+    "focus": "40% center"
   },
   {
     "system": "shichu",
@@ -303,6 +304,6 @@
     "path": "/guide-images/shichu/branch-12.jpg",
     "alt": "「亥」を描いた浮世絵(歌川国芳「道化十二支」)",
     "credit": "歌川国芳『道化十二支』(1855)",
-    "focus": "center"
+    "focus": "60% center"
   }
 ]

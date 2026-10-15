@@ -1,7 +1,7 @@
 // 早見表の項目の詳細ページ(タロット以外の占術。タロットは /guide/tarot/[id])
 import { notFound } from "next/navigation";
-import { GuideImageView } from "@/components/guide/guide-image";
-import { GuideDetailFrame, GuideDetailLayout } from "@/components/guide/guide-detail-layout";
+import { GuideDetailLayout } from "@/components/guide/guide-detail-layout";
+import { GuideDetailImage } from "@/components/guide/guide-entry-image";
 import { GuideTile } from "@/components/guide/guide-tile";
 import { getGuideEntry, guideSystems } from "@/data/guide";
 
@@ -25,11 +25,7 @@ export default async function GuideEntryPage({ params }: { params: Promise<{ sys
       system={entry.system}
       systemLabel={systemLabel}
       group={entry.group}
-      image={
-        <GuideDetailFrame>
-          <GuideImageView image={entry.image} size="detail" />
-        </GuideDetailFrame>
-      }
+      image={<GuideDetailImage entry={entry} />}
     >
       <header className="flex flex-col gap-1 text-center lg:text-left">
         <h1 className="font-heading text-[30px] leading-tight lg:text-4xl">{entry.name}</h1>

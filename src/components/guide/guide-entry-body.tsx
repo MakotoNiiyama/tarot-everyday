@@ -1,5 +1,5 @@
 import type { GuideEntry } from "@/data/guide";
-import { GuideImageView } from "./guide-image";
+import { GuideEntryImage } from "./guide-entry-image";
 
 /**
  * 詳細シート・サイドパネルの本文(画像・キーワード・説明・運勢の一文)。
@@ -20,11 +20,11 @@ export function GuideEntryBody({
     <div className="flex flex-col gap-3.5">
       {showImage && (
         <div
-          className={`flex items-center justify-center self-center overflow-hidden rounded-[20px] border border-gold/40 bg-surface lg:rounded-3xl ${
+          className={`relative flex items-center justify-center self-center overflow-hidden rounded-[20px] border border-gold/40 bg-surface lg:rounded-3xl ${
             portrait ? "h-[200px] w-[120px]" : "h-[120px] w-[120px] lg:h-[140px] lg:w-[140px]"
           }`}
         >
-          <GuideImageView image={entry.image} size="sheet" />
+          <GuideEntryImage entry={entry} size="sheet" />
         </div>
       )}
       <ul className="flex flex-wrap justify-center gap-1.5" aria-label="キーワード">

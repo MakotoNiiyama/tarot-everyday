@@ -7,9 +7,35 @@ import { sanmeiEntries } from "./sanmei";
 import { shichuEntries } from "./shichu";
 import { sukuyoEntries } from "./sukuyo";
 import { tarotEntries } from "./tarot";
-import type { GuideEntry, GuideSystemId } from "./types";
+import photos from "./photos.json";
+import type { GuideEntry, GuidePhoto, GuideSystemId } from "./types";
 
-export type { GuideEntry, GuideSystemId, GuideImage } from "./types";
+export type { GuideEntry, GuideSystemId, GuideImage, GuidePhoto } from "./types";
+
+/** 画像の一覧(photos.json)。ダウンロードのスクリプトと共有する */
+export interface GuidePhotoSource extends GuidePhoto {
+  system: GuideSystemId;
+  id: string;
+  /** Wikimedia Commons のファイル名 */
+  file: string;
+}
+
+export const guidePhotos = photos as GuidePhotoSource[];
+
+const photoByKey = new Map(
+  guidePhotos.map(({ system, id, path, alt, credit, focus, zoom }): [string, GuidePhoto] => [
+    `${system}:${id}`,
+    zoom === undefined ? { path, alt, credit, focus } : { path, alt, credit, focus, zoom },
+  ]),
+);
+
+/** photos.json にある項目に photo を付ける */
+function withPhotos(entries: GuideEntry[]): GuideEntry[] {
+  return entries.map((e) => {
+    const photo = photoByKey.get(`${e.system}:${e.id}`);
+    return photo ? { ...e, photo } : e;
+  });
+}
 
 export interface GuideGroup {
   name: string;
@@ -22,10 +48,10 @@ export interface GuideSystem {
   groups: GuideGroup[];
 }
 
-/** 項目の並び順を保ったまま、グループ名の出現順でまとめる */
+/** 項目の並び順を保ったまま、グループ名の出現順でまとめる(画像のある項目には photo を付ける) */
 function groupEntries(entries: GuideEntry[]): GuideGroup[] {
   const groups: GuideGroup[] = [];
-  for (const entry of entries) {
+  for (const entry of withPhotos(entries)) {
     const group = groups.find((g) => g.name === entry.group);
     if (group) group.entries.push(entry);
     else groups.push({ name: entry.group, entries: [entry] });

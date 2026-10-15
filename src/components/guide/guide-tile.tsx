@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { guideHref, type GuideEntry } from "@/data/guide";
-import { GuideImageView } from "./guide-image";
+import { GuideEntryImage } from "./guide-entry-image";
 
-/** 一覧のタイル。タロットは縦長、ほかは正方形(角丸14px・枠 gold/25) */
+/** 一覧のタイル。タロットは縦長、ほかは正方形(角丸14px・枠 gold/25)。絵画・写真のある項目も同じ正方形の枠に切り抜く */
 export function GuideTile({ entry }: { entry: GuideEntry }) {
   const portrait = entry.image.kind === "photo";
   return (
@@ -17,7 +17,7 @@ export function GuideTile({ entry }: { entry: GuideEntry }) {
           portrait ? "aspect-[3/5]" : "aspect-square"
         }`}
       >
-        <GuideImageView image={entry.image} size="tile" />
+        <GuideEntryImage entry={entry} size="tile" />
       </span>
       <span className="text-center text-[11px] leading-snug lg:text-xs">{entry.name}</span>
     </Link>

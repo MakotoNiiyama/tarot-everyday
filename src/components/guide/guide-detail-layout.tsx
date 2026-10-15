@@ -61,7 +61,7 @@ export function GuideDetailFrame({ children, portrait = false }: { children: Rea
           : "aspect-square w-[220px] rounded-[28px] lg:w-[360px]"
       }`}
     >
-      {!portrait && <span aria-hidden="true" className="absolute inset-3.5 rounded-[18px] border border-gold/15" />}
+      {!portrait && <span aria-hidden="true" className="pointer-events-none absolute inset-3.5 z-10 rounded-[18px] border border-gold/15" />}
       {children}
     </div>
   );

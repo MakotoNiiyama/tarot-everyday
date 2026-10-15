@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { composeHeadline, getGuideEntry, guideHref, guideSystems, searchGuide } from "../index";
+import { composeHeadline, getGuideEntry, guideHref, guidePhotos, guideSystems, searchGuide } from "../index";
 import type { PeriodResult } from "@/lib/fortune/types";
 
 describe("guideSystems", () => {
@@ -144,5 +144,42 @@ describe("composeHeadline", () => {
 
   it("参照先が見つからなければ見出しの文だけ", () => {
     expect(composeHeadline({ ...result, headline: { text: "X", ref: { system: "numerology", id: "nothing" } } })).toBe("X。");
+  });
+});
+
+describe("guidePhotos(早見表の画像)", () => {
+  it("34件すべてが実在する項目を指し、重複しないこと", () => {
+    expect(guidePhotos).toHaveLength(34);
+    expect(new Set(guidePhotos.map((p) => `${p.system}:${p.id}`)).size).toBe(34);
+    for (const p of guidePhotos) expect(getGuideEntry(p.system, p.id), `${p.system}:${p.id}`).toBeDefined();
+  });
+
+  it("十二星座・太陽〜冥王星・十二支に付き、ドラゴンヘッド・キロン・リリスには付かないこと", () => {
+    const ids = (system: string) => guidePhotos.filter((p) => p.system === system).map((p) => p.id);
+    expect(ids("horoscope").filter((id) => id.startsWith("sign-"))).toHaveLength(12);
+    expect(ids("horoscope").filter((id) => id.startsWith("body-"))).toHaveLength(10);
+    expect(ids("shichu")).toEqual(Array.from({ length: 12 }, (_, i) => `branch-${i + 1}`));
+    for (const id of ["body-node", "body-chiron", "body-lilith"]) expect(getGuideEntry("horoscope", id)?.photo).toBeUndefined();
+  });
+
+  it("項目に path・alt・出典・切り抜きの位置が付き、path は system と id から決まること", () => {
+    for (const p of guidePhotos) {
+      expect(p.path).toBe(`/guide-images/${p.system}/${p.id}.jpg`);
+      expect(p.file).not.toBe("");
+      const photo = getGuideEntry(p.system, p.id)?.photo;
+      expect(photo).toEqual({ path: p.path, alt: p.alt, credit: p.credit, focus: p.focus, zoom: p.zoom });
+      expect(photo?.focus).not.toBe("");
+      if (photo?.zoom !== undefined) expect(photo.zoom).toBeGreaterThan(1);
+      expect(photo?.alt).not.toBe("");
+      expect(photo?.credit).not.toBe("");
+    }
+  });
+
+  it("タロットの項目には photo を付けないこと(カード画像は image のまま)", () => {
+    const tarot = guideSystems.find((s) => s.id === "tarot")!;
+    for (const e of tarot.groups.flatMap((g) => g.entries)) {
+      expect(e.photo).toBeUndefined();
+      expect(e.image.kind).toBe("photo");
+    }
   });
 });
