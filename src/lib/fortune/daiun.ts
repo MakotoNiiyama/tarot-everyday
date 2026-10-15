@@ -3,7 +3,7 @@ import { midpoint, representative, resolvedValues } from "./ambiguity";
 import { solarMonthAt } from "./astro/solar-terms";
 import { mod, toJdn, type LocalDate } from "./local-date";
 import { isYangStem, stemOf } from "./sexagenary";
-import { jstLocalDate } from "./tokyo-time";
+import { standardDate } from "./tokyo-time";
 import type { Resolved, TimeRange } from "./types";
 
 export interface DaiunPlan {
@@ -23,8 +23,8 @@ export interface DaiunPlan {
 export function daiunPlan(at: Date, yearCycle: number, monthCycle: number, gender: "male" | "female"): DaiunPlan {
   const forward = isYangStem(stemOf(yearCycle)) === (gender === "male");
   const month = solarMonthAt(at);
-  const birth = toJdn(jstLocalDate(at));
-  const days = forward ? toJdn(jstLocalDate(month.end)) - birth : birth - toJdn(jstLocalDate(month.start));
+  const birth = toJdn(standardDate(at));
+  const days = forward ? toJdn(standardDate(month.end)) - birth : birth - toJdn(standardDate(month.start));
   return { forward, startAge: Math.min(10, Math.max(1, Math.round(days / 3))), monthCycle };
 }
 
