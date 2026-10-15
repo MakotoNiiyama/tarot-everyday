@@ -1,10 +1,10 @@
 // src/lib/fortune/kyusei/index.ts
 import { describeCandidates, describeResolved, isAmbiguous, representative, resolvedValues, resolveOverRange } from "../ambiguity";
-import { jieBoundariesWithin, solarLongitudeTime, solarMonthAt } from "../astro/solar-terms";
+import { calendarPeriod } from "../astro/calendar-period";
+import { jieBoundariesWithin } from "../astro/solar-terms";
 import { directionId, palaceId, starId, type Direction } from "../element-ids";
-import { addDays, formatSlash, type LocalDate } from "../local-date";
+import type { LocalDate } from "../local-date";
 import { monthBranchIndex, yearBranchIndex } from "../sexagenary";
-import { jstLocalDate, tokyoToUtc } from "../tokyo-time";
 import type { ElementRef, Fact, FortuneSystemModule, Period, PeriodResult } from "../types";
 import {
   DIRECTION_LABELS,
@@ -42,25 +42,18 @@ const PERIOD_WORD: Record<Period, string> = { day: "今日", month: "今月", ye
 const BOARD_LABEL: Record<Period, string> = { day: "日盤の中宮", month: "月盤の中宮", year: "年盤の中宮" };
 
 function boardFor(period: Period, today: LocalDate) {
-  // 暦の慣習どおり節入り・立春の当日は新しい月・年に含めるため、今日の終わり(23:59)で判定する
-  const endOfToday = tokyoToUtc(today.year, today.month, today.day, 23, 59);
-  const month = solarMonthAt(endOfToday);
-  const ky = month.kyuseiYear;
+  const cal = calendarPeriod(period, today);
   if (period === "year") {
-    const start = jstLocalDate(solarLongitudeTime(ky, 315));
-    const end = addDays(jstLocalDate(solarLongitudeTime(ky + 1, 315)), -1);
-    return { center: yearStar(ky), branch: yearBranchIndex(ky), range: `${formatSlash(start)}〜${formatSlash(end)}` };
+    return { center: yearStar(cal.kyuseiYear), branch: yearBranchIndex(cal.kyuseiYear), range: cal.rangeLabel };
   }
   if (period === "month") {
-    const start = jstLocalDate(month.start);
-    const end = addDays(jstLocalDate(month.end), -1);
     return {
-      center: monthStar(yearStar(ky), month.index),
-      branch: monthBranchIndex(month.index),
-      range: `${formatSlash(start)}〜${formatSlash(end)}`,
+      center: monthStar(yearStar(cal.kyuseiYear), cal.solarMonthIndex),
+      branch: monthBranchIndex(cal.solarMonthIndex),
+      range: cal.rangeLabel,
     };
   }
-  return { center: dayStar(today), branch: dayBranchIndex(today), range: formatSlash(today) };
+  return { center: dayStar(today), branch: dayBranchIndex(today), range: cal.rangeLabel };
 }
 
 function periodResult(period: Period, natal: KyuseiNatal, today: LocalDate, note?: string): PeriodResult {
