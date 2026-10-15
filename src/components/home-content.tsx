@@ -15,9 +15,9 @@ import { useToday, useTodayLocalDate } from "@/lib/use-today";
 const HomeFortuneChips = dynamic(() => import("./home-fortune-chips").then((m) => m.HomeFortuneChips), { ssr: false });
 
 const entries: { href: string; icon: IconName; title: string; sub: string }[] = [
+  { href: "/fortune/other", icon: "people", title: "好きな生年月日で占う", sub: "家族や友人の生年月日で7占術を見る" },
   { href: "/tarot/reading", icon: "chat", title: "相談したいことがある", sub: "タロット占い" },
   { href: "/tarot/quiz", icon: "quiz", title: "タロットクイズ", sub: "カードの意味を練習する" },
-  { href: "/fortune/other", icon: "people", title: "好きな生年月日で占う", sub: "家族や友人の生年月日で7占術を見る" },
   { href: "/guide", icon: "guide", title: "早見表", sub: "タロットと7占術の要素を調べる" },
 ];
 

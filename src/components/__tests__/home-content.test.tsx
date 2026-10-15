@@ -77,6 +77,7 @@ describe("HomeContent", () => {
     render(<HomeContent />);
     const menu = screen.getByRole("region", { name: "メニュー" });
     expect(menu.querySelector('a[href="/tarot/reading"]')).toHaveTextContent("相談したいことがある");
+    expect([...menu.querySelectorAll("a")].map((a) => a.getAttribute("href"))).toEqual(["/fortune/other", "/tarot/reading", "/tarot/quiz", "/guide"]);
     expect(menu.querySelector('a[href="/tarot/quiz"]')).toHaveTextContent("タロットクイズ");
     expect(menu.querySelector('a[href="/fortune/other"]')).toHaveTextContent("好きな生年月日で占う");
     expect(menu.querySelector('a[href="/guide"]')).toHaveTextContent("早見表");
