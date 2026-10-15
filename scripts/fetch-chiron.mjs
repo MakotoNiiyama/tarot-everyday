@@ -1,15 +1,19 @@
 // scripts/fetch-chiron.mjs
 // JPL Horizons API からキロン(2060 Chiron)の地心黄経(ecliptic of date、視位置)を
-// 1900-01-01〜2100-01-01 の10日刻みで取得し、src/lib/fortune/horoscope/chiron-table.ts を書き出す。
+// 1899-12-01〜2100-01-31 の10日刻みで取得し、src/lib/fortune/horoscope/chiron-table.ts を書き出す。
 // 実行: node scripts/fetch-chiron.mjs(ビルドでは実行しない。生成したファイルをコミットする)
 import { writeFileSync } from "node:fs";
 
-const START = Date.UTC(1900, 0, 1);
-const END = Date.UTC(2100, 0, 1);
-const STEP_MS = 10 * 86_400_000;
-/** 1回に取る行数。区切りも 1900-01-01 からの10日刻みにそろえる(暦の年で区切ると刻みがずれる) */
-const ROWS_PER_SPAN = 2000;
 const isoDate = (ms) => new Date(ms).toISOString().slice(0, 10);
+
+// 1900-01-01 0時(日本時間)の前後12時間と、2100-01-01 の終わりの前後12時間まで4点補間できるよう、両端に余裕を持たせる
+const START = Date.UTC(1899, 11, 1);
+const STEP_MS = 10 * 86_400_000;
+/** START からの10日刻み。2100-01-31 は START から 7311 刻み目 */
+const END = START + 7311 * STEP_MS;
+if (isoDate(END) !== "2100-01-31") throw new Error(`END が ${isoDate(END)}`);
+/** 1回に取る行数。区切りも START からの10日刻みにそろえる(暦の年で区切ると刻みがずれる) */
+const ROWS_PER_SPAN = 2000;
 const SPANS = [];
 for (let from = START; from <= END; from += ROWS_PER_SPAN * STEP_MS) {
   SPANS.push([isoDate(from), isoDate(Math.min(from + (ROWS_PER_SPAN - 1) * STEP_MS, END))]);
@@ -62,8 +66,8 @@ if (lons.length !== expectedRows) throw new Error(`行数が ${lons.length}(想�
 const millideg = lons.map((v) => Math.round(v * 1000));
 const out = `// 生成ファイル(scripts/fetch-chiron.mjs)。手で編集しない。
 // Source: JPL Horizons (NASA/JPL-Caltech). 2060 Chiron, geocentric apparent ecliptic longitude of date.
-/** 表の最初の日(1900-01-01 0時 UT)のユリウス日 */
-export const CHIRON_START_JD = 2415020.5;
+/** 表の最初の日(${isoDate(START)} 0時 UT)のユリウス日 */
+export const CHIRON_START_JD = ${START / 86_400_000 + 2440587.5};
 export const CHIRON_STEP_DAYS = 10;
 /** 黄経(1/1000度) */
 export const CHIRON_MILLIDEG: readonly number[] = [${millideg.join(",")}];

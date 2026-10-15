@@ -43,6 +43,14 @@ describe("bodyPosition(Swiss Ephemeris との比較)", () => {
     expect(diff(bodyPosition(body, j2000)!.lon, expected)).toBeLessThan(0.03);
   });
 
+  it("キロンは入力できる範囲(1900/1/1〜2099/12/31 の日本時間)の両端でも値を返すこと", () => {
+    const edges = [new Date(Date.UTC(1899, 11, 31, 15, 0)), new Date(Date.UTC(2099, 11, 31, 14, 59)), new Date(Date.UTC(2100, 0, 1, 12, 0))];
+    for (const at of edges) {
+      expect(chironLongitude(at)).not.toBeNull();
+      expect(bodyPosition("chiron", at)).not.toBeNull();
+    }
+  });
+
   it("キロンは表の範囲外なら null", () => {
     expect(chironLongitude(new Date(Date.UTC(1899, 0, 1)))).toBeNull();
     expect(chironLongitude(new Date(Date.UTC(2101, 0, 1)))).toBeNull();
