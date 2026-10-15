@@ -2,7 +2,7 @@
 import { describe, it, expect } from "vitest";
 import { maya } from "../index";
 import { moonId, sealId, toneId } from "../../element-ids";
-import { kinOf } from "../calc";
+import { BLACK_KINS, isBlackKin, kinOf } from "../calc";
 import { toBirthMoment } from "../../birth-moment";
 import type { BirthProfile } from "../../types";
 
@@ -14,7 +14,8 @@ describe("maya.read", () => {
   it("人物像にKIN・紋章・音・ウェイブスペル・関係KINを返すこと", () => {
     const byLabel = Object.fromEntries(reading.natal.map((f) => [f.label, f]));
     expect(byLabel["KIN"].value).toBe("34");
-    expect(reading.natal.map((f) => f.key)).toEqual(["kin", "seal", "tone", "wavespell", "guide", "analog", "antipode", "occult"]);
+    expect(reading.natal.map((f) => f.key)).toEqual(["kin", "seal", "tone", "wavespell", "guide", "analog", "antipode", "occult", "black-kin"]);
+    expect(byLabel["黒KIN"]).toEqual({ key: "black-kin", label: "黒KIN", value: "該当しない", refs: [] });
     expect(byLabel["太陽の紋章"]).toEqual({ key: "seal", label: "太陽の紋章", value: "白い魔法使い", refs: [{ system: "maya", id: sealId(14) }] });
     expect(byLabel["銀河の音"]).toEqual({ key: "tone", label: "銀河の音", value: "8(銀河)", refs: [{ system: "maya", id: toneId(8) }] });
     expect(byLabel["ウェイブスペル"].value).toBe("青い手");
@@ -58,6 +59,33 @@ describe("maya.read", () => {
     const read = (t: { year: number; month: number; day: number }) => maya.read(leap, toBirthMoment(leap), t);
     expect(read({ year: 2027, month: 6, day: 1 }).periods.year.rangeLabel).toBe("2027/2/28〜2028/2/28");
     expect(read({ year: 2028, month: 3, day: 1 }).periods.year.rangeLabel).toBe("2028/2/29〜2029/2/27");
+  });
+
+  it("黒KIN生まれなら人物像に示すこと", () => {
+    const p: BirthProfile = { version: 1, date: { year: 1988, month: 3, day: 29 }, time: { kind: "unknown" } };
+    const r = maya.read(p, toBirthMoment(p), today);
+    expect(r.natal.find((f) => f.key === "kin")?.value).toBe("20");
+    expect(r.natal.find((f) => f.key === "black-kin")).toEqual({
+      key: "black-kin",
+      label: "黒KIN",
+      value: "該当(銀河の活性化の門)",
+      refs: [{ system: "maya", id: "black-kin" }],
+    });
+  });
+
+  it("今日が黒KINの日なら見出しとチップで知らせること", () => {
+    // 2026/10/15 は KIN 50(黒KIN)
+    const r = maya.read(profile, toBirthMoment(profile), { year: 2026, month: 10, day: 15 });
+    expect(r.periods.day.headline).toEqual({ text: "今日のKINは白い犬・音11。黒KINの日", ref: { system: "maya", id: "black-kin" } });
+    expect(r.periods.day.chips.map((c) => c.key)).toEqual(["today-kin", "today-tone", "black-kin", "birth-kin"]);
+    expect(r.periods.day.chips[2]).toEqual({ key: "black-kin", label: "黒KIN", value: "黒KINの日", refs: [{ system: "maya", id: "black-kin" }] });
+  });
+
+  it("黒KINは52個で、260の表で点対称に並ぶこと", () => {
+    expect(BLACK_KINS).toHaveLength(52);
+    for (const k of BLACK_KINS) expect(isBlackKin(261 - k)).toBe(true);
+    expect([1, 20, 106, 115, 146, 155, 260].every(isBlackKin)).toBe(true);
+    expect([2, 121, 130, 140, 259].some(isBlackKin)).toBe(false);
   });
 
   it("時間をはずした日の今月", () => {

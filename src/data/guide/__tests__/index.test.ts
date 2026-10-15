@@ -37,6 +37,7 @@ describe("guideSystems", () => {
       ["太陽の紋章", 20],
       ["銀河の音", 13],
       ["13の月", 14],
+      ["黒KIN", 1],
     ]);
     expect(byId.shichu.groups.map((g) => [g.name, g.entries.length])).toEqual([
       ["十干", 10],

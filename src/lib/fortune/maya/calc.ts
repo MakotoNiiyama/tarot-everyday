@@ -131,3 +131,17 @@ export function lastBirthday(birth: { month: number; day: number }, today: Local
   const thisYear = on(today.year);
   return compareLocalDate(thisYear, today) <= 0 ? thisYear : on(today.year - 1);
 }
+
+/**
+ * 黒KIN(銀河の活性化の門)。ツォルキン(13列 × 20行)の表で黒く塗られる52のKIN。
+ * 表の上下・左右に対称で、KIN n が黒KINなら 261 − n も黒KIN
+ */
+export const BLACK_KINS: readonly number[] = [
+  1, 20, 22, 39, 43, 50, 51, 58, 64, 69, 72, 77, 85, 88, 93, 96, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115,
+  146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 165, 168, 173, 176, 184, 189, 192, 197, 203, 210, 211, 218, 222,
+  239, 241, 260,
+];
+
+const blackKinSet = new Set(BLACK_KINS);
+
+export const isBlackKin = (kin: number) => blackKinSet.has(kin);

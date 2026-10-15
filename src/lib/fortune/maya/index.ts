@@ -1,5 +1,5 @@
 // src/lib/fortune/maya/index.ts
-import { moonId, sealId, toneId } from "../element-ids";
+import { BLACK_KIN_ID, moonId, sealId, toneId } from "../element-ids";
 import { addDays, formatSlash, type LocalDate } from "../local-date";
 import type { ElementRef, Fact, FortuneSystemModule } from "../types";
 import {
@@ -9,6 +9,7 @@ import {
   analogKin,
   antipodeKin,
   guideKin,
+  isBlackKin,
   kinOf,
   lastBirthday,
   moonDateRange,
@@ -44,11 +45,15 @@ export const maya: FortuneSystemModule = {
       kinFact("analog", "類似KIN", analogKin(kin)),
       kinFact("antipode", "反対KIN", antipodeKin(kin)),
       kinFact("occult", "神秘KIN", occultKin(kin)),
+      isBlackKin(kin)
+        ? { key: "black-kin", label: "黒KIN", value: "該当(銀河の活性化の門)", refs: [ref(BLACK_KIN_ID)] }
+        : { key: "black-kin", label: "黒KIN", value: "該当しない", refs: [] },
     ];
     const birthKinFact: Fact = { key: "birth-kin", label: "本命KIN", value: `${kin} ${sealName(kin)}`, refs: [ref(sealId(sealOf(kin)))] };
 
     const todayKin = kinOf(today);
     const todayTone = toneOf(todayKin);
+    const todayBlack = isBlackKin(todayKin);
     const moon = moonDateRange(today);
     const birthday = lastBirthday(profile.date, today);
     // 次の誕生日 = birthday より後で最初の誕生日(2月29日生まれは平年2月28日・閏年2月29日を正しく扱う)
@@ -60,17 +65,22 @@ export const maya: FortuneSystemModule = {
       id: "maya",
       name: "マヤ暦",
       nameEn: "Tzolkin",
-      method: "13の月の暦(ドリームスペル)系。2月29日は数えない(2月28日と同じKIN)。年回りKINは直近の誕生日のKIN",
+      method:
+        "13の月の暦(ドリームスペル)系。2月29日は数えない(2月28日と同じKIN)。年回りKINは直近の誕生日のKIN。黒KIN(銀河の活性化の門)はツォルキンの52のKIN",
       natal,
       ambiguous: false,
       periods: {
         day: {
           period: "day",
           rangeLabel: formatSlash(today),
-          headline: { text: `今日のKINは${sealName(todayKin)}・音${todayTone}`, ref: ref(sealId(sealOf(todayKin))) },
+          // 黒KINの日は見出しの一文も黒KINの説明にする
+          headline: todayBlack
+            ? { text: `今日のKINは${sealName(todayKin)}・音${todayTone}。黒KINの日`, ref: ref(BLACK_KIN_ID) }
+            : { text: `今日のKINは${sealName(todayKin)}・音${todayTone}`, ref: ref(sealId(sealOf(todayKin))) },
           chips: [
             kinFact("today-kin", "今日のKIN", todayKin),
             { key: "today-tone", label: "銀河の音", value: `${todayTone}(${TONE_NAMES[todayTone - 1]})`, refs: [ref(toneId(todayTone))] },
+            ...(todayBlack ? [{ key: "black-kin", label: "黒KIN", value: "黒KINの日", refs: [ref(BLACK_KIN_ID)] }] : []),
             birthKinFact,
           ],
         },

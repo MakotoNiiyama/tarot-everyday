@@ -24,6 +24,8 @@ export const directionId = (d: Direction) => `direction-${d}`;
 export const sealId = (n: number) => `seal-${n}`;
 export const toneId = (n: number) => `tone-${n}`;
 export const moonId = (n: number) => `moon-${n}`;
+/** マヤ暦の黒KIN(銀河の活性化の門) */
+export const BLACK_KIN_ID = "black-kin";
 
 /** 四柱推命の十干(1 = 甲 … 10 = 癸)・十二支(1 = 子 … 12 = 亥)・通変星(1 = 比肩 … 10 = 印綬)・十二運(1 = 長生 … 12 = 養) */
 export const stemId = (n: number) => `stem-${n}`;
@@ -73,7 +75,7 @@ export type ElementSystemId = "numerology" | "kyusei" | "maya" | "shichu" | "san
 export const ELEMENT_IDS: Record<ElementSystemId, readonly string[]> = {
   numerology: [...range(1, 9), 11, 22, 33].map(numberId),
   kyusei: [...range(1, 9).map(starId), ...PALACES.map(palaceId), ...DIRECTIONS.map(directionId)],
-  maya: [...range(1, 20).map(sealId), ...range(1, 13).map(toneId), ...range(0, 13).map(moonId)],
+  maya: [...range(1, 20).map(sealId), ...range(1, 13).map(toneId), ...range(0, 13).map(moonId), BLACK_KIN_ID],
   shichu: [
     ...range(1, 10).map(stemId),
     ...range(1, 12).map(branchId),

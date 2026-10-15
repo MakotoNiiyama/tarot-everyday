@@ -660,4 +660,18 @@ export const mayaEntries: GuideEntry[] = [
     image: { kind: "glyph", text: "13" },
     related: ["tone-13", "moon-12", "moon-0"],
   },
+  // 黒KIN
+  {
+    system: "maya",
+    id: "black-kin",
+    group: "黒KIN",
+    name: "黒KIN",
+    reading: "くろきん",
+    nameEn: "Galactic Activation Portal",
+    keywords: ["銀河の門", "強いエネルギー", "影響力", "引き寄せ"],
+    summary:
+      "ツォルキンの表で黒く塗られた52のKINで、銀河の活性化の門と呼ばれます。宇宙からのエネルギーが強く流れ込むとされ、この日に生まれた人は存在感と引き寄せる力が強く、濃い人生を歩みやすいといわれます。思いが形になりやすいので、前向きな願いを持つことが大切です。",
+    periodNote: "エネルギーが強く流れ込む日です。温めていた挑戦に踏み出し、前向きな思いを言葉にすると形になりやすくなります。",
+    image: { kind: "glyph", text: "黒\nKIN", color: "#B89A5A" },
+  },
 ];

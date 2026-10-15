@@ -9,7 +9,8 @@ describe("ELEMENT_IDS", () => {
     expect(ELEMENT_IDS.kyusei).toHaveLength(9 + 9 + 8);
     expect(ELEMENT_IDS.kyusei).toContain("palace-center");
     expect(ELEMENT_IDS.kyusei).not.toContain("direction-center");
-    expect(ELEMENT_IDS.maya).toHaveLength(20 + 13 + 14);
+    expect(ELEMENT_IDS.maya).toHaveLength(20 + 13 + 14 + 1);
+    expect(ELEMENT_IDS.maya).toContain("black-kin");
     expect(ELEMENT_IDS.maya).toContain("moon-0");
     expect(ELEMENT_IDS.shichu).toHaveLength(10 + 12 + 10 + 12 + 5);
     expect(ELEMENT_IDS.shichu).toContain("stem-10");
