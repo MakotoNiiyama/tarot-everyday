@@ -1,5 +1,5 @@
 /** 早見表の占術(タロットを含む) */
-export type GuideSystemId = "tarot" | "numerology" | "kyusei" | "maya";
+export type GuideSystemId = "tarot" | "numerology" | "kyusei" | "maya" | "shichu" | "sanmei";
 
 /** 画像枠の中身。glyph は漢字・数字のタイポグラフィ、photo はカード画像など */
 export type GuideImage =
