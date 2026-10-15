@@ -82,7 +82,8 @@ export function cusps(system: HouseSystem, at: Date, place: Place): number[] {
     c3 = placidusCusp(sky, false, 1 / 3);
   } else {
     // Koch(Swiss Ephemeris の swehouse.c と同じ式)
-    const sinA = Math.min(1, (Math.sin(rad(mc)) * Math.sin(rad(sky.eps))) / Math.cos(rad(sky.lat)));
+    // 極圏では絶対値が 1 を超えることがあるので [-1, 1] に収める
+    const sinA = Math.max(-1, Math.min(1, (Math.sin(rad(mc)) * Math.sin(rad(sky.eps))) / Math.cos(rad(sky.lat))));
     const cosA = Math.sqrt(1 - sinA * sinA);
     const c = deg(Math.atan(Math.tan(rad(sky.lat)) / cosA));
     const ad3 = deg(Math.asin(Math.sin(rad(c)) * sinA)) / 3;
