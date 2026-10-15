@@ -44,6 +44,21 @@ describe("PromptCard", () => {
     expect(await screen.findByText("コピーしました")).toBeInTheDocument();
   });
 
+  it("コピーされる内容を省略表示し、相談内容の入力に合わせて変わり、全文を表示できること", async () => {
+    const user = userEvent.setup();
+    render(<PromptCard profile={profile} readings={readings} period="day" today={today} tarot={null} />);
+    const preview = screen.getByLabelText("コピーされる内容");
+    expect(preview).toHaveTextContent(/^あなたはプロの占い師です。/);
+    expect(preview).toHaveTextContent("■ 相談内容: 特になし(総合的な鑑定)");
+    await user.type(screen.getByRole("textbox", { name: "相談したいこと(任意)" }), "転職のこと");
+    expect(preview).toHaveTextContent("■ 相談内容: 転職のこと");
+    const toggle = screen.getByRole("button", { name: "全文を表示" });
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(toggle).toHaveAttribute("aria-controls", preview.id);
+    await user.click(toggle);
+    expect(screen.getByRole("button", { name: "折りたたむ" })).toHaveAttribute("aria-expanded", "true");
+  });
+
   it("コピーに失敗したら「コピーできませんでした」と表示し、しばらくすると消すこと", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     try {
