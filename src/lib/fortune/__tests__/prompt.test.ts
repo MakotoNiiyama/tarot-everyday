@@ -94,6 +94,16 @@ describe("generateFortunePrompt", () => {
     expect(p).toContain("未抽選");
   });
 
+  it("omitTarot を付けると1dayタロットの節を入れないこと", () => {
+    const p = generateFortunePrompt({ profile, readings, today, question: "", tarot: null, omitTarot: true });
+    expect(p).not.toContain("1dayタロット");
+    expect(p).not.toContain("未抽選");
+    expect(p).toContain("── 今年の要素 ──");
+    // 前後の節の間は空行1つのまま
+    expect(p).toMatch(/\n\n── 採用している方式 ──\n/);
+    expect(p).not.toMatch(/\n\n\n/);
+  });
+
   it("候補がある項目は「A または B(出生時刻が曖昧なため候補)」と書くこと", () => {
     const amb: BirthProfile = { version: 1, date: { year: 1990, month: 2, day: 4 }, time: { kind: "unknown" } };
     const p = generateFortunePrompt({ profile: amb, readings: readAll(amb, today), today, question: "", tarot: null });

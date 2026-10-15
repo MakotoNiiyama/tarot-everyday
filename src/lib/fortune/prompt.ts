@@ -16,6 +16,8 @@ export interface FortunePromptInput {
   today: LocalDate;
   question: string;
   tarot: { card: TarotCard; isReversed: boolean } | null;
+  /** true なら「今日の1dayタロット」の節を入れない(登録していない生年月日で占うとき) */
+  omitTarot?: boolean;
 }
 
 /** 候補がある事実は「A または B(出生時刻が曖昧なため候補)」にする */
@@ -40,7 +42,7 @@ function birthTimeText(time: BirthTime): string {
  * 各占術で求めた要素の値と注記・採用している方式だけを渡して、意味づけと統合はAIに任せる
  */
 export function generateFortunePrompt(input: FortunePromptInput): string {
-  const { profile, readings, today, question, tarot } = input;
+  const { profile, readings, today, question, tarot, omitTarot = false } = input;
   const { year, month, day } = profile.date;
   const place = profile.prefecture ? formatPrefecture(profile.prefecture) : "未入力(明石を基準に計算)";
   const time = birthTimeText(profile.time);
@@ -55,6 +57,7 @@ export function generateFortunePrompt(input: FortunePromptInput): string {
     return `── ${label}の要素 ──\n${lines.join("\n")}`;
   });
   const tarotLine = tarot ? `${tarot.card.name.ja}(${tarot.isReversed ? "逆位置" : "正位置"})` : "未抽選";
+  const tarotSection = omitTarot ? "" : `── 今日の1dayタロット ──\n${tarotLine}\n\n`;
 
   return `東洋・西洋の複数の占術で求めた要素をもとに、相談者の今日・今月・今年の運勢を総合的にわかりやすく鑑定してください。
 
@@ -67,10 +70,7 @@ ${natal.join("\n")}
 
 ${periodSections.join("\n\n")}
 
-── 今日の1dayタロット ──
-${tarotLine}
-
-── 採用している方式 ──
+${tarotSection}── 採用している方式 ──
 ${readings.map((r) => `【${r.name}】${r.method}`).join("\n")}
 
 ── 依頼 ──
