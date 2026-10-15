@@ -54,6 +54,13 @@ test.describe("早見表", () => {
     await expect(page.getByRole("heading", { name: /三九の関係/ })).toBeVisible();
   });
 
+  test("西洋占星術のタブがあること", async ({ page }) => {
+    await page.goto("/guide?tab=horoscope");
+    await expect(page.getByRole("tab", { name: "西洋占星術" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("heading", { name: /十二星座/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /アスペクト/ })).toBeVisible();
+  });
+
   test("早見表ナビがアクティブであること", async ({ page }) => {
     await page.goto("/guide");
     await expect(

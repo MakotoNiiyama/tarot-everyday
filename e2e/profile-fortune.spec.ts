@@ -9,7 +9,7 @@ test.describe("プロフィール登録から運勢ページまで", () => {
     });
   });
 
-  test("登録すると運勢ページに6占術の運勢が表示されること", async ({ page }) => {
+  test("登録すると運勢ページに7占術の運勢が表示されること", async ({ page }) => {
     await page.goto("/fortune");
     await page.getByRole("link", { name: "生年月日を登録する" }).click();
     await expect(page).toHaveURL("/fortune/profile");
@@ -23,7 +23,7 @@ test.describe("プロフィール登録から運勢ページまで", () => {
 
     await expect(page).toHaveURL("/fortune");
     await expect(page.getByText("1990/3/29 生 · 14時台 · 東京都")).toBeVisible();
-    for (const name of ["数秘術", "九星気学", "マヤ暦", "四柱推命", "算命学", "宿曜"]) {
+    for (const name of ["数秘術", "九星気学", "マヤ暦", "四柱推命", "算命学", "宿曜", "西洋占星術"]) {
       await expect(page.getByRole("article", { name })).toBeVisible();
     }
     await page.getByRole("tab", { name: "今年" }).click();
@@ -43,6 +43,22 @@ test.describe("プロフィール登録から運勢ページまで", () => {
     await expect(natal.getByRole("table", { name: "四柱推命の命式" })).toContainText("癸巳");
     await natal.getByRole("button", { name: "算命学" }).click();
     await expect(natal.getByRole("list", { name: "算命学の人体星図" })).toContainText("鳳閣星");
+  });
+
+  test("人物像にホロスコープのチャート円と天体の表が表示されること", async ({ page }) => {
+    await page.evaluate(() =>
+      localStorage.setItem(
+        "tarot-birth-profile",
+        JSON.stringify({ version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "hour", hour: 14 }, prefecture: "13" }),
+      ),
+    );
+    await page.goto("/fortune");
+    const natal = page.getByRole("region", { name: "あなたについて" });
+    await natal.getByRole("button", { name: "西洋占星術" }).click();
+    await expect(natal.getByRole("img", { name: /ホロスコープ/ })).toBeVisible();
+    await expect(natal.getByRole("table", { name: "天体の位置" })).toContainText("牡羊座");
+    await natal.getByRole("radio", { name: "ホールサイン" }).click();
+    await expect(natal.getByRole("radio", { name: "ホールサイン" })).toHaveAttribute("aria-checked", "true");
   });
 
   test("チップから要素の詳細を開けること", async ({ page, isMobile }) => {
