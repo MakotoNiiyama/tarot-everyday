@@ -79,6 +79,13 @@ describe("shichu.read 人物像", () => {
     expect(fact(r, "meishiki")?.candidates).toBeUndefined();
   });
 
+  it("サマータイム中の0時台は標準時で前日の日柱にすること", () => {
+    // 1949/7/1 0時台(サマータイム)は標準時で 6/30 23時台。日柱は 6/30 の辛卯、時柱は翌日(壬)の子の刻で庚子
+    const r = read({ version: 1, date: { year: 1949, month: 7, day: 1 }, time: { kind: "hour", hour: 0 } });
+    expect(fact(r, "day-pillar")?.value).toBe("辛卯");
+    expect(fact(r, "hour-pillar")?.value).toBe("庚子");
+  });
+
   it("性別があれば大運を返すこと", () => {
     expect(fact(read({ ...p, gender: "male" }), "daiun")).toEqual({ key: "daiun", label: "大運", value: "2歳運・順行", refs: [] });
     expect(fact(read({ ...p, gender: "female" }), "daiun")?.value).toBe("8歳運・逆行");

@@ -65,6 +65,16 @@ describe("sanmei.read 人物像", () => {
     }
   });
 
+  it("時刻指定のときは標準時の日付で日柱を出し、四柱推命と同じ日柱にすること", () => {
+    // 1949/7/1 0時台(サマータイム)は標準時で 6/30 23時台。日柱は 6/30 の辛卯
+    const dst = read({ version: 1, date: { year: 1949, month: 7, day: 1 }, time: { kind: "hour", hour: 0 } });
+    expect(values(dst).insen).toBe("己丑・庚午・辛卯");
+    // 時刻不明なら誕生日の暦日(7/1 の壬辰)
+    expect(values(read({ version: 1, date: { year: 1949, month: 7, day: 1 }, time: { kind: "unknown" } })).insen).toBe(
+      "己丑・庚午・壬辰",
+    );
+  });
+
   it("性別があれば大運を返すこと", () => {
     expect(read({ ...p, gender: "male" }).natal.find((f) => f.key === "daiun")?.value).toBe("2歳運・順行");
     expect(read(p).natal.find((f) => f.key === "daiun")).toBeUndefined();

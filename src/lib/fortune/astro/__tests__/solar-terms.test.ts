@@ -63,4 +63,10 @@ describe("dayNumberInSolarMonth", () => {
     // 節入りの時刻より前は前の月(立春 1990/2/4 から数えて31日目)
     expect(dayNumberInSolarMonth(tokyoToUtc(1990, 3, 6, 3, 0))).toBe(31);
   });
+
+  it("サマータイム中は標準時の日付で数えること", () => {
+    // 芒種 1949/6/6。サマータイムの 7/1 0:30 は標準時で 6/30 23:30 なので25日目
+    expect(dayNumberInSolarMonth(tokyoToUtc(1949, 7, 1, 0, 30))).toBe(25);
+    expect(dayNumberInSolarMonth(tokyoToUtc(1949, 7, 1, 1, 30))).toBe(26);
+  });
 });

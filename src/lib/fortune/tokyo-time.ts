@@ -54,6 +54,12 @@ export function jstLocalDate(at: Date): LocalDate {
   return { year: p.year, month: p.month, day: p.day };
 }
 
+/** 標準時(UTC+9 固定。サマータイムは1時間戻す)の暦日 */
+export function standardDate(at: Date): LocalDate {
+  const t = new Date(at.getTime() + 9 * 3_600_000);
+  return { year: t.getUTCFullYear(), month: t.getUTCMonth() + 1, day: t.getUTCDate() };
+}
+
 /** 例: 5:01 */
 export function formatTokyoHm(at: Date): string {
   const p = tokyoParts(at);

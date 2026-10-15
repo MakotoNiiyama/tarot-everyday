@@ -1,6 +1,6 @@
 // src/lib/fortune/__tests__/tokyo-time.test.ts
 import { describe, it, expect } from "vitest";
-import { tokyoParts, tokyoToUtc, jstLocalDate, formatTokyoHm } from "../tokyo-time";
+import { tokyoParts, tokyoToUtc, jstLocalDate, formatTokyoHm, standardDate } from "../tokyo-time";
 
 describe("tokyo-time", () => {
   it("通常期間は UTC+9 で変換すること", () => {
@@ -10,6 +10,14 @@ describe("tokyo-time", () => {
   it("1949年夏のサマータイム期間は UTC+10 で変換すること", () => {
     expect(tokyoToUtc(1949, 7, 1, 12, 0).toISOString()).toBe("1949-07-01T02:00:00.000Z");
     expect(tokyoToUtc(1949, 12, 1, 12, 0).toISOString()).toBe("1949-12-01T03:00:00.000Z");
+  });
+
+  it("standardDate はサマータイムを無視した UTC+9 の暦日を返すこと", () => {
+    // サマータイム中の 1949/7/1 0:30 は標準時で 6/30 23:30
+    const at = tokyoToUtc(1949, 7, 1, 0, 30);
+    expect(jstLocalDate(at)).toEqual({ year: 1949, month: 7, day: 1 });
+    expect(standardDate(at)).toEqual({ year: 1949, month: 6, day: 30 });
+    expect(standardDate(tokyoToUtc(2026, 10, 14, 23, 59))).toEqual({ year: 2026, month: 10, day: 14 });
   });
 
   it("24時は翌日0時として扱うこと", () => {

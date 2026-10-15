@@ -49,13 +49,13 @@ export interface SanmeiNatal {
   dayNumber: number;
 }
 
-/** その瞬間に生まれたときの宿命(年・月・日の3柱。時柱は使わない。日柱は日本時間の暦日) */
-export function sanmeiNatalAt(at: Date, localDate: LocalDate): SanmeiNatal {
+/** その瞬間に生まれたときの宿命(年・月・日の3柱。時柱は使わない。日柱は dayDate の暦日) */
+export function sanmeiNatalAt(at: Date, dayDate: LocalDate): SanmeiNatal {
   const month = solarMonthAt(at);
   return {
     year: yearCycleIndex(month.kyuseiYear),
     month: monthCycleIndex(month.kyuseiYear, month.index),
-    day: dayCycleIndex(localDate),
+    day: dayCycleIndex(dayDate),
     dayNumber: dayNumberInSolarMonth(at),
   };
 }
