@@ -3,6 +3,8 @@ import { ELEMENT_IDS } from "@/lib/fortune/element-ids";
 import { numerologyEntries } from "../numerology";
 import { kyuseiEntries } from "../kyusei";
 import { mayaEntries } from "../maya";
+import { sanmeiEntries } from "../sanmei";
+import { shichuEntries } from "../shichu";
 import type { GuideEntry } from "../types";
 
 const EMOJI_OR_SYMBOL = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2190}-\u{21FF}\u{25A0}-\u{25FF}]/u;
@@ -14,7 +16,15 @@ const cases: [keyof typeof ELEMENT_IDS, GuideEntry[]][] = [
   ["numerology", numerologyEntries],
   ["kyusei", kyuseiEntries],
   ["maya", mayaEntries],
+  ["shichu", shichuEntries],
+  ["sanmei", sanmeiEntries],
 ];
+
+/** 運勢の見出しに使うグループ(periodNote を持つ)。書かれていない占術は全グループ */
+const PERIOD_GROUPS: Partial<Record<keyof typeof ELEMENT_IDS, string[]>> = {
+  shichu: ["通変星"],
+  sanmei: ["十大主星", "天中殺"],
+};
 
 describe.each(cases)("%s の辞書データ", (system, entries) => {
   it("ELEMENT_IDS と過不足なく一致すること", () => {
@@ -35,10 +45,15 @@ describe.each(cases)("%s の辞書データ", (system, entries) => {
     for (const k of e.keywords) expect([...k].length).toBeLessThanOrEqual(8);
     expect(width(e.summary)).toBeGreaterThanOrEqual(80);
     expect(width(e.summary)).toBeLessThanOrEqual(160);
-    expect(e.periodNote).toBeDefined();
-    expect(width(e.periodNote ?? "")).toBeGreaterThanOrEqual(30);
-    expect(width(e.periodNote ?? "")).toBeLessThanOrEqual(80);
-    expect(e.periodNote).not.toMatch(PERIOD_WORDS);
+    const needsNote = PERIOD_GROUPS[system]?.includes(e.group) ?? true;
+    if (needsNote) {
+      expect(e.periodNote).toBeDefined();
+      expect(width(e.periodNote ?? "")).toBeGreaterThanOrEqual(30);
+      expect(width(e.periodNote ?? "")).toBeLessThanOrEqual(80);
+      expect(e.periodNote).not.toMatch(PERIOD_WORDS);
+    } else {
+      expect(e.periodNote).toBeUndefined();
+    }
     const text = [e.name, e.reading, e.summary, e.periodNote, ...e.keywords].join("");
     expect(text).not.toMatch(EMOJI_OR_SYMBOL);
     expect(e.image.kind).toBe("glyph");

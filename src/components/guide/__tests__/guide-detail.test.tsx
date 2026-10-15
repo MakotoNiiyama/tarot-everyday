@@ -6,7 +6,13 @@ import { ELEMENT_IDS } from "@/lib/fortune/element-ids";
 describe("早見表の項目の詳細ページ", () => {
   it("タロット以外の全項目を静的生成すること", () => {
     const params = generateStaticParams();
-    expect(params).toHaveLength(ELEMENT_IDS.numerology.length + ELEMENT_IDS.kyusei.length + ELEMENT_IDS.maya.length);
+    expect(params).toHaveLength(
+      ELEMENT_IDS.numerology.length +
+        ELEMENT_IDS.kyusei.length +
+        ELEMENT_IDS.maya.length +
+        ELEMENT_IDS.shichu.length +
+        ELEMENT_IDS.sanmei.length,
+    );
     expect(params.some((p) => p.system === "tarot")).toBe(false);
   });
 

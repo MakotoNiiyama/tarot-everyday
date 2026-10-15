@@ -3,12 +3,14 @@ import { composeHeadline, getGuideEntry, guideHref, guideSystems, searchGuide } 
 import type { PeriodResult } from "@/lib/fortune/types";
 
 describe("guideSystems", () => {
-  it("タブの順は タロット・数秘術・九星気学・マヤ暦", () => {
+  it("タブの順は タロット・数秘術・九星気学・マヤ暦・四柱推命・算命学", () => {
     expect(guideSystems.map((s) => [s.id, s.label])).toEqual([
       ["tarot", "タロット"],
       ["numerology", "数秘術"],
       ["kyusei", "九星気学"],
       ["maya", "マヤ暦"],
+      ["shichu", "四柱推命"],
+      ["sanmei", "算命学"],
     ]);
   });
 
@@ -35,6 +37,21 @@ describe("guideSystems", () => {
       ["銀河の音", 13],
       ["13の月", 14],
     ]);
+    expect(byId.shichu.groups.map((g) => [g.name, g.entries.length])).toEqual([
+      ["十干", 10],
+      ["十二支", 12],
+      ["通変星", 10],
+      ["十二運", 12],
+      ["五行", 5],
+    ]);
+    expect(byId.sanmei.groups.map((g) => [g.name, g.entries.length])).toEqual([
+      ["十大主星", 10],
+      ["十二大従星", 12],
+      ["天中殺", 6],
+      ["宿命中殺", 5],
+      ["異常干支", 13],
+      ["位相法", 7],
+    ]);
   });
 });
 
@@ -52,6 +69,11 @@ describe("getGuideEntry / guideHref", () => {
 });
 
 describe("searchGuide", () => {
+  it("四柱推命・算命学の項目も読みで検索できること", () => {
+    expect(searchGuide("きのえ").map((e) => `${e.system}:${e.id}`)).toContain("shichu:stem-1");
+    expect(searchGuide("てんちゅうさつ").filter((e) => e.system === "sanmei")).toHaveLength(6);
+  });
+
   it("名前・読み・英名・キーワードで全占術を横断して検索できること", () => {
     expect(searchGuide("一白").map((e) => e.id)).toContain("star-1");
     expect(searchGuide("いっぱく").map((e) => e.id)).toContain("star-1");

@@ -1,4 +1,4 @@
-// 早見表の項目の詳細ページ(数秘術・九星気学・マヤ暦。タロットは /guide/tarot/[id])
+// 早見表の項目の詳細ページ(タロット以外の占術。タロットは /guide/tarot/[id])
 import { notFound } from "next/navigation";
 import { GuideImageView } from "@/components/guide/guide-image";
 import { GuideDetailFrame, GuideDetailLayout } from "@/components/guide/guide-detail-layout";
