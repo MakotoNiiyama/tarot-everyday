@@ -9,7 +9,7 @@ test.describe("プロフィール登録から運勢ページまで", () => {
     });
   });
 
-  test("登録すると運勢ページに5占術の運勢が表示されること", async ({ page }) => {
+  test("登録すると運勢ページに6占術の運勢が表示されること", async ({ page }) => {
     await page.goto("/fortune");
     await page.getByRole("link", { name: "生年月日を登録する" }).click();
     await expect(page).toHaveURL("/fortune/profile");
@@ -23,7 +23,7 @@ test.describe("プロフィール登録から運勢ページまで", () => {
 
     await expect(page).toHaveURL("/fortune");
     await expect(page.getByText("1990/3/29 生 · 14時台 · 東京都")).toBeVisible();
-    for (const name of ["数秘術", "九星気学", "マヤ暦", "四柱推命", "算命学"]) {
+    for (const name of ["数秘術", "九星気学", "マヤ暦", "四柱推命", "算命学", "宿曜"]) {
       await expect(page.getByRole("article", { name })).toBeVisible();
     }
     await page.getByRole("tab", { name: "今年" }).click();
@@ -88,6 +88,7 @@ test.describe("プロフィール登録から運勢ページまで", () => {
     );
     await page.goto("/");
     await expect(page.getByRole("region", { name: "今日の運勢" })).toContainText("今日のKIN");
+    await expect(page.getByRole("region", { name: "今日の運勢" })).toContainText("本命宿との関係");
     await page.goto("/fortune/profile");
     await page.getByRole("button", { name: "登録情報を削除" }).click();
     await page.getByRole("button", { name: "削除する" }).click();

@@ -47,6 +47,13 @@ test.describe("早見表", () => {
     await expect(page.getByRole("heading", { name: /十大主星/ })).toBeVisible();
   });
 
+  test("宿曜のタブがあること", async ({ page }) => {
+    await page.goto("/guide?tab=sukuyo");
+    await expect(page.getByRole("tab", { name: "宿曜" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("heading", { name: /二十七宿/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /三九の関係/ })).toBeVisible();
+  });
+
   test("早見表ナビがアクティブであること", async ({ page }) => {
     await page.goto("/guide");
     await expect(
