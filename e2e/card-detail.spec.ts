@@ -46,9 +46,10 @@ test.describe("カード詳細ページ", () => {
     await expect(page.getByText(/仕事運/)).toBeVisible();
   });
 
-  test("早見表のカードリンクから詳細に遷移できること", async ({ page }) => {
+  test("早見表のカードのシートから詳細に遷移できること", async ({ page }) => {
     await page.goto("/guide");
-    await page.getByRole("tabpanel").getByRole("link", { name: "愚者の詳細を見る" }).click();
+    await page.getByRole("tabpanel").getByRole("button", { name: "愚者の詳細を見る" }).click();
+    await page.getByRole("link", { name: "詳しく見る" }).click();
     await expect(page).toHaveURL("/guide/tarot/major-00");
     await expect(
       page.getByRole("heading", { level: 1, name: "愚者" })
