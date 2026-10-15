@@ -80,6 +80,18 @@ describe("干支番号", () => {
     expect(cycleName(hourCycleIndex(9, 0))).toBe("壬子");
     expect(cycleName(hourCycleIndex(9, 7))).toBe("己未");
   });
+
+  it("時柱の子の刻の十干は日干の5組ごとに決まること", () => {
+    // 甲己→甲子、乙庚→丙子、丙辛→戊子、丁壬→庚子、戊癸→壬子
+    const starts = STEMS.map((_, dayStem) => cycleName(hourCycleIndex(dayStem, 0)));
+    expect(starts).toEqual(["甲子", "丙子", "戊子", "庚子", "壬子", "甲子", "丙子", "戊子", "庚子", "壬子"]);
+  });
+
+  it("月柱の寅月の十干は年干の5組ごとに決まること", () => {
+    // 1984(甲)〜1993(癸)。甲己→丙寅、乙庚→戊寅、丙辛→庚寅、丁壬→壬寅、戊癸→甲寅
+    const starts = STEMS.map((_, i) => cycleName(monthCycleIndex(1984 + i, 0)));
+    expect(starts).toEqual(["丙寅", "戊寅", "庚寅", "壬寅", "甲寅", "丙寅", "戊寅", "庚寅", "壬寅", "甲寅"]);
+  });
 });
 
 describe("五行・陰陽", () => {

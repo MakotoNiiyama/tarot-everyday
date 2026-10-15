@@ -95,6 +95,17 @@ describe("shichu.read 人物像", () => {
     expect(fact(r, "hour-pillar")?.value).toBe("庚子");
   });
 
+  it("東京の23時台は地方平均時の0時(23:41ごろ)で日柱を候補にし、時柱は子の刻のままにすること", () => {
+    // 23時台はどちらの日柱でも翌日(甲)の子の刻で甲子
+    const r = read({ ...p, time: { kind: "hour", hour: 23 }, prefecture: "13" });
+    expect(fact(r, "day-pillar")?.value).toMatch(/^癸巳\(〜23:4\d\) \/ 甲午\(23:4\d〜\)$/);
+    expect(fact(r, "hour-pillar")?.value).toBe("甲子");
+    expect(r.ambiguous).toBe(true);
+    for (const period of ["day", "month", "year"] as const) {
+      expect(r.periods[period].note).toBe("日柱を癸巳として計算(出生時刻により甲午の可能性があります)");
+    }
+  });
+
   it("性別があれば大運を返すこと", () => {
     expect(fact(read({ ...p, gender: "male" }), "daiun")).toEqual({ key: "daiun", label: "大運", value: "2歳運・順行", refs: [] });
     expect(fact(read({ ...p, gender: "female" }), "daiun")?.value).toBe("8歳運・逆行");
