@@ -24,6 +24,10 @@ describe("ELEMENT_IDS", () => {
     expect(ELEMENT_IDS.sanmei).toContain("shukumei-nikkyo");
     expect(ELEMENT_IDS.sanmei).toContain("ijo-11");
     expect(ELEMENT_IDS.sanmei).toContain("isou-ha");
+    expect(ELEMENT_IDS.sukuyo).toHaveLength(27 + 11);
+    expect(ELEMENT_IDS.sukuyo).toContain("mansion-1");
+    expect(ELEMENT_IDS.sukuyo).toContain("mansion-27");
+    expect(ELEMENT_IDS.sukuyo).toContain("relation-tai");
     for (const ids of Object.values(ELEMENT_IDS)) expect(new Set(ids).size).toBe(ids.length);
   });
 

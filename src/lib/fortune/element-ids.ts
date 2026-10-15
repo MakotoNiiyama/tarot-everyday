@@ -57,10 +57,17 @@ export type IsouKind = "shigo" | "hankai" | "hosani" | "taichu" | "kei" | "gai" 
 export const ISOU_KINDS: readonly IsouKind[] = ["shigo", "hankai", "hosani", "taichu", "kei", "gai", "ha"];
 export const isouId = (k: IsouKind) => `isou-${k}`;
 
+/** 宿曜の27宿(1 = 昴宿 … 27 = 胃宿)と三九の関係 */
+export const mansionId = (n: number) => `mansion-${n}`;
+export type RelationKind = "mei" | "ei" | "sui" | "an" | "ki" | "sei" | "kai" | "yu" | "shin" | "gyo" | "tai";
+/** 三九の関係(命・栄・衰・安・危・成・壊・友・親・業・胎の順) */
+export const RELATION_KINDS: readonly RelationKind[] = ["mei", "ei", "sui", "an", "ki", "sei", "kai", "yu", "shin", "gyo", "tai"];
+export const relationId = (k: RelationKind) => `relation-${k}`;
+
 const range = (from: number, to: number) => Array.from({ length: to - from + 1 }, (_, i) => from + i);
 
 /** 早見表の項目を持つ実装済みの占術 */
-export type ElementSystemId = "numerology" | "kyusei" | "maya" | "shichu" | "sanmei";
+export type ElementSystemId = "numerology" | "kyusei" | "maya" | "shichu" | "sanmei" | "sukuyo";
 
 /** 占術ごとの早見表の項目 id の一覧 */
 export const ELEMENT_IDS: Record<ElementSystemId, readonly string[]> = {
@@ -82,4 +89,5 @@ export const ELEMENT_IDS: Record<ElementSystemId, readonly string[]> = {
     ...[...IJO_NORMAL, ...IJO_ANGOU].map(ijoId),
     ...ISOU_KINDS.map(isouId),
   ],
+  sukuyo: [...range(1, 27).map(mansionId), ...RELATION_KINDS.map(relationId)],
 };
