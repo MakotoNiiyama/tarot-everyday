@@ -2,6 +2,7 @@
 
 import { FactDetailSheet } from "@/components/guide/fact-detail-sheet";
 import type { Fact, NatalChart } from "@/lib/fortune/types";
+import { HoroscopeChart } from "./horoscope-chart";
 
 /** 候補に分かれたセルは「A / B」 */
 export const factDisplayValue = (f: Fact) =>
@@ -105,10 +106,9 @@ function BodyStarChart({ chart, label }: { chart: Extract<NatalChart, { kind: "b
   );
 }
 
-/** 人物像の専用の図(四柱推命の命式表・算命学の人体星図) */
+/** 人物像の専用の図(四柱推命の命式表・算命学の人体星図・西洋占星術のホロスコープ) */
 export function NatalChartView({ chart, systemName }: { chart: NatalChart; systemName: string }) {
-  // 西洋占星術のチャート円は horoscope-chart.tsx で描く(未接続の間は何も出さない)
-  if (chart.kind === "horoscope") return null;
+  if (chart.kind === "horoscope") return <HoroscopeChart chart={chart} />;
   const label = chart.kind === "pillars" ? `${systemName}の命式` : `${systemName}の人体星図`;
   return chart.kind === "pillars" ? (
     <PillarTable chart={chart} label={label} />

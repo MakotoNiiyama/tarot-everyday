@@ -50,8 +50,9 @@ export function NatalSection({ readings }: { readings: SystemReading[] }) {
       <Accordion className="flex flex-col gap-2">
         {readings.map((r) => {
           const charted = new Set(r.chart?.factKeys ?? []);
-          const tiles = r.chart ? [] : r.natal.slice(0, 3);
-          const rows = r.chart ? r.natal.filter((f) => !charted.has(f.key)) : r.natal.slice(3);
+          // 西洋占星術は図があっても先頭の3つ(太陽・月・ASC)をタイルで出す
+          const tiles = !r.chart || r.chart.kind === "horoscope" ? r.natal.slice(0, 3) : [];
+          const rows = r.chart ? r.natal.filter((f) => !charted.has(f.key) && !tiles.includes(f)) : r.natal.slice(3);
           const first = r.natal[0]?.refs[0];
           const summary = first ? getGuideEntry(first.system, first.id)?.summary : undefined;
           return (
@@ -63,9 +64,7 @@ export function NatalSection({ readings }: { readings: SystemReading[] }) {
               <AccordionTrigger className="min-h-[52px] px-4 font-heading text-base text-cream">{r.name}</AccordionTrigger>
               {/* 間隔は gap で取るので、AccordionContent が段落に付ける下の余白は打ち消す */}
               <AccordionContent className="flex flex-col gap-3 px-4 pb-4 [&_p:not(:last-child)]:mb-0">
-                {r.chart ? (
-                  <NatalChartView chart={r.chart} systemName={r.name} />
-                ) : (
+                {tiles.length > 0 && (
                   <ul className="grid grid-cols-3 gap-2">
                     {tiles.map((f) => (
                       <li key={f.key}>
@@ -74,6 +73,7 @@ export function NatalSection({ readings }: { readings: SystemReading[] }) {
                     ))}
                   </ul>
                 )}
+                {r.chart && <NatalChartView chart={r.chart} systemName={r.name} />}
                 {rows.length > 0 && (
                   <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-[13px]">
                     {rows.map((f) => (
