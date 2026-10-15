@@ -5,6 +5,7 @@ import { kyuseiEntries } from "../kyusei";
 import { mayaEntries } from "../maya";
 import { sanmeiEntries } from "../sanmei";
 import { shichuEntries } from "../shichu";
+import { sukuyoEntries } from "../sukuyo";
 import type { GuideEntry } from "../types";
 
 const EMOJI_OR_SYMBOL = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2190}-\u{21FF}\u{25A0}-\u{25FF}]/u;
@@ -18,12 +19,14 @@ const cases: [keyof typeof ELEMENT_IDS, GuideEntry[]][] = [
   ["maya", mayaEntries],
   ["shichu", shichuEntries],
   ["sanmei", sanmeiEntries],
+  ["sukuyo", sukuyoEntries],
 ];
 
 /** 運勢の見出しに使うグループ(periodNote を持つ)。書かれていない占術は全グループ */
 const PERIOD_GROUPS: Partial<Record<keyof typeof ELEMENT_IDS, string[]>> = {
   shichu: ["通変星"],
   sanmei: ["十大主星", "天中殺"],
+  sukuyo: ["三九の関係"],
 };
 
 describe.each(cases)("%s の辞書データ", (system, entries) => {

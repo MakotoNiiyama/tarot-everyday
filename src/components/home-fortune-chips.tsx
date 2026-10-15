@@ -5,11 +5,12 @@ import { readAll } from "@/lib/fortune/registry";
 import type { BirthProfile, Fact } from "@/lib/fortune/types";
 import type { LocalDate } from "@/lib/fortune/local-date";
 
-/** ホームに出す今日の要点(設計書 §11.1): 数秘のパーソナルデー・九星の位置と吉方位・今日のKIN */
+/** ホームに出す今日の要点(設計書 §11.1): 数秘のパーソナルデー・九星の位置と吉方位・今日のKIN・宿曜の関係 */
 const HOME_KEYS: Record<string, string[]> = {
   numerology: ["personal-day"],
   kyusei: ["position", "lucky"],
   maya: ["today-kin"],
+  sukuyo: ["relation"],
 };
 
 export function HomeFortuneChips({ profile, today }: { profile: BirthProfile; today: LocalDate }) {

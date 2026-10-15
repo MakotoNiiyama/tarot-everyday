@@ -11,7 +11,8 @@ describe("早見表の項目の詳細ページ", () => {
         ELEMENT_IDS.kyusei.length +
         ELEMENT_IDS.maya.length +
         ELEMENT_IDS.shichu.length +
-        ELEMENT_IDS.sanmei.length,
+        ELEMENT_IDS.sanmei.length +
+        ELEMENT_IDS.sukuyo.length,
     );
     expect(params.some((p) => p.system === "tarot")).toBe(false);
   });

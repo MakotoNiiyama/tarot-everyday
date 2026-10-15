@@ -8,4 +8,5 @@ export const FORTUNE_SYSTEM_NAMES: readonly { id: SystemId; name: string }[] = [
   { id: "maya", name: "マヤ暦" },
   { id: "shichu", name: "四柱推命" },
   { id: "sanmei", name: "算命学" },
+  { id: "sukuyo", name: "宿曜" },
 ];

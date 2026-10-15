@@ -8,13 +8,13 @@ import type { BirthProfile } from "../types";
 const profile: BirthProfile = { version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "hour", hour: 14 }, prefecture: "13" };
 
 describe("registry", () => {
-  it("実装済みの占術を設計書の順(数秘術・九星気学・マヤ暦・四柱推命・算命学)で持つこと", () => {
-    expect(fortuneSystems.map((s) => s.id)).toEqual(["numerology", "kyusei", "maya", "shichu", "sanmei"]);
+  it("実装済みの占術を設計書の順(数秘術・九星気学・マヤ暦・四柱推命・算命学・宿曜)で持つこと", () => {
+    expect(fortuneSystems.map((s) => s.id)).toEqual(["numerology", "kyusei", "maya", "shichu", "sanmei", "sukuyo"]);
   });
 
   it("readAll で全占術の結果を返すこと", () => {
     const readings = readAll(profile, { year: 2026, month: 10, day: 14 });
-    expect(readings.map((r) => r.id)).toEqual(["numerology", "kyusei", "maya", "shichu", "sanmei"]);
+    expect(readings.map((r) => r.id)).toEqual(["numerology", "kyusei", "maya", "shichu", "sanmei", "sukuyo"]);
     for (const r of readings) {
       expect(r.natal.length).toBeGreaterThan(0);
       for (const period of ["day", "month", "year"] as const) {

@@ -4,6 +4,7 @@ import { mayaEntries } from "./maya";
 import { numerologyEntries } from "./numerology";
 import { sanmeiEntries } from "./sanmei";
 import { shichuEntries } from "./shichu";
+import { sukuyoEntries } from "./sukuyo";
 import { tarotEntries } from "./tarot";
 import type { GuideEntry, GuideSystemId } from "./types";
 
@@ -39,6 +40,7 @@ export const guideSystems: GuideSystem[] = [
   { id: "maya", label: "マヤ暦", groups: groupEntries(mayaEntries) },
   { id: "shichu", label: "四柱推命", groups: groupEntries(shichuEntries) },
   { id: "sanmei", label: "算命学", groups: groupEntries(sanmeiEntries) },
+  { id: "sukuyo", label: "宿曜", groups: groupEntries(sukuyoEntries) },
 ];
 
 const allEntries: GuideEntry[] = guideSystems.flatMap((s) => s.groups.flatMap((g) => g.entries));
