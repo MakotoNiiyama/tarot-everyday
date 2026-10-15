@@ -4,7 +4,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { FactDetailSheet } from "@/components/guide/fact-detail-sheet";
 import { getGuideEntry } from "@/data/guide";
 import type { Fact, SystemReading } from "@/lib/fortune/types";
-import { NatalChartView } from "./natal-chart";
+import { NatalChartView, factDisplayValue } from "./natal-chart";
 
 /** 1つの事実のタイル(タップで詳細) */
 function FactTile({ fact }: { fact: Fact }) {
@@ -15,12 +15,13 @@ function FactTile({ fact }: { fact: Fact }) {
       className="grid h-full w-full grid-rows-[28px_56px] items-center justify-items-center rounded-xl bg-popover px-1.5 py-2.5 text-center hover:bg-popover/70"
     >
       <span className="self-start text-[10px] leading-tight text-gold-dim">{fact.label}</span>
+      <span className="sr-only">、</span>
       <span
         className={`font-heading leading-[1.15] break-keep ${fact.candidates ? "text-terracotta" : "text-gold-light"} ${
           long ? "text-[15px]" : "text-2xl"
         }`}
       >
-        {fact.candidates ? fact.candidates.map((c) => c.value).join(" / ") : fact.value}
+        {factDisplayValue(fact)}
       </span>
     </FactDetailSheet>
   );
@@ -53,7 +54,6 @@ export function NatalSection({ readings }: { readings: SystemReading[] }) {
           const rows = r.chart ? r.natal.filter((f) => !charted.has(f.key)) : r.natal.slice(3);
           const first = r.natal[0]?.refs[0];
           const summary = first ? getGuideEntry(first.system, first.id)?.summary : undefined;
-          const chartLabel = r.chart ? `${r.name}の${r.chart.kind === "pillars" ? "命式" : "人体星図"}` : "";
           return (
             <AccordionItem
               key={r.id}
@@ -64,7 +64,7 @@ export function NatalSection({ readings }: { readings: SystemReading[] }) {
               {/* 間隔は gap で取るので、AccordionContent が段落に付ける下の余白は打ち消す */}
               <AccordionContent className="flex flex-col gap-3 px-4 pb-4 [&_p:not(:last-child)]:mb-0">
                 {r.chart ? (
-                  <NatalChartView chart={r.chart} label={chartLabel} />
+                  <NatalChartView chart={r.chart} systemName={r.name} />
                 ) : (
                   <ul className="grid grid-cols-3 gap-2">
                     {tiles.map((f) => (
