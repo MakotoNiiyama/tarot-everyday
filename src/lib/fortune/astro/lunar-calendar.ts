@@ -39,8 +39,16 @@ function newMoonOnOrBefore(jdn: number): number {
   return last;
 }
 
+const winterCache = new Map<number, number>();
+
 /** 西暦 year の冬至を含む旧暦月(11月)の1日 */
-const winterMonthStart = (year: number) => newMoonOnOrBefore(jdnOf(solarLongitudeTime(year, 270)));
+function winterMonthStart(year: number): number {
+  const cached = winterCache.get(year);
+  if (cached !== undefined) return cached;
+  const start = newMoonOnOrBefore(jdnOf(solarLongitudeTime(year, 270)));
+  winterCache.set(year, start);
+  return start;
+}
 
 /** [a, b) の日付に中気(太陽黄経が30度の倍数になる日)があるか */
 function hasChuki(a: number, b: number, years: number[]): boolean {
@@ -75,6 +83,7 @@ function monthsFromWinter(year: number): LunarMonth[] {
     month = (month % 12) + 1;
     months.push({ start: starts[i], month, leap: false });
   }
+  if (hasLeap && !leapUsed) throw new Error(`${year}年の冬至からの13か月に閏月が見つかりません`);
   cache.set(year, months);
   return months;
 }

@@ -20,6 +20,22 @@ describe("toLunar", () => {
     expect(toLunar(date)).toMatchObject(expected);
   });
 
+  it.each([
+    // 朔が日本時間の0時の前後数分にある日(日付は日本時間で決めること。中国では 2012/6/19 が5月1日)
+    [d(2012, 6, 20), { month: 5, leap: false, day: 1 }],
+    [d(2005, 12, 2), { month: 11, leap: false, day: 1 }],
+    [d(2017, 2, 26), { month: 2, leap: false, day: 1 }],
+    // 閏月
+    [d(1984, 11, 23), { month: 10, leap: true, day: 1 }],
+    [d(2014, 10, 24), { month: 9, leap: true, day: 1 }],
+    [d(2001, 5, 23), { month: 4, leap: true, day: 1 }],
+    // 範囲の端(1899年の冬至から数える)
+    [d(1900, 1, 1), { year: 1899, month: 12, leap: false, day: 1 }],
+    [d(2100, 2, 9), { year: 2100, month: 1, leap: false, day: 1 }],
+  ])("境界の日 %o は旧暦 %o", (date, expected) => {
+    expect(toLunar(date)).toMatchObject(expected);
+  });
+
   it("2033年問題は閏11月案になること", () => {
     expect(toLunar(d(2033, 12, 22))).toMatchObject({ month: 11, leap: true, day: 1 });
     expect(toLunar(d(2034, 1, 1))).toMatchObject({ month: 11, leap: true, day: 11 });
@@ -41,5 +57,6 @@ describe("lunarMonthSpan / lunarNewYear", () => {
   it("旧正月の日付", () => {
     expect(lunarNewYear(2026)).toEqual(d(2026, 2, 17));
     expect(lunarNewYear(2027)).toEqual(d(2027, 2, 7));
+    expect(lunarNewYear(1900)).toEqual(d(1900, 1, 31));
   });
 });
