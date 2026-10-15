@@ -7,10 +7,11 @@ import { sanmeiEntries } from "./sanmei";
 import { shichuEntries } from "./shichu";
 import { sukuyoEntries } from "./sukuyo";
 import { tarotEntries } from "./tarot";
+import mayaGlyphs from "./maya-glyphs.json";
 import photos from "./photos.json";
-import type { GuideEntry, GuidePhoto, GuideSystemId } from "./types";
+import type { GuideEntry, GuideLineArt, GuidePhoto, GuideSystemId } from "./types";
 
-export type { GuideEntry, GuideSystemId, GuideImage, GuidePhoto } from "./types";
+export type { GuideEntry, GuideSystemId, GuideImage, GuidePhoto, GuideLineArt } from "./types";
 
 /** 画像の一覧(photos.json)。ダウンロードのスクリプトと共有する */
 export interface GuidePhotoSource extends GuidePhoto {
@@ -23,17 +24,38 @@ export interface GuidePhotoSource extends GuidePhoto {
 export const guidePhotos = photos as GuidePhotoSource[];
 
 const photoByKey = new Map(
-  guidePhotos.map(({ system, id, path, alt, credit, focus, zoom }): [string, GuidePhoto] => [
-    `${system}:${id}`,
-    zoom === undefined ? { path, alt, credit, focus } : { path, alt, credit, focus, zoom },
-  ]),
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- file はダウンロードにだけ使う
+  guidePhotos.map(({ system, id, file, ...photo }): [string, GuidePhoto] => [`${system}:${id}`, photo]),
 );
 
-/** photos.json にある項目に photo を付ける */
-function withPhotos(entries: GuideEntry[]): GuideEntry[] {
+/** マヤ暦の太陽の紋章の線画の一覧(maya-glyphs.json)。どの版をダウンロードするかも記録する */
+export interface MayaGlyphSource {
+  /** 太陽の紋章の id(seal-1〜20) */
+  id: string;
+  /** 日の名前(ユカテク語。Imix〜Ahau) */
+  sign: string;
+  /** Wikimedia Commons のファイル名 */
+  file: string;
+  path: string;
+  /** ダウンロードする版(作者・日時・URL・SHA-1) */
+  revision: { user: string; timestamp: string; url: string; sha1: string };
+}
+
+export const mayaGlyphSources = mayaGlyphs as MayaGlyphSource[];
+
+export const MAYA_GLYPH_CREDIT = "古代マヤの日の文字(Wikimedia Commons の DaySign シリーズ)";
+
+const lineArtByKey = new Map(
+  mayaGlyphSources.map(({ id, path }): [string, GuideLineArt] => [`maya:${id}`, { path, credit: MAYA_GLYPH_CREDIT }]),
+);
+
+/** photos.json にある項目に photo を、maya-glyphs.json にある項目に lineArt を付ける */
+function withImages(entries: GuideEntry[]): GuideEntry[] {
   return entries.map((e) => {
-    const photo = photoByKey.get(`${e.system}:${e.id}`);
-    return photo ? { ...e, photo } : e;
+    const key = `${e.system}:${e.id}`;
+    const photo = photoByKey.get(key);
+    const lineArt = lineArtByKey.get(key);
+    return { ...e, ...(photo && { photo }), ...(lineArt && { lineArt }) };
   });
 }
 
@@ -48,10 +70,10 @@ export interface GuideSystem {
   groups: GuideGroup[];
 }
 
-/** 項目の並び順を保ったまま、グループ名の出現順でまとめる(画像のある項目には photo を付ける) */
+/** 項目の並び順を保ったまま、グループ名の出現順でまとめる(画像のある項目には photo・lineArt を付ける) */
 function groupEntries(entries: GuideEntry[]): GuideGroup[] {
   const groups: GuideGroup[] = [];
-  for (const entry of withPhotos(entries)) {
+  for (const entry of withImages(entries)) {
     const group = groups.find((g) => g.name === entry.group);
     if (group) group.entries.push(entry);
     else groups.push({ name: entry.group, entries: [entry] });

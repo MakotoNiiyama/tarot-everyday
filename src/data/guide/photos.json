@@ -204,7 +204,8 @@
     "path": "/guide-images/shichu/branch-1.jpg",
     "alt": "「子」を描いた浮世絵(歌川国芳「道化十二支」)",
     "credit": "歌川国芳『道化十二支』(1855)",
-    "focus": "center"
+    "focus": "center",
+    "tileOverlay": true
   },
   {
     "system": "shichu",
@@ -213,7 +214,8 @@
     "path": "/guide-images/shichu/branch-2.jpg",
     "alt": "「丑」を描いた浮世絵(歌川国芳「道化十二支」)",
     "credit": "歌川国芳『道化十二支』(1855)",
-    "focus": "40% center"
+    "focus": "40% center",
+    "tileOverlay": true
   },
   {
     "system": "shichu",
@@ -223,7 +225,8 @@
     "alt": "「寅」を描いた浮世絵(歌川国芳「道化十二支」)",
     "credit": "歌川国芳『道化十二支』(1855)",
     "focus": "center 30%",
-    "zoom": 1.35
+    "zoom": 1.35,
+    "tileOverlay": true
   },
   {
     "system": "shichu",
@@ -232,7 +235,8 @@
     "path": "/guide-images/shichu/branch-4.jpg",
     "alt": "「卯」を描いた浮世絵(歌川国芳「道化十二支」)",
     "credit": "歌川国芳『道化十二支』(1855)",
-    "focus": "center"
+    "focus": "center",
+    "tileOverlay": true
   },
   {
     "system": "shichu",
@@ -241,7 +245,8 @@
     "path": "/guide-images/shichu/branch-5.jpg",
     "alt": "「辰」を描いた浮世絵(歌川国芳「道化十二支」)",
     "credit": "歌川国芳『道化十二支』(1855)",
-    "focus": "center"
+    "focus": "center",
+    "tileOverlay": true
   },
   {
     "system": "shichu",
@@ -250,7 +255,8 @@
     "path": "/guide-images/shichu/branch-6.jpg",
     "alt": "「巳」を描いた浮世絵(歌川国芳「道化十二支」)",
     "credit": "歌川国芳『道化十二支』(1855)",
-    "focus": "55% center"
+    "focus": "55% center",
+    "tileOverlay": true
   },
   {
     "system": "shichu",
@@ -259,7 +265,8 @@
     "path": "/guide-images/shichu/branch-7.jpg",
     "alt": "「午」を描いた浮世絵(歌川国芳「道化十二支」)",
     "credit": "歌川国芳『道化十二支』(1855)",
-    "focus": "center"
+    "focus": "center",
+    "tileOverlay": true
   },
   {
     "system": "shichu",
@@ -268,7 +275,8 @@
     "path": "/guide-images/shichu/branch-8.jpg",
     "alt": "「未」を描いた浮世絵(歌川国芳「道化十二支」)",
     "credit": "歌川国芳『道化十二支』(1855)",
-    "focus": "55% center"
+    "focus": "55% center",
+    "tileOverlay": true
   },
   {
     "system": "shichu",
@@ -277,7 +285,8 @@
     "path": "/guide-images/shichu/branch-9.jpg",
     "alt": "「申」を描いた浮世絵(歌川国芳「道化十二支」)",
     "credit": "歌川国芳『道化十二支』(1855)",
-    "focus": "40% center"
+    "focus": "40% center",
+    "tileOverlay": true
   },
   {
     "system": "shichu",
@@ -286,7 +295,8 @@
     "path": "/guide-images/shichu/branch-10.jpg",
     "alt": "「酉」を描いた浮世絵(歌川国芳「道化十二支」)",
     "credit": "歌川国芳『道化十二支』(1855)",
-    "focus": "center"
+    "focus": "center",
+    "tileOverlay": true
   },
   {
     "system": "shichu",
@@ -295,7 +305,8 @@
     "path": "/guide-images/shichu/branch-11.jpg",
     "alt": "「戌」を描いた浮世絵(歌川国芳「道化十二支」)",
     "credit": "歌川国芳『道化十二支』(1855)",
-    "focus": "center"
+    "focus": "center",
+    "tileOverlay": true
   },
   {
     "system": "shichu",
@@ -304,6 +315,7 @@
     "path": "/guide-images/shichu/branch-12.jpg",
     "alt": "「亥」を描いた浮世絵(歌川国芳「道化十二支」)",
     "credit": "歌川国芳『道化十二支』(1855)",
-    "focus": "60% center"
+    "focus": "60% center",
+    "tileOverlay": true
   }
 ]

@@ -10,6 +10,11 @@ const pisces = getGuideEntry("horoscope", "sign-pisces")!;
 const ox = getGuideEntry("shichu", "branch-2")!;
 const chiron = getGuideEntry("horoscope", "body-chiron")!;
 const fool = getGuideEntry("tarot", "major-00")!;
+const dragon = getGuideEntry("maya", "seal-1")!;
+const sun = getGuideEntry("maya", "seal-20")!;
+
+/** 線画の読み込みを確かめる隠した画像 */
+const probeOf = (container: HTMLElement) => container.querySelector("img[hidden]")!;
 
 /** テストでは next.config の images.unoptimized が効かないので、src に元のパスが含まれることで確かめる */
 const srcOf = (img: Element | null) => decodeURIComponent(img?.getAttribute("src") ?? "");
@@ -78,5 +83,72 @@ describe("GuideDetailImage", () => {
   it("photo がない項目は出典を書かないこと", () => {
     render(<GuideDetailImage entry={chiron} />);
     expect(screen.queryByText(/パブリックドメイン/)).toBeNull();
+  });
+});
+
+describe("十二支のタイル(tileOverlay)", () => {
+  it("タイルでは絵を暗くし、上に元の色の漢字を重ねること", () => {
+    const { container } = render(<GuideEntryImage entry={ox} size="tile" />);
+    const img = screen.getByRole("img", { name: ox.photo!.alt });
+    expect(img.style.filter).toBe("brightness(0.42) saturate(0.85)");
+    const overlay = container.querySelector("[data-overlay]")!;
+    expect(overlay).toHaveTextContent("丑");
+    expect(overlay.querySelector("span")).toHaveStyle({ color: ox.image.kind === "glyph" ? ox.image.color : "" });
+  });
+
+  it("シート・詳細では暗くせず、文字を重ねないこと", () => {
+    const { container } = render(<GuideEntryImage entry={ox} size="sheet" />);
+    expect(screen.getByRole("img").style.filter).toBe("");
+    expect(container.querySelector("[data-overlay]")).toBeNull();
+    const detail = render(<GuideDetailImage entry={ox} />);
+    expect(detail.container.querySelector("[data-overlay]")).toBeNull();
+  });
+
+  it("tileOverlay のない項目(星座)のタイルは暗くしないこと", () => {
+    const { container } = render(<GuideEntryImage entry={pisces} size="tile" />);
+    expect(screen.getByRole("img").style.filter).toBe("");
+    expect(container.querySelector("[data-overlay]")).toBeNull();
+  });
+
+  it("絵を読み込めなければ、暗い枠を残さず普通の文字のタイルに戻すこと", () => {
+    const { container } = render(<GuideTile entry={ox} />);
+    fireEvent.error(screen.getByRole("img"));
+    expect(screen.queryByRole("img")).toBeNull();
+    expect(container.querySelector("[data-overlay]")).toBeNull();
+    expect(container.querySelector("[data-shape]")).toHaveTextContent("丑");
+  });
+});
+
+describe("太陽の紋章の線画(lineArt)", () => {
+  it("線画を mask-image にし、紋章の色で塗ること(タイル・シート)", () => {
+    for (const size of ["tile", "sheet"] as const) {
+      const { container, unmount } = render(<GuideEntryImage entry={dragon} size={size} />);
+      const art = container.querySelector<HTMLElement>("[data-line-art]")!;
+      expect(art.style.maskImage).toMatch(/^url\("?\/guide-images\/maya\/seal-1\.svg"?\)$/);
+      expect(art).toHaveStyle({ backgroundColor: "#C75B39" });
+      expect(art).toHaveAttribute("aria-hidden", "true");
+      expect(probeOf(container)).toHaveAttribute("src", "/guide-images/maya/seal-1.svg");
+      expect(screen.queryByText("赤い竜")).toBeNull();
+      unmount();
+    }
+  });
+
+  it("確認用の画像が読み込めなければ、紋章の名前の文字に戻すこと", () => {
+    const { container } = render(<GuideTile entry={sun} />);
+    fireEvent.error(probeOf(container));
+    expect(container.querySelector("[data-line-art]")).toBeNull();
+    expect(container.querySelector("[data-shape]")).toHaveTextContent(/黄色い\s*太陽/);
+  });
+
+  it("詳細ページでは線画を描き、下に出典を書くこと。読み込めなければ文字に戻して出典を消すこと", () => {
+    const { container } = render(<GuideDetailImage entry={sun} />);
+    expect(container.querySelector("[data-line-art]")).not.toBeNull();
+    expect(container.querySelector("figcaption")).toHaveTextContent(
+      "画像: 古代マヤの日の文字(Wikimedia Commons の DaySign シリーズ)・パブリックドメイン",
+    );
+    fireEvent.error(probeOf(container));
+    expect(container.querySelector("[data-line-art]")).toBeNull();
+    expect(container.querySelector("figcaption")).toBeNull();
+    expect(screen.getByText(/黄色い\s*太陽/)).toBeInTheDocument();
   });
 });

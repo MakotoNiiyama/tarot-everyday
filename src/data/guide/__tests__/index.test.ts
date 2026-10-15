@@ -1,5 +1,14 @@
 import { describe, it, expect } from "vitest";
-import { composeHeadline, getGuideEntry, guideHref, guidePhotos, guideSystems, searchGuide } from "../index";
+import {
+  MAYA_GLYPH_CREDIT,
+  composeHeadline,
+  getGuideEntry,
+  guideHref,
+  guidePhotos,
+  guideSystems,
+  mayaGlyphSources,
+  searchGuide,
+} from "../index";
 import type { PeriodResult } from "@/lib/fortune/types";
 
 describe("guideSystems", () => {
@@ -167,7 +176,14 @@ describe("guidePhotos(早見表の画像)", () => {
       expect(p.path).toBe(`/guide-images/${p.system}/${p.id}.jpg`);
       expect(p.file).not.toBe("");
       const photo = getGuideEntry(p.system, p.id)?.photo;
-      expect(photo).toEqual({ path: p.path, alt: p.alt, credit: p.credit, focus: p.focus, zoom: p.zoom });
+      expect(photo).toEqual({
+        path: p.path,
+        alt: p.alt,
+        credit: p.credit,
+        focus: p.focus,
+        zoom: p.zoom,
+        tileOverlay: p.tileOverlay,
+      });
       expect(photo?.focus).not.toBe("");
       if (photo?.zoom !== undefined) expect(photo.zoom).toBeGreaterThan(1);
       expect(photo?.alt).not.toBe("");
@@ -181,5 +197,49 @@ describe("guidePhotos(早見表の画像)", () => {
       expect(e.photo).toBeUndefined();
       expect(e.image.kind).toBe("photo");
     }
+  });
+
+  it("十二支の12件だけ、タイルで絵に文字を重ねること(tileOverlay)", () => {
+    const overlay = guidePhotos.filter((p) => p.tileOverlay).map((p) => `${p.system}:${p.id}`);
+    expect(overlay).toEqual(Array.from({ length: 12 }, (_, i) => `shichu:branch-${i + 1}`));
+    for (const p of guidePhotos) if (p.tileOverlay !== undefined) expect(p.tileOverlay).toBe(true);
+  });
+});
+
+describe("mayaGlyphSources(太陽の紋章の線画)", () => {
+  const SIGNS = ["Imix", "Ik", "Akbal", "Kan", "Chiccan", "Cimi", "Manik", "Lamat", "Muluc", "Oc", "Chuen", "Eb", "Ben", "Ix", "Men", "Cib", "Caban", "Etznab", "Cauac", "Ahau"];
+  /** 現在の版が Kilom691 による描き直しのもの。Ekwoman の元の版(2008年)を使う */
+  const REDRAWN = new Set(["Ahau", "Ben", "Chiccan", "Chuen", "Etznab", "Ik", "Ix", "Kan", "Lamat", "Muluc"]);
+
+  it("seal-1〜20 が Imix〜Ahau の DaySign に順に対応すること", () => {
+    expect(mayaGlyphSources.map((g) => [g.id, g.sign, g.file, g.path])).toEqual(
+      SIGNS.map((sign, i) => [`seal-${i + 1}`, sign, `DaySign ${sign}.svg`, `/guide-images/maya/seal-${i + 1}.svg`]),
+    );
+  });
+
+  it("どの版を使うかを記録し、描き直された10件は Ekwoman の元の版を使うこと", () => {
+    for (const g of mayaGlyphSources) {
+      expect(g.revision.url).toMatch(/^https:\/\/upload\.wikimedia\.org\/wikipedia\/commons\//);
+      expect(g.revision.sha1).toMatch(/^[0-9a-f]{40}$/);
+      if (REDRAWN.has(g.sign)) {
+        expect(g.revision.user, g.sign).toBe("Ekwoman");
+        expect(g.revision.timestamp.startsWith("2008-")).toBe(true);
+        expect(g.revision.url).toContain("/archive/");
+      } else {
+        expect(g.revision.user, g.sign).toBe("Vanisaac");
+      }
+    }
+  });
+
+  it("太陽の紋章の20件すべてに線画が付き、ほかの項目には付かないこと", () => {
+    const maya = guideSystems.find((s) => s.id === "maya")!.groups.flatMap((g) => g.entries);
+    const seals = maya.filter((e) => e.group === "太陽の紋章");
+    expect(seals).toHaveLength(20);
+    for (const e of seals) {
+      expect(e.lineArt).toEqual({ path: `/guide-images/maya/${e.id}.svg`, credit: MAYA_GLYPH_CREDIT });
+      expect(e.image.kind === "glyph" && e.image.color).toBeTruthy();
+    }
+    const others = guideSystems.flatMap((s) => s.groups.flatMap((g) => g.entries)).filter((e) => !seals.includes(e));
+    for (const e of others) expect(e.lineArt).toBeUndefined();
   });
 });

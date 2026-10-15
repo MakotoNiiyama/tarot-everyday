@@ -20,6 +20,19 @@ export interface GuidePhoto {
   focus: string;
   /** 余白・色見本などを切り落とすための拡大率(1より大きい数。focus を中心に拡大する)。なければ拡大しない */
   zoom?: number;
+  /** タイルでは絵を暗くし、上に image の文字(漢字など)を重ねる。シート・詳細は絵だけ */
+  tileOverlay?: boolean;
+}
+
+/**
+ * 項目の色(image.color)で塗る線画(CSS の mask-image に使う白黒の SVG。設計書 §7.2)。
+ * マヤ暦の太陽の紋章に、古代マヤの日の文字(Wikimedia Commons の DaySign シリーズ。パブリックドメイン)を出す
+ */
+export interface GuideLineArt {
+  /** public からのパス(/guide-images/...)。scripts/download-guide-images.mjs でダウンロードして線画に整える */
+  path: string;
+  /** 詳細ページの出典表示 */
+  credit: string;
 }
 
 /** 早見表の1項目(設計書 §7) */
@@ -41,6 +54,8 @@ export interface GuideEntry {
   image: GuideImage;
   /** 絵画・写真。あれば image の代わりに出し、読み込めなければ image に戻す */
   photo?: GuidePhoto;
+  /** 線画。あれば image の代わりに image.color で塗って出し、読み込めなければ image に戻す */
+  lineArt?: GuideLineArt;
   /** 同じ占術の関連項目の id */
   related?: string[];
 }
