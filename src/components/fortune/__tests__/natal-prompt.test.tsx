@@ -58,7 +58,7 @@ describe("PromptCard", () => {
     const user = userEvent.setup();
     render(<PromptCard profile={profile} readings={readings} today={today} tarot={null} />);
     const preview = screen.getByLabelText("コピーされる内容");
-    expect(preview).toHaveTextContent(/^あなたはプロの占い師です。/);
+    expect(preview).toHaveTextContent(/^東洋・西洋の複数の占術で求めた要素をもとに、/);
     expect(preview).toHaveTextContent("■ 相談内容: 特になし(総合的な鑑定)");
     await user.type(screen.getByRole("textbox", { name: "相談したいこと(任意)" }), "転職のこと");
     expect(preview).toHaveTextContent("■ 相談内容: 転職のこと");

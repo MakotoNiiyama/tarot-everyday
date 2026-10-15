@@ -56,7 +56,7 @@ export function generateFortunePrompt(input: FortunePromptInput): string {
   });
   const tarotLine = tarot ? `${tarot.card.name.ja}(${tarot.isReversed ? "逆位置" : "正位置"})` : "未抽選";
 
-  return `あなたはプロの占い師です。東洋・西洋の複数の占術で求めた要素をもとに、相談者の今日・今月・今年の運勢を総合的に鑑定してください。各要素の意味づけと、占術どうしの統合はあなたの知識で行ってください。
+  return `東洋・西洋の複数の占術で求めた要素をもとに、相談者の今日・今月・今年の運勢を総合的にわかりやすく鑑定してください。
 
 ■ 生年月日: ${year}年${month}月${day}日 / 出生時刻: ${time} / 出生地: ${place} / 性別: ${formatGender(profile.gender)}
 ■ 鑑定日: ${today.year}年${today.month}月${today.day}日
