@@ -6,19 +6,17 @@ import { Icon } from "@/components/icons/icon";
 import { primaryButton } from "@/lib/button-styles";
 import type { LocalDate } from "@/lib/fortune/local-date";
 import { generateFortunePrompt } from "@/lib/fortune/prompt";
-import type { BirthProfile, Period, SystemReading } from "@/lib/fortune/types";
+import type { BirthProfile, SystemReading } from "@/lib/fortune/types";
 
 /** 総合鑑定プロンプトのカード(相談内容の入力欄、コピーされる内容のプレビュー、コピー) */
 export function PromptCard({
   profile,
   readings,
-  period,
   today,
   tarot,
 }: {
   profile: BirthProfile;
   readings: SystemReading[];
-  period: Period;
   today: LocalDate;
   tarot: { card: TarotCard; isReversed: boolean } | null;
 }) {
@@ -40,8 +38,8 @@ export function PromptCard({
 
   // プレビューとコピーで同じ文を使う(相談内容を入力するとプレビューもすぐ変わる)
   const prompt = useMemo(
-    () => generateFortunePrompt({ profile, readings, period, today, question, tarot }),
-    [profile, readings, period, today, question, tarot],
+    () => generateFortunePrompt({ profile, readings, today, question, tarot }),
+    [profile, readings, today, question, tarot],
   );
   const previewId = `${inputId}-preview`;
 
@@ -68,14 +66,14 @@ export function PromptCard({
         総合鑑定プロンプト
       </h2>
       <p className="text-xs leading-relaxed text-gold-dim">
-        占術の結果と1dayタロットをまとめた鑑定用プロンプトを作成します。ChatGPT や Claude などに貼り付けて使えます。
+        今日・今月・今年の運勢をまとめて鑑定してもらうプロンプトを作成します。占術の要素だけを渡し、解釈は ChatGPT や Claude などに任せます。
       </p>
       <label htmlFor={inputId} className="sr-only">
         相談したいこと(任意)
       </label>
       <textarea
         id={inputId}
-        placeholder="相談したいこと(任意)"
+        placeholder="相談したいこと(任意) 例: 仕事の方向性について。来年の運勢も知りたい"
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
         className="min-h-[72px] w-full resize-none rounded-xl border border-gold/30 bg-background px-3 py-2.5 text-sm text-cream placeholder:text-gold-dim/70 focus:border-gold/60 focus:outline-none lg:min-h-20"

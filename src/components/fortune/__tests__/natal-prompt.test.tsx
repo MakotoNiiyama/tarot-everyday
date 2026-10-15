@@ -45,18 +45,18 @@ describe("PromptCard", () => {
     const user = userEvent.setup();
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
-    render(<PromptCard profile={profile} readings={readings} period="month" today={today} tarot={null} />);
+    render(<PromptCard profile={profile} readings={readings} today={today} tarot={null} />);
     await user.type(screen.getByRole("textbox", { name: "相談したいこと(任意)" }), "仕事のこと");
     await user.click(screen.getByRole("button", { name: "総合鑑定プロンプトをコピー" }));
     expect(writeText).toHaveBeenCalledTimes(1);
     expect(writeText.mock.calls[0][0]).toContain("■ 相談内容: 仕事のこと");
-    expect(writeText.mock.calls[0][0]).toContain("── 今月の運勢 ──");
+    expect(writeText.mock.calls[0][0]).toContain("── 今月の要素 ──");
     expect(await screen.findByText("コピーしました")).toBeInTheDocument();
   });
 
   it("コピーされる内容を省略表示し、相談内容の入力に合わせて変わり、全文を表示できること", async () => {
     const user = userEvent.setup();
-    render(<PromptCard profile={profile} readings={readings} period="day" today={today} tarot={null} />);
+    render(<PromptCard profile={profile} readings={readings} today={today} tarot={null} />);
     const preview = screen.getByLabelText("コピーされる内容");
     expect(preview).toHaveTextContent(/^あなたはプロの占い師です。/);
     expect(preview).toHaveTextContent("■ 相談内容: 特になし(総合的な鑑定)");
@@ -75,7 +75,7 @@ describe("PromptCard", () => {
       const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
       const writeText = vi.fn().mockRejectedValue(new Error("denied"));
       Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
-      render(<PromptCard profile={profile} readings={readings} period="day" today={today} tarot={null} />);
+      render(<PromptCard profile={profile} readings={readings} today={today} tarot={null} />);
       await user.click(screen.getByRole("button", { name: "総合鑑定プロンプトをコピー" }));
       expect(await screen.findByText("コピーできませんでした")).toBeInTheDocument();
       act(() => {
@@ -93,7 +93,7 @@ describe("PromptCard", () => {
       const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
       const writeText = vi.fn().mockResolvedValue(undefined);
       Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
-      render(<PromptCard profile={profile} readings={readings} period="day" today={today} tarot={null} />);
+      render(<PromptCard profile={profile} readings={readings} today={today} tarot={null} />);
       const button = screen.getByRole("button", { name: "総合鑑定プロンプトをコピー" });
       await user.click(button);
       act(() => {
@@ -115,7 +115,7 @@ describe("PromptCard", () => {
     try {
       const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
       Object.defineProperty(navigator, "clipboard", { value: { writeText: vi.fn().mockResolvedValue(undefined) }, configurable: true });
-      const { unmount } = render(<PromptCard profile={profile} readings={readings} period="day" today={today} tarot={null} />);
+      const { unmount } = render(<PromptCard profile={profile} readings={readings} today={today} tarot={null} />);
       await user.click(screen.getByRole("button", { name: "総合鑑定プロンプトをコピー" }));
       await screen.findByText("コピーしました");
       unmount();

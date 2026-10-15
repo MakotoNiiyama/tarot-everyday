@@ -51,7 +51,7 @@ export function FortuneReadings({
         </div>
         <div className="flex min-w-0 flex-col gap-4">
           <NatalSection readings={readings} />
-          <PromptCard profile={profile} readings={readings} period={period} today={today} tarot={tarot} />
+          <PromptCard profile={profile} readings={readings} today={today} tarot={tarot} />
         </div>
       </div>
     </div>
