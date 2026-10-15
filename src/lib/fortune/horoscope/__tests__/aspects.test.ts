@@ -24,6 +24,14 @@ describe("findAspects", () => {
     expect(findAspects([{ key: "sun", lon: 0 }, { key: "jupiter", lon: 127 }])).toHaveLength(1); // 7 <= 8
   });
 
+  it("ASC と MC の組はアスペクトにしないこと(ハウスの軸どうしの角度なので)", () => {
+    expect(findAspects([{ key: "asc", lon: 0 }, { key: "mc", lon: 270 }])).toEqual([]);
+    expect(findAspects([{ key: "asc", lon: 0 }, { key: "mc", lon: 270 }, { key: "sun", lon: 90 }]).map((a) => [a.a, a.b])).toEqual([
+      ["asc", "sun"],
+      ["mc", "sun"],
+    ]);
+  });
+
   it("感受点を含む組は主要5種・オーブ3だけ", () => {
     expect(findAspects([{ key: "node", lon: 0 }, { key: "sun", lon: 4 }])).toEqual([]);
     expect(findAspects([{ key: "asc", lon: 0 }, { key: "sun", lon: 92 }]).map((a) => a.kind)).toEqual(["square"]);

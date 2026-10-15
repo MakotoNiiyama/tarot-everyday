@@ -31,6 +31,7 @@ const LUMINARIES = new Set(["sun", "moon"]);
 /** 感受点(主要5種・オーブ3だけ) */
 const SENSITIVE = new Set(["node", "chiron", "lilith", "asc", "mc"]);
 const SENSITIVE_ORB = 3;
+const AXES = new Set(["asc", "mc"]);
 
 export interface Aspect {
   a: string;
@@ -48,6 +49,8 @@ export function findAspects(points: { key: string; lon: number }[]): Aspect[] {
     for (let j = i + 1; j < points.length; j++) {
       const p = points[i];
       const q = points[j];
+      // ASC と MC はハウスの軸どうしなので組にしない
+      if (AXES.has(p.key) && AXES.has(q.key)) continue;
       const sep = Math.abs(((q.lon - p.lon + 540) % 360) - 180);
       const sensitive = SENSITIVE.has(p.key) || SENSITIVE.has(q.key);
       const luminary = LUMINARIES.has(p.key) || LUMINARIES.has(q.key);
