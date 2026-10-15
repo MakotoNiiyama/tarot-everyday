@@ -4,6 +4,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { FactDetailSheet } from "@/components/guide/fact-detail-sheet";
 import { getGuideEntry } from "@/data/guide";
 import type { Fact, SystemReading } from "@/lib/fortune/types";
+import { NatalChartView } from "./natal-chart";
 
 /** 1つの事実のタイル(タップで詳細) */
 function FactTile({ fact }: { fact: Fact }) {
@@ -47,10 +48,12 @@ export function NatalSection({ readings }: { readings: SystemReading[] }) {
       </div>
       <Accordion className="flex flex-col gap-2">
         {readings.map((r) => {
-          const tiles = r.natal.slice(0, 3);
-          const rows = r.natal.slice(3);
+          const charted = new Set(r.chart?.factKeys ?? []);
+          const tiles = r.chart ? [] : r.natal.slice(0, 3);
+          const rows = r.chart ? r.natal.filter((f) => !charted.has(f.key)) : r.natal.slice(3);
           const first = r.natal[0]?.refs[0];
           const summary = first ? getGuideEntry(first.system, first.id)?.summary : undefined;
+          const chartLabel = r.chart ? `${r.name}の${r.chart.kind === "pillars" ? "命式" : "人体星図"}` : "";
           return (
             <AccordionItem
               key={r.id}
@@ -60,13 +63,17 @@ export function NatalSection({ readings }: { readings: SystemReading[] }) {
               <AccordionTrigger className="min-h-[52px] px-4 font-heading text-base text-cream">{r.name}</AccordionTrigger>
               {/* 間隔は gap で取るので、AccordionContent が段落に付ける下の余白は打ち消す */}
               <AccordionContent className="flex flex-col gap-3 px-4 pb-4 [&_p:not(:last-child)]:mb-0">
-                <ul className="grid grid-cols-3 gap-2">
-                  {tiles.map((f) => (
-                    <li key={f.key}>
-                      <FactTile fact={f} />
-                    </li>
-                  ))}
-                </ul>
+                {r.chart ? (
+                  <NatalChartView chart={r.chart} label={chartLabel} />
+                ) : (
+                  <ul className="grid grid-cols-3 gap-2">
+                    {tiles.map((f) => (
+                      <li key={f.key}>
+                        <FactTile fact={f} />
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 {rows.length > 0 && (
                   <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-[13px]">
                     {rows.map((f) => (
