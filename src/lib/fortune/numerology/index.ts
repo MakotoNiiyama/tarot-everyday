@@ -1,6 +1,7 @@
 // src/lib/fortune/numerology/index.ts
 import { numberId } from "../element-ids";
 import { daysInMonth, formatSlash } from "../local-date";
+import { masterNumberNote } from "../natal-notes";
 import type { ElementRef, Fact, FortuneSystemModule } from "../types";
 import { birthdayNumber, lifePath, personalDay, personalMonth, personalYear } from "./calc";
 
@@ -28,6 +29,7 @@ export const numerology: FortuneSystemModule = {
         "生年月日の全桁を一度に足す方式。11・22・33はマスターナンバーとして残す(パーソナルナンバーは1〜9に還元。年の区切りは1月1日)",
       natal: [lpFact, fact("birthday", "バースデー", bd)],
       ambiguous: false,
+      ...(masterNumberNote(lp) ? { highlights: [masterNumberNote(lp)!] } : {}),
       periods: {
         day: {
           period: "day",

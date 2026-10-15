@@ -1,6 +1,7 @@
 // src/lib/fortune/kyusei/index.ts
 import { describeCandidates, describeResolved, isAmbiguous, representative, resolvedValues, resolveOverRange } from "../ambiguity";
 import { calendarPeriod } from "../astro/calendar-period";
+import { sameStarNote } from "../natal-notes";
 import { jieBoundariesWithin } from "../astro/solar-terms";
 import { directionId, palaceId, starId, type Direction } from "../element-ids";
 import type { LocalDate } from "../local-date";
@@ -129,6 +130,10 @@ export const kyusei: FortuneSystemModule = {
         "年は立春、月は節入りで区切る。日盤は冬至・夏至に最も近い甲子日で陽遁・陰遁を切り替える。中宮傾斜は本命星ごとの表(五黄同士は男性=兌宮・女性=乾宮)。吉方位は五黄殺・暗剣殺・本命殺・本命的殺・破を除き、本命星と相生・比和の星が入る方位",
       natal: facts,
       ambiguous: isAmbiguous(natal),
+      // 本命星と月命星が同じ星(候補がすべて同じ星のときだけ)
+      ...(values.every((n) => n.honmei === n.getsumei && n.honmei === values[0].honmei)
+        ? { highlights: [sameStarNote(values[0].honmei, STAR_NAMES[values[0].honmei - 1])] }
+        : {}),
       periods: {
         day: periodResult("day", base, today, note),
         month: periodResult("month", base, today, note),

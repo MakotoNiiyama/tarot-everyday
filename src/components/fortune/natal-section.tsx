@@ -3,6 +3,7 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { FactDetailSheet } from "@/components/guide/fact-detail-sheet";
 import { getGuideEntry } from "@/data/guide";
+import { joinNatalNotes } from "@/lib/fortune/natal-notes";
 import type { Fact, SystemReading } from "@/lib/fortune/types";
 import { NatalChartView, factDisplayValue } from "./natal-chart";
 
@@ -91,7 +92,9 @@ export function NatalSection({ readings }: { readings: SystemReading[] }) {
                 {r.natal.map((f) => (
                   <CandidateNote key={f.key} fact={f} />
                 ))}
-                {summary && <p className="text-[13px] leading-[1.7]">{summary}</p>}
+                {(summary || r.highlights) && (
+                  <p className="text-[13px] leading-[1.7]">{joinNatalNotes(summary, r.highlights)}</p>
+                )}
               </AccordionContent>
             </AccordionItem>
           );

@@ -1,11 +1,12 @@
 // src/lib/fortune/sanmei/index.ts
-import { isAmbiguous, representative, resolveOverRange } from "../ambiguity";
+import { isAmbiguous, representative, resolvedValues, resolveOverRange } from "../ambiguity";
 import { calendarPeriod } from "../astro/calendar-period";
 import { jieBoundariesWithin } from "../astro/solar-terms";
 import { ageOn, daiunAt, daiunNote, formatDaiunPlan, resolveDaiun, type DaiunPlan } from "../daiun";
 import { ijoId, isouId, mainStarId, shukumeiId, subStarId, tenchuId } from "../element-ids";
 import { resolvedFact } from "../fact";
 import type { LocalDate } from "../local-date";
+import { ijoNote, shukumeiNote } from "../natal-notes";
 import { GANSHI_LABEL, PERIOD_WORD } from "../period-labels";
 import { BRANCHES, STEMS, branchOf, cycleName, stemOf, tenGodIndex, twelveStageIndex } from "../sexagenary";
 import { standardDate } from "../tokyo-time";
@@ -133,6 +134,21 @@ export const sanmei: FortuneSystemModule = {
     ) as Record<BodyKey, Fact>;
 
     const base = representative(natal);
+    // 宿命中殺・異常干支の「また、…」の一文。出生時刻の候補で結果が分かれるときは出さない
+    const sameForAll = (text: (n: SanmeiNatal) => string | undefined) => {
+      const texts = resolvedValues(natal).map(text);
+      return texts.every((t) => t === texts[0]) ? texts[0] : undefined;
+    };
+    const highlights = [
+      sameForAll((n) => shukumeiNote(shukumeiChusatsu(n).map((k) => SHUKUMEI_NAMES[k]))),
+      sameForAll((n) => {
+        const found = ijoKanshi(n);
+        return ijoNote(
+          found.map((m) => `${PILLAR_NAMES[m.pillar]}の${cycleName(m.cycleNumber - 1)}`),
+          found.every((m) => m.kind === "angou"),
+        );
+      }),
+    ].filter((t): t is string => t !== undefined);
     const daiunResolved = profile.gender ? resolveDaiun(natal, moment.range, profile.gender) : null;
     // 運勢の大運は代表の候補で計算し、候補に分かれるときは今年の運勢に注記を添える
     const plan = daiunResolved ? representative(daiunResolved) : null;
@@ -194,6 +210,7 @@ export const sanmei: FortuneSystemModule = {
         "年・月・日の3柱(時柱は使わない)。年は立春、月は節入りで区切る。日柱の日付は、時刻指定時は標準時(サマータイムは1時間戻す)、それ以外は誕生日の暦日。蔵干は二十八元を節入り日を1日目とする日数で選ぶ(高尾学館式。日数は標準時の日付で数える)。人体星図は頭=年干、腹=月干、左手(東)=年支蔵干、胸=月支蔵干、右手(西)=日支蔵干、十二大従星は年支=初年・月支=中年・日支=晩年。天中殺は日干支の旬で決める。宿命中殺は生年・生月・生日・日座・日居、異常干支は通常6種と暗合7種、位相法は支合・半会・方三位・対冲・刑・害・破。大運は節入り日までの日数÷3を四捨五入(1〜10歳)",
       natal: facts,
       ambiguous: isAmbiguous(natal),
+      ...(highlights.length ? { highlights } : {}),
       chart,
       periods: {
         day: periodResult("day", base, today, daiun),

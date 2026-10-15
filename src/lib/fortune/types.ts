@@ -123,6 +123,8 @@ export interface SystemReading {
   ambiguous: boolean;
   /** 人物像の専用の図(四柱推命の命式表・算命学の人体星図)。なければタイルで表示する */
   chart?: NatalChart;
+  /** 人物像の説明に続ける「また、…」の一文(黒KIN・異常干支などの特殊な配置に当たるときだけ。出生時刻の候補で結果が分かれるときは出さない) */
+  highlights?: string[];
 }
 
 export interface FortuneSystemModule {

@@ -3,6 +3,7 @@ import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NatalSection } from "../natal-section";
 import { PromptCard } from "../prompt-card";
+import { BLACK_KIN_NOTE } from "@/lib/fortune/natal-notes";
 import { readAll } from "@/lib/fortune/registry";
 import type { BirthProfile } from "@/lib/fortune/types";
 
@@ -27,6 +28,15 @@ describe("NatalSection", () => {
     render(<NatalSection readings={amb} />);
     await user.click(screen.getByRole("button", { name: "九星気学" }));
     expect(screen.getAllByText(/候補/).length).toBeGreaterThan(0);
+  });
+
+  it("特殊な配置に当たるときは、説明文に「また、…」の一文を続けること", async () => {
+    const user = userEvent.setup();
+    // 1988/3/29 は KIN 20(黒KIN)
+    const black = readAll({ version: 1, date: { year: 1988, month: 3, day: 29 }, time: { kind: "unknown" } }, today);
+    render(<NatalSection readings={black} />);
+    await user.click(screen.getByRole("button", { name: "マヤ暦" }));
+    expect(screen.getByText((text) => text.endsWith(BLACK_KIN_NOTE))).toBeInTheDocument();
   });
 });
 

@@ -1,5 +1,6 @@
 // src/lib/fortune/maya/index.ts
 import { BLACK_KIN_ID, moonId, sealId, toneId } from "../element-ids";
+import { BLACK_KIN_NOTE } from "../natal-notes";
 import { addDays, formatSlash, type LocalDate } from "../local-date";
 import type { ElementRef, Fact, FortuneSystemModule } from "../types";
 import {
@@ -69,6 +70,7 @@ export const maya: FortuneSystemModule = {
         "13の月の暦(ドリームスペル)系。2月29日は数えない(2月28日と同じKIN)。年回りKINは直近の誕生日のKIN。黒KIN(銀河の活性化の門)はツォルキンの52のKIN",
       natal,
       ambiguous: false,
+      ...(isBlackKin(kin) ? { highlights: [BLACK_KIN_NOTE] } : {}),
       periods: {
         day: {
           period: "day",
