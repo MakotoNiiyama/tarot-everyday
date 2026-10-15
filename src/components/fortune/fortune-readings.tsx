@@ -6,7 +6,7 @@ import type { LocalDate } from "@/lib/fortune/local-date";
 import { readAll } from "@/lib/fortune/registry";
 import type { BirthProfile, Period } from "@/lib/fortune/types";
 import { useDailyDraw } from "@/lib/use-daily-draw";
-import { NatalSection } from "./natal-section";
+import { NatalSection, type NatalHeading } from "./natal-section";
 import { PeriodTabs } from "./period-tabs";
 import { PromptCard } from "./prompt-card";
 import { SystemPeriodCard } from "./system-period-card";
@@ -17,15 +17,18 @@ const PERIOD_HEADING: Record<Period, string> = { day: "今日の運勢", month: 
  * 計算結果を使う運勢ページの本体。計算エンジンを含むので fortune-content から動的に読み込む。
  * 本文の幅が十分あるとき(PC 1280px〜で詳細パネルを閉じているとき)は、左に1dayタロット・タブ・運勢カード、
  * 右に人物像とプロンプトの2カラム。詳細パネルを開くと本文が縮むので、画面幅に加えて本文の幅(コンテナクエリ)も条件にする。
+ * tarotSlot を渡さないとき(登録していない生年月日で占うとき)は、1dayタロットを表示せず、プロンプトにも入れない。
  */
 export function FortuneReadings({
   profile,
   today,
   tarotSlot,
+  natalHeading,
 }: {
   profile: BirthProfile;
   today: LocalDate;
-  tarotSlot: ReactNode;
+  tarotSlot?: ReactNode;
+  natalHeading?: NatalHeading;
 }) {
   const [period, setPeriod] = useState<Period>("day");
   const readings = useMemo(() => readAll(profile, today), [profile, today]);
@@ -50,8 +53,8 @@ export function FortuneReadings({
           </section>
         </div>
         <div className="flex min-w-0 flex-col gap-4">
-          <NatalSection readings={readings} />
-          <PromptCard profile={profile} readings={readings} today={today} tarot={tarot} />
+          <NatalSection readings={readings} heading={natalHeading} />
+          <PromptCard profile={profile} readings={readings} today={today} tarot={tarot} omitTarot={tarotSlot === undefined} />
         </div>
       </div>
     </div>

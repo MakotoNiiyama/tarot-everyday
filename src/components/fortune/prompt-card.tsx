@@ -14,11 +14,14 @@ export function PromptCard({
   readings,
   today,
   tarot,
+  omitTarot = false,
 }: {
   profile: BirthProfile;
   readings: SystemReading[];
   today: LocalDate;
   tarot: { card: TarotCard; isReversed: boolean } | null;
+  /** true ならプロンプトに1dayタロットの節を入れない */
+  omitTarot?: boolean;
 }) {
   const [question, setQuestion] = useState("");
   const [status, setStatus] = useState<"idle" | "copied" | "failed">("idle");
@@ -38,8 +41,8 @@ export function PromptCard({
 
   // プレビューとコピーで同じ文を使う(相談内容を入力するとプレビューもすぐ変わる)
   const prompt = useMemo(
-    () => generateFortunePrompt({ profile, readings, today, question, tarot }),
-    [profile, readings, today, question, tarot],
+    () => generateFortunePrompt({ profile, readings, today, question, tarot, omitTarot }),
+    [profile, readings, today, question, tarot, omitTarot],
   );
   const previewId = `${inputId}-preview`;
 

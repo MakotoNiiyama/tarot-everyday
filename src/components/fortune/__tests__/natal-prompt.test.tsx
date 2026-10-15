@@ -22,6 +22,13 @@ describe("NatalSection", () => {
     expect(screen.getByText(maya.natal[0].value)).toBeInTheDocument();
   });
 
+  it("見出しを差し替えられ、セクションの名前も見出しに合わせること", () => {
+    render(<NatalSection readings={readings} heading={{ title: "この生年月日の人物像", accent: "About this birthday" }} />);
+    expect(screen.getByRole("region", { name: "この生年月日の人物像" })).toBeInTheDocument();
+    expect(screen.getByText("About this birthday")).toBeInTheDocument();
+    expect(screen.queryByText("あなたについて")).not.toBeInTheDocument();
+  });
+
   it("候補がある事実を候補として表示すること", async () => {
     const user = userEvent.setup();
     const amb = readAll({ version: 1, date: { year: 1990, month: 2, day: 4 }, time: { kind: "unknown" } }, today);
@@ -67,6 +74,14 @@ describe("PromptCard", () => {
     expect(toggle).toHaveAttribute("aria-controls", preview.id);
     await user.click(toggle);
     expect(screen.getByRole("button", { name: "折りたたむ" })).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("omitTarot を付けると1dayタロットをプロンプトに入れないこと", () => {
+    const { unmount } = render(<PromptCard profile={profile} readings={readings} today={today} tarot={null} />);
+    expect(screen.getByLabelText("コピーされる内容")).toHaveTextContent("今日の1dayタロット");
+    unmount();
+    render(<PromptCard profile={profile} readings={readings} today={today} tarot={null} omitTarot />);
+    expect(screen.getByLabelText("コピーされる内容")).not.toHaveTextContent("1dayタロット");
   });
 
   it("コピーに失敗したら「コピーできませんでした」と表示し、しばらくすると消すこと", async () => {

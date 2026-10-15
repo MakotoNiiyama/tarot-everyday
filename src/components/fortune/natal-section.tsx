@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { FactDetailSheet } from "@/components/guide/fact-detail-sheet";
 import { getGuideEntry } from "@/data/guide";
@@ -38,14 +39,25 @@ function CandidateNote({ fact }: { fact: Fact }) {
   );
 }
 
+/** 人物像の見出し。既定は自分のプロフィール用の「あなたについて」 */
+export interface NatalHeading {
+  /** 見出し(セクションの名前にもなる) */
+  title: string;
+  /** 見出しの上の Caveat の一言 */
+  accent: string;
+}
+
+const DEFAULT_HEADING: NatalHeading = { title: "あなたについて", accent: "About you" };
+
 /** 「あなたについて」。占術ごとの人物像をアコーディオンで表示する */
-export function NatalSection({ readings }: { readings: SystemReading[] }) {
+export function NatalSection({ readings, heading = DEFAULT_HEADING }: { readings: SystemReading[]; heading?: NatalHeading }) {
+  const headingId = useId();
   return (
-    <section aria-labelledby="natal-heading" className="flex flex-col gap-3">
+    <section aria-labelledby={headingId} className="flex flex-col gap-3">
       <div className="flex flex-col gap-1.5">
-        <p className="font-accent text-xl leading-none text-gold">About you</p>
-        <h2 id="natal-heading" className="font-heading text-xl">
-          あなたについて
+        <p className="font-accent text-xl leading-none text-gold">{heading.accent}</p>
+        <h2 id={headingId} className="font-heading text-xl">
+          {heading.title}
         </h2>
       </div>
       <Accordion className="flex flex-col gap-2">
