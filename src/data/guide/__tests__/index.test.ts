@@ -3,7 +3,7 @@ import { composeHeadline, getGuideEntry, guideHref, guideSystems, searchGuide } 
 import type { PeriodResult } from "@/lib/fortune/types";
 
 describe("guideSystems", () => {
-  it("タブの順は タロット・数秘術・九星気学・マヤ暦・四柱推命・算命学・宿曜", () => {
+  it("タブの順は タロット・数秘術・九星気学・マヤ暦・四柱推命・算命学・宿曜・西洋占星術", () => {
     expect(guideSystems.map((s) => [s.id, s.label])).toEqual([
       ["tarot", "タロット"],
       ["numerology", "数秘術"],
@@ -12,6 +12,7 @@ describe("guideSystems", () => {
       ["shichu", "四柱推命"],
       ["sanmei", "算命学"],
       ["sukuyo", "宿曜"],
+      ["horoscope", "西洋占星術"],
     ]);
   });
 
@@ -58,6 +59,13 @@ describe("guideSystems", () => {
       ["二十七宿", 27],
       ["三九の関係", 11],
     ]);
+    expect(byId.horoscope.groups.map((g) => [g.name, g.entries.length])).toEqual([
+      ["十二星座", 12],
+      ["天体", 13],
+      ["ハウス", 12],
+      ["アスペクト", 11],
+      ["エレメント", 4],
+    ]);
   });
 });
 
@@ -79,6 +87,7 @@ describe("searchGuide", () => {
     expect(searchGuide("きのえ").map((e) => `${e.system}:${e.id}`)).toContain("shichu:stem-1");
     expect(searchGuide("てんちゅうさつ").filter((e) => e.system === "sanmei")).toHaveLength(6);
     expect(searchGuide("ひつしゅく").map((e) => `${e.system}:${e.id}`)).toContain("sukuyo:mansion-2");
+    expect(searchGuide("おひつじざ").map((e) => `${e.system}:${e.id}`)).toContain("horoscope:sign-aries");
   });
 
   it("名前・読み・英名・キーワードで全占術を横断して検索できること", () => {

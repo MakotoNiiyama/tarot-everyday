@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { ELEMENT_IDS } from "@/lib/fortune/element-ids";
 import { numerologyEntries } from "../numerology";
+import { horoscopeEntries } from "../horoscope";
 import { kyuseiEntries } from "../kyusei";
 import { mayaEntries } from "../maya";
 import { sanmeiEntries } from "../sanmei";
@@ -20,6 +21,7 @@ const cases: [keyof typeof ELEMENT_IDS, GuideEntry[]][] = [
   ["shichu", shichuEntries],
   ["sanmei", sanmeiEntries],
   ["sukuyo", sukuyoEntries],
+  ["horoscope", horoscopeEntries],
 ];
 
 /** 運勢の見出しに使うグループ(periodNote を持つ)。書かれていない占術は全グループ */
@@ -27,6 +29,7 @@ const PERIOD_GROUPS: Partial<Record<keyof typeof ELEMENT_IDS, string[]>> = {
   shichu: ["通変星"],
   sanmei: ["十大主星", "天中殺"],
   sukuyo: ["三九の関係"],
+  horoscope: ["ハウス"],
 };
 
 describe.each(cases)("%s の辞書データ", (system, entries) => {
@@ -59,7 +62,7 @@ describe.each(cases)("%s の辞書データ", (system, entries) => {
     }
     const text = [e.name, e.reading, e.summary, e.periodNote, ...e.keywords].join("");
     expect(text).not.toMatch(EMOJI_OR_SYMBOL);
-    expect(e.image.kind).toBe("glyph");
+    expect(["glyph", ...(system === "horoscope" ? ["astro"] : [])]).toContain(e.image.kind);
     // 文字の絵は改行(\n)で3行まで。各行は空にしない
     if (e.image.kind === "glyph") {
       const lines = e.image.text.split("\n");

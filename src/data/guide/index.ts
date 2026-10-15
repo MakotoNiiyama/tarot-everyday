@@ -1,4 +1,5 @@
 import type { ElementRef, PeriodResult } from "@/lib/fortune/types";
+import { horoscopeEntries } from "./horoscope";
 import { kyuseiEntries } from "./kyusei";
 import { mayaEntries } from "./maya";
 import { numerologyEntries } from "./numerology";
@@ -41,6 +42,7 @@ export const guideSystems: GuideSystem[] = [
   { id: "shichu", label: "四柱推命", groups: groupEntries(shichuEntries) },
   { id: "sanmei", label: "算命学", groups: groupEntries(sanmeiEntries) },
   { id: "sukuyo", label: "宿曜", groups: groupEntries(sukuyoEntries) },
+  { id: "horoscope", label: "西洋占星術", groups: groupEntries(horoscopeEntries) },
 ];
 
 const allEntries: GuideEntry[] = guideSystems.flatMap((s) => s.groups.flatMap((g) => g.entries));

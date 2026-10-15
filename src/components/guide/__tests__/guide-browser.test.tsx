@@ -16,7 +16,7 @@ describe("GuideBrowser", () => {
   it("占術のタブを tablist として表示し、URL の tab を選択状態にすること", () => {
     renderAt("?tab=kyusei");
     const tabs = screen.getByRole("tablist", { name: "占術" });
-    expect(within(tabs).getAllByRole("tab").map((t) => t.textContent)).toEqual(["タロット", "数秘術", "九星気学", "マヤ暦", "四柱推命", "算命学", "宿曜"]);
+    expect(within(tabs).getAllByRole("tab").map((t) => t.textContent)).toEqual(["タロット", "数秘術", "九星気学", "マヤ暦", "四柱推命", "算命学", "宿曜", "西洋占星術"]);
     expect(screen.getByRole("tab", { name: "九星気学" })).toHaveAttribute("aria-selected", "true");
   });
 
@@ -57,12 +57,12 @@ describe("GuideBrowser", () => {
     expect(window.location.search).toBe("?tab=kyusei");
 
     await user.keyboard("{End}");
-    expect(tab("宿曜")).toHaveFocus();
+    expect(tab("西洋占星術")).toHaveFocus();
     await user.keyboard("{ArrowRight}");
     expect(tab("タロット")).toHaveFocus();
     expect(tab("タロット")).toHaveAttribute("aria-selected", "true");
     await user.keyboard("{ArrowLeft}");
-    expect(tab("宿曜")).toHaveFocus();
+    expect(tab("西洋占星術")).toHaveFocus();
     await user.keyboard("{Home}");
     expect(tab("タロット")).toHaveFocus();
     expect(window.location.search).toBe("?tab=tarot");
