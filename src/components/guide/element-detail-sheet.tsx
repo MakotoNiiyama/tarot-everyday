@@ -20,8 +20,11 @@ export function ElementDetailSheet({
   children,
   className,
   triggerLabel,
+  inGuide,
 }: {
   element: ElementRef;
+  /** 早見表の一覧から開いたとき。リンクを「詳しく見る」にする */
+  inGuide?: boolean;
   /** トリガーの中身。フレージングコンテンツだけ */
   children: ReactNode;
   className?: string;
@@ -31,7 +34,7 @@ export function ElementDetailSheet({
     const card = getCardById(element.id);
     if (!card) return <span className={className}>{children}</span>;
     return (
-      <CardDetailSheet card={card} className={className} triggerLabel={triggerLabel}>
+      <CardDetailSheet card={card} className={className} triggerLabel={triggerLabel} inGuide={inGuide}>
         {children}
       </CardDetailSheet>
     );
@@ -43,6 +46,7 @@ export function ElementDetailSheet({
       heading={{ title: entry.name, subtitle: entry.group, reading: entry.reading || undefined, nameEn: entry.nameEn }}
       body={<GuideEntryBody entry={entry} />}
       guideHref={guideHref(entry.system, entry.id)}
+      inGuide={inGuide}
       className={className}
       triggerLabel={triggerLabel}
     >

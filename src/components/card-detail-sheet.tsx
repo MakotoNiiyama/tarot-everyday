@@ -13,8 +13,11 @@ export function CardDetailSheet({
   children,
   className,
   triggerLabel,
+  inGuide,
 }: {
   card: TarotCard;
+  /** 早見表の一覧から開いたとき */
+  inGuide?: boolean;
   children: React.ReactNode;
   className?: string;
   triggerLabel?: string;
@@ -24,6 +27,7 @@ export function CardDetailSheet({
       heading={{ title: card.name.ja, subtitle: arcanaLabel(card), nameEn: card.name.en }}
       body={<TarotCardSheetBody card={card} />}
       guideHref={`/guide/tarot/${card.id}`}
+      inGuide={inGuide}
       className={className}
       triggerLabel={triggerLabel}
     >

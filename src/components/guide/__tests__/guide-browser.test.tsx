@@ -1,7 +1,13 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { GuideBrowser, GuideBrowserView } from "../guide-browser";
+import { DetailPanelLayout } from "@/components/detail/detail-panel";
+
+const originalMatchMedia = window.matchMedia;
+afterEach(() => {
+  window.matchMedia = originalMatchMedia;
+});
 
 beforeEach(() => {
   window.history.replaceState(null, "", "/guide");
@@ -29,7 +35,7 @@ describe("GuideBrowser", () => {
     renderAt("?tab=kyusei");
     const panel = screen.getByRole("tabpanel");
     expect(within(panel).getByRole("heading", { name: "九星 9項目" })).toBeInTheDocument();
-    expect(within(panel).getByRole("link", { name: "一白水星の詳細を見る" })).toBeInTheDocument();
+    expect(within(panel).getByRole("button", { name: "一白水星の詳細を見る" })).toBeInTheDocument();
   });
 
   it("タブを押すと URL の tab を置き換え、一覧が変わること", async () => {
@@ -39,7 +45,7 @@ describe("GuideBrowser", () => {
     expect(window.location.pathname).toBe("/guide");
     expect(window.location.search).toBe("?tab=maya");
     expect(screen.getByRole("tab", { name: "マヤ暦" })).toHaveAttribute("aria-selected", "true");
-    expect(screen.getByRole("link", { name: "白い魔法使いの詳細を見る" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "白い魔法使いの詳細を見る" })).toBeInTheDocument();
   });
 
   it("選択中のタブだけがタブ順に入り、矢印・Home・End でフォーカスと選択が移ること", async () => {
@@ -75,7 +81,7 @@ describe("GuideBrowser", () => {
     expect(screen.getByRole("status")).toHaveTextContent(/件見つかりました/);
     const results = screen.getByRole("region", { name: "検索結果" });
     const kyusei = within(results).getByRole("region", { name: /九星気学/ });
-    expect(within(kyusei).getByRole("link", { name: "一白水星の詳細を見る" })).toBeInTheDocument();
+    expect(within(kyusei).getByRole("button", { name: "一白水星の詳細を見る" })).toBeInTheDocument();
     expect(screen.queryByRole("tabpanel")).not.toBeInTheDocument();
   });
 
@@ -87,6 +93,35 @@ describe("GuideBrowser", () => {
     const results = screen.getByRole("region", { name: "検索結果" });
     const headings = within(results).getAllByRole("heading").map((h) => h.textContent);
     expect(headings.findIndex((h) => h?.startsWith("九星気学"))).toBeLessThan(headings.findIndex((h) => h?.startsWith("マヤ暦")));
+  });
+
+  it("タイルを押すとページを移らずに詳細シートで開き、「詳しく見る」で詳細ページへ移れること", async () => {
+    const user = userEvent.setup();
+    renderAt("?tab=maya");
+    await user.click(screen.getByRole("button", { name: "白い魔法使いの詳細を見る" }));
+    const dialog = await screen.findByRole("dialog", { name: "白い魔法使い" });
+    expect(dialog).toHaveTextContent("しろいまほうつかい");
+    expect(window.location.pathname).toBe("/guide");
+    expect(within(dialog).getByRole("link", { name: "詳しく見る" })).toHaveAttribute("href", "/guide/maya/seal-14");
+    expect(within(dialog).queryByRole("link", { name: "早見表で見る" })).not.toBeInTheDocument();
+  });
+
+  it("タロットのタイルはカードの詳細(正位置・逆位置)をシートで開くこと", async () => {
+    const user = userEvent.setup();
+    renderAt("?tab=tarot");
+    await user.click(screen.getByRole("button", { name: "愚者の詳細を見る" }));
+    const dialog = await screen.findByRole("dialog", { name: "愚者" });
+    expect(within(dialog).getByRole("tab", { name: /正位置/ })).toBeInTheDocument();
+    expect(within(dialog).getByRole("link", { name: "詳しく見る" })).toHaveAttribute("href", "/guide/tarot/major-00");
+  });
+
+  it("検索結果のタイルも詳細シートで開くこと", async () => {
+    const user = userEvent.setup();
+    renderAt("");
+    await user.type(screen.getByRole("searchbox", { name: "早見表を検索" }), "一白");
+    await user.click(screen.getByRole("button", { name: "一白水星の詳細を見る" }));
+    const dialog = await screen.findByRole("dialog", { name: "一白水星" });
+    expect(within(dialog).getByRole("link", { name: "詳しく見る" })).toHaveAttribute("href", "/guide/kyusei/star-1");
   });
 
   it("該当がなければその旨を status で伝えること", async () => {
@@ -112,6 +147,34 @@ describe("GuideBrowser", () => {
     expect(input).toHaveValue("");
     expect(toggle).toHaveAccessibleName("検索欄を開く");
     expect(screen.getByRole("tabpanel")).toBeInTheDocument();
+  });
+});
+
+describe("GuideBrowser(PC幅のサイドパネル)", () => {
+  it("1280px 以上ではタイルの詳細を右のサイドパネルに表示すること", async () => {
+    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+      matches: true,
+      media: query,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }));
+    const user = userEvent.setup();
+    window.history.replaceState(null, "", "/guide?tab=horoscope");
+    render(
+      <DetailPanelLayout>
+        <GuideBrowser />
+      </DetailPanelLayout>,
+    );
+    const tile = screen.getByRole("button", { name: "牡羊座の詳細を見る" });
+    await user.click(tile);
+    const panel = screen.getByRole("complementary", { name: "詳細パネル" });
+    expect(within(panel).getByRole("heading", { level: 2, name: "牡羊座" })).toBeInTheDocument();
+    expect(within(panel).getByRole("link", { name: "詳しく見る" })).toHaveAttribute("href", "/guide/horoscope/sign-aries");
+    expect(tile).toHaveAttribute("aria-expanded", "true");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    // 詳細ページへ移る前にパネルを閉じる(戻ったときに一覧を元の幅・位置で復元するため)
+    fireEvent.click(within(panel).getByRole("link", { name: "詳しく見る" }));
+    expect(screen.queryByRole("complementary", { name: "詳細パネル" })).not.toBeInTheDocument();
   });
 });
 

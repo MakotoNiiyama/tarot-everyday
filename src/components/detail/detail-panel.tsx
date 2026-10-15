@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -64,24 +65,47 @@ export function DetailPanelLayout({ children }: { children: ReactNode }) {
   const triggerRef = useRef<HTMLElement | null>(null);
   // フォーカス移動先のパネル要素への ref
   const panelRef = useRef<HTMLElement | null>(null);
+  // パネルの開閉で本文の幅が変わる前の、トリガーの画面上の位置。開閉のあとで同じ位置に戻す
+  const anchorRef = useRef<{ el: HTMLElement; top: number } | null>(null);
+  // 開いたときに戻しきれなかった分(本文が短くなり、ページの末尾でスクロールが止まったとき)。閉じるときに取り戻す
+  const shortfallRef = useRef(0);
 
   const show = useCallback<DetailPanelContextValue["show"]>((content, { owner, trigger }) => {
+    // パネルを開いたまま別のトリガーを押したときは本文の幅が変わらないので補正しない(取り戻す分は引き継ぐ)
+    if (!triggerRef.current) {
+      shortfallRef.current = 0;
+      anchorRef.current = { el: trigger, top: trigger.getBoundingClientRect().top };
+    }
     triggerRef.current = trigger;
     nextIdRef.current += 1;
     setEntry({ id: nextIdRef.current, owner, content });
   }, []);
 
   const close = useCallback(() => {
+    const trigger = triggerRef.current;
+    if (trigger) anchorRef.current = { el: trigger, top: trigger.getBoundingClientRect().top - shortfallRef.current };
+    shortfallRef.current = 0;
     setEntry(null);
-    triggerRef.current?.focus();
+    trigger?.focus({ preventScroll: true });
     triggerRef.current = null;
   }, []);
+
+  // パネルを開閉すると本文の幅が変わって折り返し(タイルの大きさ)が変わり、押したトリガーが画面の上下にずれる。
+  // 描画の直後(画面に出る前)にスクロールを補正し、トリガーを開閉の前と同じ位置に保つ
+  useLayoutEffect(() => {
+    const anchor = anchorRef.current;
+    anchorRef.current = null;
+    if (!anchor || !anchor.el.isConnected) return;
+    const delta = anchor.el.getBoundingClientRect().top - anchor.top;
+    if (Math.abs(delta) >= 1) window.scrollBy(0, delta);
+    shortfallRef.current = triggerRef.current ? anchor.el.getBoundingClientRect().top - anchor.top : 0;
+  }, [entry]);
 
   // パネルを開いたとき・内容を切り替えたときにパネルへフォーカスを移す。
   // setState は呼ばず focus() のみ呼ぶ(react-hooks/set-state-in-effect に抵触しない)。
   const entryId = entry?.id;
   useEffect(() => {
-    if (entryId !== undefined) panelRef.current?.focus();
+    if (entryId !== undefined) panelRef.current?.focus({ preventScroll: true });
   }, [entryId]);
 
   const panel = isWide ? entry : null;
@@ -124,7 +148,13 @@ export function DetailPanelLayout({ children }: { children: ReactNode }) {
             <div key={panel.id} className="flex flex-col gap-4 px-6 pb-8 pt-6">
               <DetailHeadingView heading={panel.content.heading} />
               {panel.content.body}
-              {panel.content.guideHref && <DetailGuideLink href={panel.content.guideHref} />}
+              {/*
+                ページを移る前にパネルを閉じ、本文の幅と位置をパネルを開く前に戻す。
+                ブラウザはこの状態のスクロール位置を履歴に覚えるので、戻ったときに元の位置に戻れる
+              */}
+              {panel.content.guideHref && (
+                <DetailGuideLink href={panel.content.guideHref} inGuide={panel.content.inGuide} onNavigate={close} />
+              )}
             </div>
           </aside>
         )}

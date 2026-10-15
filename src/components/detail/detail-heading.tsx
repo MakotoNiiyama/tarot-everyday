@@ -1,7 +1,8 @@
 import Link from "next/link";
-import type { ElementType, ReactNode } from "react";
+import type { ElementType, MouseEvent, ReactNode } from "react";
 import { Icon } from "@/components/icons/icon";
 import { outlineButton } from "@/lib/button-styles";
+import { isPlainClick, markGuideNavigation } from "@/lib/guide-back";
 
 /** 詳細表示の見出し。subtitle は分類(例「大アルカナ」) */
 export interface DetailHeading {
@@ -21,6 +22,8 @@ export interface DetailContent {
   body: ReactNode;
   /** 早見表の該当ページ。あれば本文の末尾に「早見表で見る」リンクを出す */
   guideHref?: string;
+  /** 早見表の一覧から開いたとき。リンクを「詳しく見る」にし、詳細ページの戻るボタンで一覧に戻れるようにする */
+  inGuide?: boolean;
 }
 
 /**
@@ -54,11 +57,30 @@ export function DetailHeadingView({
   );
 }
 
-/** 詳細の末尾に置く、早見表の該当ページへのリンク。ボトムシートとサイドパネルで共通 */
-export function DetailGuideLink({ href, label }: { href: string; /** 同じ表示に複数並ぶときの、区別できる名前 */ label?: string }) {
+/**
+ * 詳細の末尾に置く、早見表の該当ページへのリンク。ボトムシートとサイドパネルで共通。
+ * inGuide(早見表の一覧から開いたとき)は「詳しく見る」にし、詳細ページの戻るボタンが一覧に戻れるよう印を立てる
+ */
+export function DetailGuideLink({
+  href,
+  label,
+  inGuide = false,
+  onNavigate,
+}: {
+  href: string;
+  /** 同じ表示に複数並ぶときの、区別できる名前 */
+  label?: string;
+  inGuide?: boolean;
+  /** 同じタブでページを移るとき(修飾キーなしのクリック)に呼ぶ */
+  onNavigate?: () => void;
+}) {
+  const onClick = (e: MouseEvent) => {
+    if (inGuide) markGuideNavigation(e);
+    if (onNavigate && isPlainClick(e)) onNavigate();
+  };
   return (
-    <Link href={href} aria-label={label} className={`${outlineButton} mt-2 w-full`}>
-      早見表で見る
+    <Link href={href} aria-label={label} onClick={onClick} className={`${outlineButton} mt-2 w-full`}>
+      {inGuide ? "詳しく見る" : "早見表で見る"}
       <Icon name="right" size={16} />
     </Link>
   );

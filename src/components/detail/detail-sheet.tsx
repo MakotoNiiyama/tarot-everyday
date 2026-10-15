@@ -14,6 +14,7 @@ export function DetailSheet({
   heading,
   body,
   guideHref,
+  inGuide = false,
   children,
   className,
   triggerLabel,
@@ -22,6 +23,8 @@ export function DetailSheet({
   body: ReactNode;
   /** 早見表の該当ページ。あれば本文の末尾に「早見表で見る」リンクを出す */
   guideHref?: string;
+  /** 早見表の一覧から開いたとき。リンクを「詳しく見る」にする */
+  inGuide?: boolean;
   /** トリガーの中身 */
   children: ReactNode;
   className?: string;
@@ -42,7 +45,7 @@ export function DetailSheet({
           aria-label={triggerLabel}
           aria-expanded={panel.activeOwner === owner}
           aria-controls={panel.activeOwner === owner ? panel.panelId : undefined}
-          onClick={(e) => panel.show({ heading, body, guideHref }, { owner, trigger: e.currentTarget })}
+          onClick={(e) => panel.show({ heading, body, guideHref, inGuide }, { owner, trigger: e.currentTarget })}
           className={triggerClassName}
         >
           {children}
@@ -80,7 +83,7 @@ export function DetailSheet({
             <div className="flex-1 overflow-y-auto px-5 pb-11 pt-2 flex flex-col gap-3.5">
               <DetailHeadingView heading={heading} titleAs={Drawer.Title} descriptionAs={Drawer.Description} />
               {body}
-              {guideHref && <DetailGuideLink href={guideHref} />}
+              {guideHref && <DetailGuideLink href={guideHref} inGuide={inGuide} />}
             </div>
           </Drawer.Popup>
         </Drawer.Viewport>

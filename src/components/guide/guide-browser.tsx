@@ -5,9 +5,14 @@ import { flushSync } from "react-dom";
 import { Icon } from "@/components/icons/icon";
 import { guideSystems, isGuideSystemId, searchGuide, type GuideEntry, type GuideSystemId } from "@/data/guide";
 import { useUrlTab } from "@/lib/use-url-tab";
-import { GuideTile } from "./guide-tile";
+import { ElementDetailSheet } from "./element-detail-sheet";
+import { GUIDE_TILE_CLASS, GuideTileFace } from "./guide-tile";
 
-const GRID = "grid grid-cols-4 gap-2 lg:grid-cols-10 lg:gap-2.5";
+/**
+ * タイルの並び。スマホ4列、PC10列。PC でサイドパネルを開いて一覧が狭くなったとき(幅680px未満)は8列にし、
+ * 九星の2文字の漢字などがタイルからはみ出さないようにする(外側の @container の幅で決める)
+ */
+const GRID = "grid grid-cols-4 gap-2 lg:grid-cols-8 lg:gap-2.5 lg:@min-[680px]:grid-cols-10";
 
 /** URL の ?tab= を読み書きする版。不正な値・指定なしはタロット。事前描画中は tab が null */
 export function GuideBrowser() {
@@ -64,7 +69,7 @@ export function GuideBrowserView({
   const focusableId = system?.id ?? guideSystems[0].id;
 
   return (
-    <div className="flex flex-col gap-4 lg:gap-6">
+    <div className="@container flex flex-col gap-4 lg:gap-6">
       <div className="flex items-center gap-2">
         <button
           type="button"
@@ -165,12 +170,23 @@ export function GuideBrowserView({
   );
 }
 
+/**
+ * タイルの並び。タイルを押すとページを移らずに詳細シート(PC幅ではサイドパネル)で開き、
+ * 一覧のスクロール位置をそのままにする。詳細ページへはシートの「詳しく見る」から移る
+ */
 function TileGrid({ entries }: { entries: GuideEntry[] }) {
   return (
     <ul className={GRID}>
       {entries.map((e) => (
         <li key={`${e.system}:${e.id}`}>
-          <GuideTile entry={e} />
+          <ElementDetailSheet
+            element={{ system: e.system, id: e.id }}
+            triggerLabel={`${e.name}の詳細を見る`}
+            className={GUIDE_TILE_CLASS}
+            inGuide
+          >
+            <GuideTileFace entry={e} />
+          </ElementDetailSheet>
         </li>
       ))}
     </ul>
