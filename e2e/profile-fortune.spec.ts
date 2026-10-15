@@ -17,7 +17,8 @@ test.describe("プロフィール登録から運勢ページまで", () => {
     await page.getByRole("combobox", { name: "月" }).selectOption("3");
     await page.getByRole("combobox", { name: "日" }).selectOption("29");
     await page.getByRole("radio", { name: "時刻を指定" }).click();
-    await page.getByRole("combobox", { name: "出生時刻" }).selectOption("14");
+    await page.getByLabel("出生時刻", { exact: true }).fill("14:00");
+    await page.getByRole("checkbox", { name: "分は分からない(14時台として計算)" }).check();
     await page.getByRole("combobox", { name: "出生地" }).selectOption("13");
     await page.getByRole("button", { name: "保存" }).click();
 
@@ -28,6 +29,25 @@ test.describe("プロフィール登録から運勢ページまで", () => {
     }
     await page.getByRole("tab", { name: "今年" }).click();
     await expect(page.getByRole("article", { name: "数秘術" })).toContainText("パーソナルイヤー");
+  });
+
+  test("分まで入力して保存すると運勢ページの要約にその時刻が出ること", async ({ page }) => {
+    await page.goto("/fortune/profile");
+    await page.getByRole("combobox", { name: "年" }).selectOption("1990");
+    await page.getByRole("combobox", { name: "月" }).selectOption("3");
+    await page.getByRole("combobox", { name: "日" }).selectOption("29");
+    await page.getByRole("radio", { name: "時刻を指定" }).click();
+    await expect(page.getByText("出生時刻を入力してください")).toBeVisible();
+    await expect(page.getByRole("button", { name: "保存" })).toBeDisabled();
+    await page.getByLabel("出生時刻", { exact: true }).fill("14:35");
+    await expect(page.getByRole("checkbox", { name: "分は分からない(14時台として計算)" })).not.toBeChecked();
+    await page.getByRole("combobox", { name: "出生地" }).selectOption("13");
+    await page.getByRole("button", { name: "保存" }).click();
+
+    await expect(page).toHaveURL("/fortune");
+    await expect(page.getByText("1990/3/29 生 · 14:35 · 東京都")).toBeVisible();
+    const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("tarot-birth-profile") ?? "null"));
+    expect(saved.time).toEqual({ kind: "minute", hour: 14, minute: 35 });
   });
 
   test("人物像に命式表と人体星図が表示されること", async ({ page }) => {

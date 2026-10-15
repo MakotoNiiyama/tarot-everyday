@@ -16,8 +16,33 @@ import { useRovingSelection } from "@/lib/use-roving-selection";
 
 const ProfilePreview = dynamic(() => import("./profile-preview").then((m) => m.ProfilePreview), { ssr: false });
 
-type TimeMode = BirthTime["kind"];
+/** 入力方式。"time" は時刻を指定(分まで、または分は分からない) */
+type TimeMode = "unknown" | "half" | "time";
 type Half = "am" | "pm";
+
+const pad2 = (n: number) => String(n).padStart(2, "0");
+
+/** 時刻入力の値("HH:MM")。空や不正な値なら null */
+function parseClock(v: string): { hour: number; minute: number } | null {
+  const m = /^(\d{2}):(\d{2})$/.exec(v);
+  if (!m) return null;
+  const hour = Number(m[1]);
+  const minute = Number(m[2]);
+  return hour <= 23 && minute <= 59 ? { hour, minute } : null;
+}
+
+/** 登録済みの時刻を時刻入力の値にする。分が分からない時台は HH:00 */
+function initialClock(time: BirthTime | undefined): string {
+  if (time?.kind === "minute") return `${pad2(time.hour)}:${pad2(time.minute)}`;
+  if (time?.kind === "hour") return `${pad2(time.hour)}:00`;
+  return "";
+}
+
+function initialMode(time: BirthTime | undefined): TimeMode {
+  if (time?.kind === "half") return "half";
+  if (time?.kind === "hour" || time?.kind === "minute") return "time";
+  return "unknown";
+}
 
 const HALVES = [
   ["am", "午前", "0:00〜11:59"],
@@ -27,6 +52,9 @@ const HALF_VALUES: readonly Half[] = HALVES.map(([v]) => v);
 
 const SELECT =
   "w-full min-h-12 appearance-none rounded-xl border border-gold/30 bg-surface pl-3.5 pr-8 text-[15px] text-cream focus:border-gold/60 focus:outline-none";
+
+const TIME_INPUT =
+  "w-full min-h-12 rounded-xl border border-gold/30 bg-surface px-3.5 text-[15px] text-cream [color-scheme:dark] focus:border-gold/60 focus:outline-none aria-invalid:border-terracotta/60";
 
 function Field({ icon, label, required, hint, children }: { icon: IconName; label: string; required?: boolean; hint?: string; children: ReactNode }) {
   return (
@@ -92,14 +120,17 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
   const [year, setYear] = useState(initial ? String(initial.date.year) : "");
   const [month, setMonth] = useState(initial ? String(initial.date.month) : "");
   const [day, setDay] = useState(initial ? String(initial.date.day) : "");
-  const [timeMode, setTimeMode] = useState<TimeMode>(initial?.time.kind ?? "unknown");
+  const [timeMode, setTimeMode] = useState<TimeMode>(initialMode(initial?.time));
   const [half, setHalf] = useState<Half>(initial?.time.kind === "half" ? initial.time.half : "am");
-  const [hour, setHour] = useState(initial?.time.kind === "hour" ? String(initial.time.hour) : "12");
+  // 時刻を指定に切り替えた直後は空にして、入力するまで保存できないようにする(12:00 などを誤って保存しない)
+  const [clock, setClock] = useState(initialClock(initial?.time));
+  const [minuteUnknown, setMinuteUnknown] = useState(initial?.time.kind === "hour");
   const [prefecture, setPrefecture] = useState<string>(initial?.prefecture ?? "");
   const [gender, setGender] = useState<"male" | "female" | "none">(initial?.gender ?? "none");
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [error, setError] = useState("");
   const futureHintId = useId();
+  const clockHintId = useId();
   const confirmLabelId = useId();
   const deleteButtonRef = useRef<HTMLButtonElement>(null);
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
@@ -130,16 +161,25 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
     if (Number(day) > daysOf(year, v)) setDay("");
   });
 
+  const picked = parseClock(clock);
+  const clockMissing = timeMode === "time" && !picked;
+
   const profile = useMemo<BirthProfile | null>(() => {
     const date = { year: Number(year), month: Number(month), day: Number(day) };
     if (!year || !month || !day || !isValidLocalDate(date)) return null;
-    const time: BirthTime =
-      timeMode === "unknown" ? { kind: "unknown" } : timeMode === "half" ? { kind: "half", half } : { kind: "hour", hour: Number(hour) };
+    let time: BirthTime;
+    if (timeMode === "unknown") time = { kind: "unknown" };
+    else if (timeMode === "half") time = { kind: "half", half };
+    else {
+      const c = parseClock(clock);
+      if (!c) return null;
+      time = minuteUnknown ? { kind: "hour", hour: c.hour } : { kind: "minute", hour: c.hour, minute: c.minute };
+    }
     const p: BirthProfile = { version: 1, date, time };
     if (prefecture) p.prefecture = prefecture as PrefectureCode;
     if (gender !== "none") p.gender = gender;
     return p;
-  }, [year, month, day, timeMode, half, hour, prefecture, gender]);
+  }, [year, month, day, timeMode, half, clock, minuteUnknown, prefecture, gender]);
 
   const isFuture = profile !== null && compareLocalDate(profile.date, today) > 0;
 
@@ -226,7 +266,7 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
               options={[
                 { value: "unknown", label: "不明" },
                 { value: "half", label: "午前・午後" },
-                { value: "hour", label: "時刻を指定" },
+                { value: "time", label: "時刻を指定" },
               ]}
             />
             {timeMode === "unknown" && (
@@ -254,14 +294,38 @@ export function ProfileForm({ initial }: { initial: BirthProfile | null }) {
                 ))}
               </div>
             )}
-            {timeMode === "hour" && (
-              <Select label="出生時刻" value={hour} onChange={edit(setHour)}>
-                {Array.from({ length: 24 }, (_, h) => (
-                  <option key={h} value={h}>
-                    {h}時台({h}:00〜{h}:59)
-                  </option>
-                ))}
-              </Select>
+            {timeMode === "time" && (
+              <>
+                <input
+                  type="time"
+                  step={60}
+                  aria-label="出生時刻"
+                  aria-describedby={clockHintId}
+                  aria-invalid={clockMissing || undefined}
+                  value={clock}
+                  onChange={(e) => edit(setClock)(e.target.value)}
+                  className={TIME_INPUT}
+                />
+                <label className="flex min-h-12 cursor-pointer items-center gap-3 px-1 text-[13px] text-cream">
+                  <span className="relative flex h-5 w-5 shrink-0">
+                    <input
+                      type="checkbox"
+                      checked={minuteUnknown}
+                      onChange={(e) => edit(setMinuteUnknown)(e.target.checked)}
+                      className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border border-gold/50 bg-surface checked:border-gold checked:bg-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                    />
+                    <Icon name="check" size={14} strokeWidth={2.6} className="pointer-events-none absolute left-[3px] top-[3px] hidden text-background peer-checked:block" />
+                  </span>
+                  分は分からない({picked ? `${picked.hour}時台` : "その時台"}として計算)
+                </label>
+                <p id={clockHintId} className={`px-1 text-xs leading-relaxed ${clockMissing ? "text-terracotta" : "text-gold-dim"}`}>
+                  {clockMissing
+                    ? "出生時刻を入力してください"
+                    : minuteUnknown
+                      ? `${picked!.hour}時30分の生まれとして計算します。分まで入力すると、時刻の境目に近い項目もより正確に決まります。`
+                      : "分まで入力すると、出生時刻で結果が変わる項目もほぼすべて1つに決まります。"}
+                </p>
+              </>
             )}
           </Field>
 

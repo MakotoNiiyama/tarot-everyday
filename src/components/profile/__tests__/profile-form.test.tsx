@@ -57,7 +57,74 @@ describe("ProfileForm", () => {
     await user.click(screen.getByRole("radio", { name: "午前・午後" }));
     expect(within(screen.getByRole("radiogroup", { name: "午前・午後" })).getByRole("radio", { name: /午後/ })).toBeInTheDocument();
     await user.click(screen.getByRole("radio", { name: "時刻を指定" }));
-    expect(screen.getByRole("combobox", { name: "出生時刻" })).toBeInTheDocument();
+    expect(screen.getByLabelText("出生時刻")).toHaveAttribute("type", "time");
+    expect(screen.getByRole("checkbox", { name: /分は分からない/ })).not.toBeChecked();
+  });
+
+  it("時刻を指定したら、時刻を入力するまで保存できず、その旨を表示すること", async () => {
+    const user = userEvent.setup();
+    render(<ProfileForm initial={null} />);
+    await fillDate(user);
+    expect(screen.getByRole("button", { name: "保存" })).toBeEnabled();
+    await user.click(screen.getByRole("radio", { name: "時刻を指定" }));
+    const input = screen.getByLabelText("出生時刻");
+    expect(input).toHaveValue("");
+    expect(input).toHaveAttribute("aria-invalid", "true");
+    expect(input).toHaveAccessibleDescription("出生時刻を入力してください");
+    expect(screen.getByRole("button", { name: "保存" })).toBeDisabled();
+    await user.type(input, "14:35");
+    expect(input).not.toHaveAttribute("aria-invalid");
+    expect(screen.queryByText("出生時刻を入力してください")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "保存" })).toBeEnabled();
+  });
+
+  it("分まで入力して保存すると kind minute で保存すること", async () => {
+    const user = userEvent.setup();
+    render(<ProfileForm initial={null} />);
+    await fillDate(user);
+    await user.click(screen.getByRole("radio", { name: "時刻を指定" }));
+    await user.type(screen.getByLabelText("出生時刻"), "09:05");
+    expect(screen.getByRole("checkbox", { name: "分は分からない(9時台として計算)" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "保存" }));
+    expect(JSON.parse(store["tarot-birth-profile"]).time).toEqual({ kind: "minute", hour: 9, minute: 5 });
+  });
+
+  it("「分は分からない」を付けると kind hour で保存し、外すと分を戻すこと", async () => {
+    const user = userEvent.setup();
+    render(<ProfileForm initial={null} />);
+    await fillDate(user);
+    await user.click(screen.getByRole("radio", { name: "時刻を指定" }));
+    const input = screen.getByLabelText("出生時刻");
+    expect(screen.getByRole("checkbox", { name: "分は分からない(その時台として計算)" })).toBeInTheDocument();
+    await user.type(input, "14:35");
+    const checkbox = screen.getByRole("checkbox", { name: "分は分からない(14時台として計算)" });
+    await user.click(checkbox);
+    expect(checkbox).toBeChecked();
+    expect(screen.getByText(/14時30分の生まれとして計算します/)).toBeInTheDocument();
+    // 時を変えると見出しの時台も変わる
+    await user.clear(input);
+    await user.type(input, "07:10");
+    expect(screen.getByRole("checkbox", { name: "分は分からない(7時台として計算)" })).toBeChecked();
+    await user.click(screen.getByRole("button", { name: "保存" }));
+    expect(JSON.parse(store["tarot-birth-profile"]).time).toEqual({ kind: "hour", hour: 7 });
+  });
+
+  it("時台で登録済みなら「分は分からない」を付けた状態で HH:00 を表示すること", async () => {
+    const user = userEvent.setup();
+    render(<ProfileForm initial={{ version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "hour", hour: 14 } }} />);
+    expect(screen.getByRole("radio", { name: "時刻を指定" })).toHaveAttribute("aria-checked", "true");
+    expect(screen.getByLabelText("出生時刻")).toHaveValue("14:00");
+    const checkbox = screen.getByRole("checkbox", { name: "分は分からない(14時台として計算)" });
+    expect(checkbox).toBeChecked();
+    await user.click(checkbox);
+    await user.click(screen.getByRole("button", { name: "保存" }));
+    expect(JSON.parse(store["tarot-birth-profile"]).time).toEqual({ kind: "minute", hour: 14, minute: 0 });
+  });
+
+  it("分まで登録済みならその時刻を表示し、「分は分からない」は外れていること", () => {
+    render(<ProfileForm initial={{ version: 1, date: { year: 1990, month: 3, day: 29 }, time: { kind: "minute", hour: 9, minute: 5 } }} />);
+    expect(screen.getByLabelText("出生時刻")).toHaveValue("09:05");
+    expect(screen.getByRole("checkbox", { name: /分は分からない/ })).not.toBeChecked();
   });
 
   it("入力して保存すると localStorage に保存し、運勢ページへ移動すること", async () => {
@@ -65,7 +132,8 @@ describe("ProfileForm", () => {
     render(<ProfileForm initial={null} />);
     await fillDate(user);
     await user.click(screen.getByRole("radio", { name: "時刻を指定" }));
-    await user.selectOptions(screen.getByRole("combobox", { name: "出生時刻" }), "14");
+    await user.type(screen.getByLabelText("出生時刻"), "14:00");
+    await user.click(screen.getByRole("checkbox", { name: /分は分からない/ }));
     await user.selectOptions(screen.getByRole("combobox", { name: "出生地" }), "13");
     await user.click(within(screen.getByRole("radiogroup", { name: "性別" })).getByRole("radio", { name: "女性" }));
     await user.click(screen.getByRole("button", { name: "保存" }));
