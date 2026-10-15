@@ -4,6 +4,9 @@
  * 計算結果の ElementRef.id はすべてここの関数で作り、ELEMENT_IDS に含まれる値だけを使う。
  */
 
+import { ASPECTS } from "./horoscope/aspects";
+import { BODIES, SIGNS } from "./horoscope/zodiac";
+
 /** 九星気学の方位(8方位) */
 export type Direction = "n" | "ne" | "e" | "se" | "s" | "sw" | "w" | "nw";
 /** 九星気学の宮(8方位 + 中宮) */
@@ -101,12 +104,11 @@ export const ELEMENT_IDS: Record<ElementSystemId, readonly string[]> = {
     ...ISOU_KINDS.map(isouId),
   ],
   sukuyo: [...range(1, 27).map(mansionId), ...RELATION_KINDS.map(relationId)],
-  // 星座・天体・アスペクトの key は horoscope/zodiac.ts・aspects.ts の順と同じ
   horoscope: [
-    ...["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"].map(signId),
-    ...["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "node", "chiron", "lilith"].map(bodyId),
+    ...SIGNS.map((s) => signId(s.key)),
+    ...BODIES.map((b) => bodyId(b.key)),
     ...range(1, 12).map(houseId),
-    ...["conjunction", "sextile", "square", "trine", "opposition", "quincunx", "semisextile", "semisquare", "quintile", "sesquiquadrate", "biquintile"].map(aspectId),
+    ...ASPECTS.map((a) => aspectId(a.kind)),
     ...ASTRO_ELEMENTS.map(astroElementId),
   ],
 };

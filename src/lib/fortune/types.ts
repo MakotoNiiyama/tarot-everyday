@@ -1,4 +1,5 @@
 // src/lib/fortune/types.ts
+import type { HouseSystem } from "./horoscope/houses";
 import type { LocalDate } from "./local-date";
 import type { PrefectureCode } from "./prefectures";
 
@@ -98,12 +99,12 @@ export type NatalChart =
         name: string;
         lon: number;
         retrograde: boolean;
-        houses: Record<"placidus" | "koch" | "whole", number>;
+        houses: Record<HouseSystem, number>;
         fact: Fact;
       }[];
       asc: number;
       mc: number;
-      cusps: Record<"placidus" | "koch" | "whole", number[]>;
+      cusps: Record<HouseSystem, number[]>;
       aspects: { a: string; b: string; kind: string; name: string; orb: number; minor: boolean }[];
       /** 例: 出生時刻不明のため正午で仮計算 / 出生地未入力のため明石基準 */
       notes: string[];
