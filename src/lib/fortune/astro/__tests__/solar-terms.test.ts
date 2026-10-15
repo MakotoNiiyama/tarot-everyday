@@ -1,6 +1,6 @@
 // src/lib/fortune/astro/__tests__/solar-terms.test.ts
 import { describe, it, expect } from "vitest";
-import { solarLongitudeTime, solarMonthAt, jieBoundariesWithin, SOLAR_MONTH_BRANCH_NAMES } from "../solar-terms";
+import { solarLongitudeTime, solarMonthAt, jieBoundariesWithin, SOLAR_MONTH_BRANCH_NAMES, dayNumberInSolarMonth } from "../solar-terms";
 import { tokyoToUtc } from "../../tokyo-time";
 
 const minutesBetween = (a: Date, b: Date) => Math.abs(a.getTime() - b.getTime()) / 60_000;
@@ -52,5 +52,15 @@ describe("jieBoundariesWithin", () => {
     expect(result).toHaveLength(1);
     expect(result[0].getTime()).toBe(solarLongitudeTime(1990, 315).getTime());
     expect(jieBoundariesWithin({ start: tokyoToUtc(1990, 3, 29, 0, 0), end: tokyoToUtc(1990, 3, 29, 24, 0) })).toEqual([]);
+  });
+});
+
+describe("dayNumberInSolarMonth", () => {
+  it("節入り日を1日目として数えること", () => {
+    // 啓蟄 1990/3/6 5:19
+    expect(dayNumberInSolarMonth(tokyoToUtc(1990, 3, 29, 14, 0))).toBe(24);
+    expect(dayNumberInSolarMonth(tokyoToUtc(1990, 3, 6, 12, 0))).toBe(1);
+    // 節入りの時刻より前は前の月(立春 1990/2/4 から数えて31日目)
+    expect(dayNumberInSolarMonth(tokyoToUtc(1990, 3, 6, 3, 0))).toBe(31);
   });
 });

@@ -1,6 +1,7 @@
 // src/lib/fortune/astro/solar-terms.ts
 import { SearchSunLongitude } from "astronomy-engine";
-import { tokyoParts } from "../tokyo-time";
+import { toJdn } from "../local-date";
+import { jstLocalDate, tokyoParts } from "../tokyo-time";
 import type { TimeRange } from "../types";
 
 const cache = new Map<string, number>();
@@ -65,4 +66,10 @@ export function jieBoundariesWithin(range: TimeRange): Date[] {
     }
   }
   return result.sort((a, b) => a.getTime() - b.getTime());
+}
+
+/** その瞬間が、属する節月の何日目か(節入り日を1日目とする日付で数える。蔵干・二十八元の選択に使う) */
+export function dayNumberInSolarMonth(at: Date): number {
+  const month = solarMonthAt(at);
+  return toJdn(jstLocalDate(at)) - toJdn(jstLocalDate(month.start)) + 1;
 }
