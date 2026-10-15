@@ -49,6 +49,19 @@ describe("generateFortunePrompt", () => {
     expect(gen(pm)).toContain("出生時刻: 午後(12:00〜23:59) /");
   });
 
+  it("西洋占星術で出生時刻を仮に置いたときは、その印と注記をプロンプトにも書くこと", () => {
+    const unknown: BirthProfile = { ...profile, time: { kind: "unknown" } };
+    const gen = (period: "day" | "year") =>
+      generateFortunePrompt({ profile: unknown, readings: readAll(unknown, today), period, today, question: "", tarot: null });
+    const natalLine = gen("day").split("\n").find((l) => l.startsWith("【西洋占星術】"))!;
+    expect(natalLine).toMatch(/ASC: [^ ]+座\(仮\) \/ MC: [^ ]+座\(仮\)/);
+    expect(natalLine).toContain("天体の位置: 出生時刻不明のため正午で仮計算: 太陽 ");
+    expect(gen("day")).toContain("注記: ハウスは出生時刻不明のため正午で仮計算");
+    expect(gen("year")).toContain("注記: ハウスは出生時刻不明のため正午で仮計算");
+    // 時刻を指定したときは付けない
+    expect(prompt).not.toContain("(仮)");
+  });
+
   it("1dayタロットの結果", () => {
     expect(prompt).toContain("星(正位置) キーワード:");
   });

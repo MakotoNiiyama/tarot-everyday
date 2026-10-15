@@ -203,6 +203,8 @@ function yearResult(today: LocalDate, natalCusps: number[]): PeriodResult {
   };
 }
 
+const withNote = (result: PeriodResult, note: string | undefined): PeriodResult => (note ? { ...result, note } : result);
+
 const NATAL_LABEL: Partial<Record<BodyKey, string>> = { sun: "太陽星座", moon: "月星座" };
 
 const METHOD =
@@ -237,17 +239,21 @@ export const horoscope: FortuneSystemModule = {
       profile.time.kind === "hour"
         ? resolveSign(moment.range, (t) => angles(t, place).asc)
         : { kind: "fixed", value: signOf(asc) };
-    const ascFact = resolvedFact(ascResolved, "asc", "ASC", signName, (s) => [signRef(s)]);
-    const mcFact: Fact = { key: "mc", label: "MC", value: signName(signOf(mc)), refs: [signRef(signOf(mc))] };
+    // 出生時刻を仮に置いたときは、その時刻に左右される ASC・MC・天体の位置の要約に印を付ける
+    const provisional = (s: number) => `${signName(s)}${rep.note ? "(仮)" : ""}`;
+    const ascFact = resolvedFact(ascResolved, "asc", "ASC", provisional, (s) => [signRef(s)]);
+    const mcFact: Fact = { key: "mc", label: "MC", value: provisional(signOf(mc)), refs: [signRef(signOf(mc))] };
 
     const points = [...bodies.map((b) => ({ key: b.key, lon: b.lon })), { key: "asc", lon: asc }, { key: "mc", lon: mc }];
     const aspects = findAspects(points).map((a) => ({ ...a, name: ASPECT_NAME[a.kind] }));
 
     const placidus = houseCusps.placidus;
+    // 運勢のハウスは本命のカスプで決めるので、出生時刻が仮なら運勢にも注記する
+    const houseNote = rep.note ? `ハウスは${rep.note}` : undefined;
     const positionsFact: Fact = {
       key: "positions",
       label: "天体の位置",
-      value: [
+      value: (rep.note ? `${rep.note}: ` : "") + [
         ...bodies.map((b) => `${b.name} ${signName(signOf(b.lon))}${formatDegree(b.lon)}(第${b.houses.placidus}ハウス)`),
         `ASC ${signName(signOf(asc))}${formatDegree(asc)}`,
         `MC ${signName(signOf(mc))}${formatDegree(mc)}`,
@@ -286,9 +292,9 @@ export const horoscope: FortuneSystemModule = {
       method: METHOD,
       natal,
       periods: {
-        day: dayResult(today, placidus),
-        month: monthResult(today, placidus),
-        year: yearResult(today, placidus),
+        day: withNote(dayResult(today, placidus), houseNote),
+        month: withNote(monthResult(today, placidus), houseNote),
+        year: withNote(yearResult(today, placidus), houseNote),
       },
       ambiguous: isAmbiguous(ascResolved) || bodies.some((b) => isAmbiguous(b.resolved)),
       chart,

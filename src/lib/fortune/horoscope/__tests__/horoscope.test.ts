@@ -79,6 +79,20 @@ describe("horoscope.read 人物像", () => {
     if (r.chart?.kind !== "horoscope") throw new Error("ホロスコープがない");
     expect(r.chart.notes).toEqual(["出生時刻不明のため正午で仮計算", "出生地未入力のため明石基準"]);
     expect(fact(r, "asc")?.candidates).toBeUndefined();
+    // 仮の時刻に左右される人物像には印を付ける
+    expect(fact(r, "asc")?.value).toMatch(/^.+座\(仮\)$/);
+    expect(fact(r, "mc")?.value).toMatch(/^.+座\(仮\)$/);
+    expect(fact(r, "positions")?.value).toMatch(/^出生時刻不明のため正午で仮計算: 太陽 /);
+    expect(fact(r, "sun")?.value).toBe("牡羊座");
+    // 運勢のハウスも本命の仮のハウスで計算しているので注記する
+    for (const period of Object.values(r.periods)) expect(period.note).toBe("ハウスは出生時刻不明のため正午で仮計算");
+  });
+
+  it("時刻を指定したときは仮の印も運勢の注記も付けないこと", () => {
+    const r = read(tokyo14);
+    expect(fact(r, "mc")?.value).toBe("牡牛座");
+    expect(fact(r, "positions")?.value).toMatch(/^太陽 /);
+    for (const period of Object.values(r.periods)) expect(period.note).toBeUndefined();
   });
 
   it("午前・午後は 6時・18時で仮計算すること", () => {
@@ -88,6 +102,11 @@ describe("horoscope.read 人物像", () => {
     const am = read({ ...tokyo14, time: { kind: "half", half: "am" } });
     if (am.chart?.kind !== "horoscope") throw new Error("ホロスコープがない");
     expect(am.chart.notes).toEqual(["出生時刻が午前のため6時で仮計算"]);
+    expect(r.natal.find((f) => f.key === "positions")?.value).toMatch(/^出生時刻が午後のため18時で仮計算: /);
+    expect(am.natal.find((f) => f.key === "positions")?.value).toMatch(/^出生時刻が午前のため6時で仮計算: /);
+    expect(r.periods.year.note).toBe("ハウスは出生時刻が午後のため18時で仮計算");
+    expect(am.periods.day.note).toBe("ハウスは出生時刻が午前のため6時で仮計算");
+    expect(am.natal.find((f) => f.key === "asc")?.value).toMatch(/\(仮\)$/);
   });
 
   it("その日のうちに月の星座が変わるなら、時刻不明では月星座を候補にすること", () => {
