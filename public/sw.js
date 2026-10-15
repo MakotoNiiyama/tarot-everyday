@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-const CACHE_NAME = "tarot-everyday-v2";
+const CACHE_NAME = "tarot-everyday-v3";
 
 // プリキャッシュする静的リソース
 const PRECACHE_URLS = ["/", "/fortune", "/tarot", "/guide"];
@@ -32,8 +32,8 @@ self.addEventListener("fetch", (event) => {
   // 同一オリジンのリクエストのみキャッシュ
   if (url.origin !== self.location.origin) return;
 
-  // カード画像 — Cache First
-  if (url.pathname.startsWith("/cards/") && /\.(jpg|png|svg)$/.test(url.pathname)) {
+  // カード画像・早見表の画像 — Cache First
+  if (/^\/(cards|guide-images)\//.test(url.pathname) && /\.(jpg|png|svg)$/.test(url.pathname)) {
     event.respondWith(
       caches.match(request).then(
         (cached) =>
