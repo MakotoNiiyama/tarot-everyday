@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Icon } from "@/components/icons/icon";
 import { PageContainer } from "@/components/page-container";
 import type { GuideSystemId } from "@/data/guide";
+import { GuideBackLink } from "./guide-back-link";
 
 /**
  * 早見表の詳細ページの共通レイアウト(設計書 §11.5)。
@@ -24,13 +24,7 @@ export function GuideDetailLayout({
   return (
     <PageContainer className="gap-[18px]">
       <div className="flex items-center gap-2 lg:gap-3">
-        <Link
-          href={`/guide?tab=${system}`}
-          aria-label="早見表に戻る"
-          className="flex h-10 w-10 flex-none items-center justify-center rounded-full border border-gold/30 text-gold-light"
-        >
-          <Icon name="back" size={18} />
-        </Link>
+        <GuideBackLink href={`/guide?tab=${system}`} />
         <nav aria-label="パンくずリスト" className="text-xs text-gold-dim lg:text-[13px]">
           <Link href="/guide" className="hover:text-cream">
             早見表
