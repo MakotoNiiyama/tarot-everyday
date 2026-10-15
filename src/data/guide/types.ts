@@ -1,9 +1,12 @@
-/** 早見表の占術(タロットを含む) */
-export type GuideSystemId = "tarot" | "numerology" | "kyusei" | "maya" | "shichu" | "sanmei" | "sukuyo";
+import type { AstroGlyphName } from "@/components/icons/astro-glyph";
 
-/** 画像枠の中身。glyph は漢字・数字のタイポグラフィ、photo はカード画像など */
+/** 早見表の占術(タロットを含む) */
+export type GuideSystemId = "tarot" | "numerology" | "kyusei" | "maya" | "shichu" | "sanmei" | "sukuyo" | "horoscope";
+
+/** 画像枠の中身。glyph は漢字・数字のタイポグラフィ、astro は星座・天体の記号(SVG)、photo はカード画像など */
 export type GuideImage =
   | { kind: "glyph"; text: string; color?: string }
+  | { kind: "astro"; name: AstroGlyphName; color?: string }
   | { kind: "photo"; path: string; alt: string };
 
 /** 早見表の1項目(設計書 §7) */

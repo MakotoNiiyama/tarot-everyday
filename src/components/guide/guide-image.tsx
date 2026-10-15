@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 import type { GuideImage } from "@/data/guide";
+import { AstroGlyph } from "@/components/icons/astro-glyph";
 
 type Size = "tile" | "sheet" | "detail";
 
@@ -33,6 +34,15 @@ export function glyphFontSize(text: string, size: Size): { base: number; lg: num
 
 /** 早見表の画像枠の中身。枠(大きさ・角丸・背景)は呼び出し側が持つ */
 export function GuideImageView({ image, size }: { image: GuideImage; size: Size }) {
+  if (image.kind === "astro") {
+    const px = { tile: 34, sheet: 64, detail: 140 }[size];
+    // AstroGlyph は style を受け取らないので、色は外側の span で付ける(線は currentColor)
+    return (
+      <span aria-hidden="true" className="inline-flex" style={{ color: image.color ?? "#E5B85A" }}>
+        <AstroGlyph name={image.name} size={px} strokeWidth={size === "tile" ? 1.6 : 1.3} />
+      </span>
+    );
+  }
   if (image.kind === "photo") {
     return (
       <Image src={image.path} alt={image.alt} width={240} height={400} className="h-full w-full object-cover" />

@@ -17,6 +17,18 @@ describe("GuideImageView", () => {
     expect(glyph).toHaveStyle({ color: "#F5E6C8" });
   });
 
+  it("記号の画像は SVG で描くこと", () => {
+    const { container } = render(<GuideImageView image={{ kind: "astro", name: "aries" }} size="tile" />);
+    expect(container.querySelector("svg")).not.toBeNull();
+    expect(container.textContent).toBe("");
+  });
+
+  it("記号の画像は指定色で描くこと", () => {
+    const { container } = render(<GuideImageView image={{ kind: "astro", name: "sun", color: "#F5E6C8" }} size="sheet" />);
+    expect(container.firstElementChild).toHaveStyle({ color: "#F5E6C8" });
+    expect(container.querySelector("svg")).toHaveAttribute("width", "64");
+  });
+
   it("カード画像を alt 付きで描くこと", () => {
     render(<GuideImageView image={fool.image} size="tile" />);
     expect(screen.getByRole("img", { name: "愚者" })).toBeInTheDocument();

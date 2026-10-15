@@ -66,10 +66,19 @@ export type RelationKind = "mei" | "ei" | "sui" | "an" | "ki" | "sei" | "kai" | 
 export const RELATION_KINDS: readonly RelationKind[] = ["mei", "ei", "sui", "an", "ki", "sei", "kai", "yu", "shin", "gyo", "tai"];
 export const relationId = (k: RelationKind) => `relation-${k}`;
 
+/** 西洋占星術の十二星座・天体・ハウス(1〜12)・アスペクト・エレメント */
+export const signId = (key: string) => `sign-${key}`;
+export const bodyId = (key: string) => `body-${key}`;
+export const houseId = (n: number) => `house-${n}`;
+export const aspectId = (kind: string) => `aspect-${kind}`;
+export type AstroElement = "fire" | "earth" | "air" | "water";
+export const ASTRO_ELEMENTS: readonly AstroElement[] = ["fire", "earth", "air", "water"];
+export const astroElementId = (e: AstroElement) => `element-${e}`;
+
 const range = (from: number, to: number) => Array.from({ length: to - from + 1 }, (_, i) => from + i);
 
 /** 早見表の項目を持つ実装済みの占術 */
-export type ElementSystemId = "numerology" | "kyusei" | "maya" | "shichu" | "sanmei" | "sukuyo";
+export type ElementSystemId = "numerology" | "kyusei" | "maya" | "shichu" | "sanmei" | "sukuyo" | "horoscope";
 
 /** 占術ごとの早見表の項目 id の一覧 */
 export const ELEMENT_IDS: Record<ElementSystemId, readonly string[]> = {
@@ -92,4 +101,12 @@ export const ELEMENT_IDS: Record<ElementSystemId, readonly string[]> = {
     ...ISOU_KINDS.map(isouId),
   ],
   sukuyo: [...range(1, 27).map(mansionId), ...RELATION_KINDS.map(relationId)],
+  // 星座・天体・アスペクトの key は horoscope/zodiac.ts・aspects.ts の順と同じ
+  horoscope: [
+    ...["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"].map(signId),
+    ...["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "node", "chiron", "lilith"].map(bodyId),
+    ...range(1, 12).map(houseId),
+    ...["conjunction", "sextile", "square", "trine", "opposition", "quincunx", "semisextile", "semisquare", "quintile", "sesquiquadrate", "biquintile"].map(aspectId),
+    ...ASTRO_ELEMENTS.map(astroElementId),
+  ],
 };

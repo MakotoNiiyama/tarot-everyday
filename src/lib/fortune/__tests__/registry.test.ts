@@ -61,7 +61,11 @@ describe("registry", () => {
       for (const r of readings) {
         if (!r.chart) continue;
         const cells =
-          r.chart.kind === "pillars" ? r.chart.rows.flatMap((row) => row.cells) : r.chart.cells.map((c) => c?.fact ?? null);
+          r.chart.kind === "pillars"
+            ? r.chart.rows.flatMap((row) => row.cells)
+            : r.chart.kind === "horoscope"
+              ? r.chart.bodies.map((b) => b.fact)
+              : r.chart.cells.map((c) => c?.fact ?? null);
         for (const cell of cells) {
           if (!cell) continue;
           for (const ref of cell.refs) expect(ELEMENT_IDS[r.id as keyof typeof ELEMENT_IDS]).toContain(ref.id);

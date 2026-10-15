@@ -89,6 +89,25 @@ export type NatalChart =
       kind: "body-stars";
       cells: ({ fact: Fact; tone: "center" | "main" | "sub" } | null)[];
       factKeys: string[];
+    }
+  | {
+      /** 西洋占星術のホロスコープ。houses と cusps はハウスシステムごと */
+      kind: "horoscope";
+      bodies: {
+        key: string;
+        name: string;
+        lon: number;
+        retrograde: boolean;
+        houses: Record<"placidus" | "koch" | "whole", number>;
+        fact: Fact;
+      }[];
+      asc: number;
+      mc: number;
+      cusps: Record<"placidus" | "koch" | "whole", number[]>;
+      aspects: { a: string; b: string; kind: string; name: string; orb: number; minor: boolean }[];
+      /** 例: 出生時刻不明のため正午で仮計算 / 出生地未入力のため明石基準 */
+      notes: string[];
+      factKeys: string[];
     };
 
 export interface SystemReading {

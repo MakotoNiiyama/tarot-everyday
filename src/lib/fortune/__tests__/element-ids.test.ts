@@ -29,6 +29,12 @@ describe("ELEMENT_IDS", () => {
     expect(ELEMENT_IDS.sukuyo).toContain("mansion-1");
     expect(ELEMENT_IDS.sukuyo).toContain("mansion-27");
     expect(ELEMENT_IDS.sukuyo).toContain("relation-tai");
+    expect(ELEMENT_IDS.horoscope).toHaveLength(12 + 13 + 12 + 11 + 4);
+    expect(ELEMENT_IDS.horoscope).toContain("sign-aries");
+    expect(ELEMENT_IDS.horoscope).toContain("body-lilith");
+    expect(ELEMENT_IDS.horoscope).toContain("house-12");
+    expect(ELEMENT_IDS.horoscope).toContain("aspect-biquintile");
+    expect(ELEMENT_IDS.horoscope).toContain("element-water");
     for (const ids of Object.values(ELEMENT_IDS)) expect(new Set(ids).size).toBe(ids.length);
   });
 

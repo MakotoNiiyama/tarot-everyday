@@ -107,6 +107,8 @@ function BodyStarChart({ chart, label }: { chart: Extract<NatalChart, { kind: "b
 
 /** 人物像の専用の図(四柱推命の命式表・算命学の人体星図) */
 export function NatalChartView({ chart, systemName }: { chart: NatalChart; systemName: string }) {
+  // 西洋占星術のチャート円は horoscope-chart.tsx で描く(未接続の間は何も出さない)
+  if (chart.kind === "horoscope") return null;
   const label = chart.kind === "pillars" ? `${systemName}の命式` : `${systemName}の人体星図`;
   return chart.kind === "pillars" ? (
     <PillarTable chart={chart} label={label} />
